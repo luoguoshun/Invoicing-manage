@@ -1,0 +1,31 @@
+@normal-yellow: #e8aa3a;
+@normal-violet: #7979d6;
+@normal-blue: #6a9be4;
+@normal-grey: #9c9c9c;
+@deep-grey: #4a4a4a;
+@background: #f2f2f2;
+@normal-red: #ec0f0f;
+@my-red: #f56c6c;
+@normal-green: #69c384;
+
+.my-title(@size:1.4rem) {
+	font-weight: 300;
+	font-size: @size;
+	border-bottom: 1px solid #e0e0e0;
+	flex-shrink: 0;
+}
+.my-hw(@height:100%, @width:100%) {
+	height: @height;
+	width: @width;
+  border: #69c384;
+}
+.my-flex(@direction: row, @justify-content:center, @align-items:center) {
+	display: flex;
+	flex-direction: @direction;
+	justify-content: @justify-content;
+	align-items: @align-items;
+}
+.my-btn-hw(@height:28px,@width:70px) {
+	height: 28px;
+	width: @width;
+}
