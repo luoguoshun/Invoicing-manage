@@ -1,7 +1,8 @@
 import account from './account';
+import user from './user';
+import role from './role';
 import book from './book';
 import system from './system';
-import client from './client';
 import nLog from './NLog';
 import admin from './admin';
 
@@ -9,7 +10,8 @@ export default {
   account,
   book,
   system,
-  client,
+  user,
   nLog,
   admin,
+  role,
 };

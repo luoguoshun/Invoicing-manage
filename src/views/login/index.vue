@@ -10,7 +10,7 @@
             <!-- 登录信息 -->
             <div class="login-info">
               <el-input
-                placeholder="请输入用户名"
+                placeholder="请输入账号"
                 prefix-icon="el-icon-user-solid"
                 style="width: 70%"
                 v-model="loginInfo.account"
@@ -59,9 +59,9 @@ export default {
               try {
                 this.setTokenInfo(data); //设置Token
                 this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' }); //设置登入用户信息
-                this.$signalR.connection.start(); //连接signalR
-                console.log('SignalR is Connection');
-                this.$router.push({ name: 'homeIndex' });
+                // this.$signalR.connection.start(); //连接signalR
+                // console.log('SignalR is Connection');
+                this.$router.push({ name: 'home' });
               } catch (err) {
                 console.log(err);
               }

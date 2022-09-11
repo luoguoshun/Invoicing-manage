@@ -1,6 +1,6 @@
 <template>
-  <div class="system">
-    <RouterView></RouterView>
+  <div class="role">
+    role
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.system {
+.role {
   height: 100%;
   width: 100%;
 }

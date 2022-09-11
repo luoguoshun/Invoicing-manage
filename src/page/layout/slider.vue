@@ -2,7 +2,7 @@
   <div class="slide">
     <el-menu default-active="this.$route.name" background-color="#324157" text-color="#bfcbd9" active-text-color="#049eff" :router="true">
 
-      <el-menu-item index="homeIndex">
+      <el-menu-item index="home">
         <i class="el-icon-menu"></i>
         首页
       </el-menu-item>
@@ -10,19 +10,23 @@
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-user"></i>
-          <span>用户管理</span>
+          <span>系统管理</span>
         </template>
-        <el-menu-item index="clientList" @click.native="createTab({ tabName: '用户列表', routeName: 'clientList' })">用户列表</el-menu-item>
-        <el-menu-item index="1-2">权限设置</el-menu-item>
+        <el-menu-item index="users" @click.native="createTab({ tabName: '用户列表', routeName: 'users' })">用户列表</el-menu-item>
+        <el-menu-item index="role">角色管理</el-menu-item>
+        <el-menu-item index="setting">系统设置</el-menu-item>
+        <el-menu-item index="dataInitialization">数据初始化</el-menu-item>
       </el-submenu>
 
       <el-submenu index="2">
         <template slot="title">
           <i class="el-icon-notebook-2"></i>
-          <span>书籍管理</span>
+          <span>基础资料管理</span>
         </template>
-        <el-menu-item index="bookList" @click.native="createTab({ tabName: '书籍列表', routeName: 'bookList' })">书籍列表</el-menu-item>
-        <el-menu-item index="2-2">其他</el-menu-item>
+        <el-menu-item index="2-1">供应商</el-menu-item>
+        <el-menu-item index="2-2">物品信息</el-menu-item>
+        <el-menu-item index="2-2">仓库信息</el-menu-item>
+        <el-menu-item index="2-2">其他信息</el-menu-item>
       </el-submenu>
 
       <el-submenu index="3">

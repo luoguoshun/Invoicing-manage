@@ -1,6 +1,6 @@
 <template>
-  <div class="system">
-    <RouterView></RouterView>
+  <div class="setting">
+    setting
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.system {
+.setting {
   height: 100%;
   width: 100%;
 }

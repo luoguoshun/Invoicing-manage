@@ -6,7 +6,7 @@ import { Message } from 'element-ui';
 import { createThrottle } from './throttle';
 import router from '@/router';
 
-const baseurl = 'http://127.0.0.1:36779';
+const baseurl = 'http://127.0.0.1:36559';
 //创建axios实例
 const ajax = new axios.create({
   withCredentials: false, //跨域请求是否允许携带cookie资源凭证
@@ -21,12 +21,12 @@ const unauthorizedHandler = createThrottle(() => {
   console.log(nowRouteName);
   if (nowRouteName != 'login') {
     Message.warning('登录失效，请重新登录!');
-    // router.push({
-    //   name: "login",
-    //   query: {
-    //     redirectUrl: router.history.current.fullPath,
-    //   },
-    // });
+    router.push({
+      name: "login",
+      query: {
+        redirectUrl: router.history.current.fullPath,
+      },
+    });
   }
 }, 1000);
 const isEncrypt = (() => {

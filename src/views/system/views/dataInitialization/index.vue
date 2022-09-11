@@ -1,6 +1,6 @@
 <template>
-  <div class="system">
-    <RouterView></RouterView>
+  <div class="dataInitialization">
+    dataInitialization
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.system {
+.dataInitialization {
   height: 100%;
   width: 100%;
 }

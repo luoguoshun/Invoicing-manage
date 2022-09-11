@@ -3,7 +3,7 @@
     <!-- 基本信息区 -->
     <div class="header_info">
       <div class="title">
-        <p>书城管理系统</p>
+        <p>翻斗花园进销存管理系统</p>
       </div>
       <div class="adminInfo">
         <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
@@ -131,7 +131,6 @@ export default {
       let routeName = tab.$vnode.data.key;
       if (this.$route.path !== routeName) {
         this.$router.push({ name: routeName });
-        
       }
     },
     //删除tag标签并跳转路由
@@ -216,17 +215,17 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   .header_info {
-    height: 120px;
+    height: 60px;
     display: flex;
     flex-direction: row;
-    border: 1px solid rgb(214, 184, 184);
+    border: 1px solid rgb(230, 215, 215);
     margin-bottom: 5px;
     .title {
       flex-grow: 30;
       p {
-        margin-top: 20px;
+        margin-top: 10px;
         font-size: 20px;
         color: rgb(14, 13, 11);
       }
@@ -237,7 +236,7 @@ export default {
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      border: 1px solid rgb(245, 238, 238);
+      // border: 1px solid rgb(245, 238, 238);
     }
   }
   .header_tab {

@@ -1,12 +1,12 @@
 import ajax from "@/utils/ajax";
 export default {
   //获取用户列表
-  getClientList(page, row, conditions, roleId) {
-    return ajax.post("/api/Background/Client/GetClientList", {
+  GetUserList(page, row, conditions, roleId) {
+    return ajax.post("/api/Background/User/GetUserList", {
       Page: page,
       Row: row,
       Conditions: conditions,
-      RoleId:roleId,
+      RoleId: roleId,
     });
   },
   //获取用户信息
@@ -16,15 +16,19 @@ export default {
     });
   },
   //修改部分书籍信息
-  updateSectionClient(clientForm){
-    return ajax.post("/api/Background/Client/UpdateSectionClient", {...clientForm});
+  updateSectionClient(clientForm) {
+    return ajax.post("/api/Background/Client/UpdateSectionClient", {
+      ...clientForm
+    });
   },
   //修改部分书籍信息
-  updateAllClient(imageFile){
+  updateAllClient(imageFile) {
     return ajax.post("/api/Background/Client/updateAllBook", imageFile);
   },
   //删除用户
-  deleteClients(clientNos){
-    return ajax.post("/api/Background/Client/DeleteClients", {clientNos});
+  deleteClients(clientNos) {
+    return ajax.post("/api/Background/Client/DeleteClients", {
+      clientNos
+    });
   }
 };

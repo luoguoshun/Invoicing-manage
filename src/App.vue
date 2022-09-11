@@ -24,7 +24,7 @@ export default {
     },
   },
   mounted() {
-    this.startConnection();
+    // this.startConnection();
   },
 };
 </script>
