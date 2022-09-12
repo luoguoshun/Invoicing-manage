@@ -4,4 +4,11 @@ export default {
   getRoleList() {
     return ajax.post('/api/Background/Role/GetRoleList');
   },
-}
+  addRole(roleId,name,descripcion) {
+    return ajax.post('/api/Background/Role/AddRole', {
+      roleId,
+      name,
+      Descripcion,
+    });
+  },
+};
