@@ -11,6 +11,7 @@ export default {
       return state.adminInfo;
     },
   },
+  //mutations是唯一一种方式来修改state中的状态的；
   mutations: {
     setAdminInfo(state, adminInfo) {
       state.adminInfo = JSON.parse(JSON.stringify(adminInfo));

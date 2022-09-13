@@ -1,4 +1,4 @@
-import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";//引入crypto-js加密库
 
 var settings = {
   key: CryptoJS.enc.Utf8.parse("0123456789abcdef"), //十六位十六进制数作为密钥

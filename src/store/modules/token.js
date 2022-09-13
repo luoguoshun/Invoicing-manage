@@ -15,6 +15,7 @@ export default {
       }
       return state.token.tokenInfo;
     },
+    //到期时间方法
     expires(state) {
       if (state.tokenInfo == null) {
         return true;

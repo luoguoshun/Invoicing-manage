@@ -52,10 +52,27 @@ const routes = [{
           },
         ]
       },
+      //基础资料管理
       {
-        path: '/bookList',
-        name: 'bookList',
-        component: () => import(`@/views/background/bookManage/bookList`),
+        path: '/baseinfo',
+        name: 'baseinfo',
+        component: () => import(`@/views/baseinfo`),
+        children: [{
+            path: '/supplier',
+            name: 'supplier',
+            component: () => import('@/views/baseinfo/views/supplier'),
+          },
+          {
+            path: '/goods',
+            name: 'goods',
+            component: () => import('@/views/baseinfo/views/goods'),
+          },
+          {
+            path: '/warehouse',
+            name: 'warehouse',
+            component: () => import('@/views/baseinfo/views/warehouse'),
+          }
+        ]
       },
       {
         path: '/nLogList',
