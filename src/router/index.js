@@ -84,18 +84,22 @@ const routes = [{
         path: '/baseinfo',
         name: 'baseinfo',
         component: () => import(`@/views/baseinfo`),
+        meta: {
+          title: '基础资料设置',
+          isAuth: true
+        },
         children: [{
-            path: '/supplier',
+            path: 'supplier',
             name: 'supplier',
             component: () => import('@/views/baseinfo/views/supplier'),
           },
           {
-            path: '/goods',
+            path: 'goods',
             name: 'goods',
             component: () => import('@/views/baseinfo/views/goods'),
           },
           {
-            path: '/warehouse',
+            path: 'warehouse',
             name: 'warehouse',
             component: () => import('@/views/baseinfo/views/warehouse'),
           }
@@ -105,6 +109,10 @@ const routes = [{
         path: '/logs',
         name: 'logs',
         component: () => import(`@/views/logs`),
+        meta: {
+          title: '日志管理',
+          isAuth: true
+        },
       },
     ],
   },
@@ -119,18 +127,16 @@ router.beforeEach(async (to, from, next) => {
   // 判断该路由是否需要登录权限
   // 路由对象的matched属性是一个数组，包含了当前路由的所有嵌套路径片段的路由记录。
   //只需要给较高一级的路由添加isAuth即可，其下的所有子路由不必添加。
-  // (1) 函数执行次数 !== 数组长度
-  // (2) 函数内部的return
+  // 函数执行次数 !== 数组长度
   // return true: 循环结束, 找到了满足条件的元素
   // return false: 循环继续, 没找到循环继续, 如果所有元素全部遍历还是没找到, 最终结果为false
   const isAuth = to.matched.some(i => i.meta.isAuth == true);
-  debugger;
   // 判断目标路由是否是/login，如果是，直接调用next()方法
   if (to.path === '/login') {
-   next()
-  }else{
-     //判断目标路由是否需要验证
-     if (isAuth) {
+    next()
+  } else {
+    //判断目标路由是否需要验证
+    if (isAuth) {
       // 否则判Token时间是否失效
       if (store.getters["token/expiresTime"]) {
         Message.warning("凭证过期，请重新登录!");

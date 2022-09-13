@@ -48,5 +48,13 @@ export default {
   //检查用户是否存在
   checkUserExists(userId) {
     return ajax.get("/api/Background/User/CheckUserExists?userId=" + userId + "");
-  }
+  },
+  //修改密码
+  updatePwd(adminNo, oldPwd, newPwd) {
+    return ajax.post('/api/Background/User/UpdatePwd', {
+      AdminNo: adminNo,
+      OldPwd: oldPwd,
+      NewPwd: newPwd,
+    });
+  },
 };
