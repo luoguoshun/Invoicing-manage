@@ -5,6 +5,7 @@ import book from './book';
 import system from './system';
 import log from './log';
 import admin from './admin';
+import goods from './goods';
 
 export default {
   account,
@@ -14,4 +15,5 @@ export default {
   log,
   admin,
   role,
+  goods,
 };

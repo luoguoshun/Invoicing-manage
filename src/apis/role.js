@@ -4,4 +4,24 @@ export default {
   getRoleList() {
     return ajax.post('/api/Background/Role/GetRoleList');
   },
-}
+
+  //添加角色
+  addRole(RoleForm) {
+
+    return ajax.post('/api/Background/Role/AddRole', {
+      ...RoleForm,
+    });
+  },
+
+  //修改部分角色信息
+  updateRole(RoleForm) {
+    return ajax.post('/api/Background/Role/UpdateRole', {
+      ...RoleForm,
+    });
+  },
+
+  //删除角色
+  deleteRoleIdById(roleId) {
+    return ajax.post('/api/Background/Role/deleteRoleIdById', roleId);
+  },
+};

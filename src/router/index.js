@@ -79,15 +79,32 @@ const routes = [{
           },
         ]
       },
-      //日志
+      //基础资料管理
+      {
+        path: '/baseinfo',
+        name: 'baseinfo',
+        component: () => import(`@/views/baseinfo`),
+        children: [{
+            path: '/supplier',
+            name: 'supplier',
+            component: () => import('@/views/baseinfo/views/supplier'),
+          },
+          {
+            path: '/goods',
+            name: 'goods',
+            component: () => import('@/views/baseinfo/views/goods'),
+          },
+          {
+            path: '/warehouse',
+            name: 'warehouse',
+            component: () => import('@/views/baseinfo/views/warehouse'),
+          }
+        ]
+      },
       {
         path: '/logs',
         name: 'logs',
         component: () => import(`@/views/logs`),
-        meta: {
-          title: '日志管理',
-          isAuth: true
-        },
       },
     ],
   },

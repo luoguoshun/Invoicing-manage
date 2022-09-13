@@ -12,7 +12,12 @@ export default {
       }
       return state.tokenInfo.accessToken;
     },
+<<<<<<< HEAD
     expiresTime(state) {
+=======
+    //到期时间方法
+    expires(state) {
+>>>>>>> a703199a5bc4c5766e46ebc61b53edb7a0206097
       if (state.tokenInfo == null) {
         return true;
       }
