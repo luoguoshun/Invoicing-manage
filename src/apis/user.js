@@ -11,24 +11,31 @@ export default {
   },
   //获取用户信息
   getClientInfo(clientNo) {
-    return ajax.post("/api/Background/Client/GetClientinfo", {
+    return ajax.post("/api/Background/User/GetClientinfo", {
       clientNo,
     });
   },
-  //修改部分书籍信息
-  updateSectionClient(clientForm) {
-    return ajax.post("/api/Background/Client/UpdateSectionClient", {
-      ...clientForm
+  //修改部分用户信息
+  updateUser(userForm) {
+    return ajax.post("/api/Background/User/UpdateUser", {
+      ...userForm
     });
   },
-  //修改部分书籍信息
-  updateAllClient(imageFile) {
-    return ajax.post("/api/Background/Client/updateAllBook", imageFile);
+  //上传用户头像
+  UploadUserHeadImg(imageFile) {
+    return ajax.post("/api/Background/User/UploadUserHeadImg", imageFile);
+  },
+
+  updateUserState(userId, state) {
+    return ajax.post("/api/Background/User/UpdateUserState", {
+      userId,
+      state
+    });
   },
   //删除用户
-  deleteClients(clientNos) {
-    return ajax.post("/api/Background/Client/DeleteClients", {
-      clientNos
-    });
+  deleteUsersById(userIds) {
+    return ajax.post("/api/Background/User/DeleteUsersById", 
+      userIds
+    );
   }
 };

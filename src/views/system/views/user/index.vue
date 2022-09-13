@@ -6,22 +6,9 @@
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openCreateDialog()"
           >添加
         </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteClients()" round>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()" round>
           移除
         </el-button>
-        <el-upload
-          class="upload"
-          ref="uploadCoverImg"
-          action=""
-          :http-request="importClients"
-          :auto-upload="true"
-          :limit="1"
-          :show-file-list="false"
-        >
-          <el-button slot="trigger" size="mini" type="primary" round>
-            导入数据
-          </el-button>
-        </el-upload>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -46,14 +33,14 @@
       @selection-change="selectRows"
       border=""
     >
-      <el-table-column type="selection" width="55" align="center"> </el-table-column>
+      <el-table-column type="selection" width="45" align="center"> </el-table-column>
       <el-table-column fixed prop="userId" label="编号" width="90" align="center"> </el-table-column>
       <el-table-column label="头像" width="100" align="center">
         <template slot-scope="scope">
           <el-image
-            style="width: 50px; height: 50px"
-            :src="scope.row.headerImgSrc"
-            :preview-src-list="[scope.row.headerImgSrc]"
+            style="width: 60px; height: 50px"
+            :src="scope.row.headerImgUrl"
+            :preview-src-list="[scope.row.headerImgUrl]"
           ></el-image>
         </template>
       </el-table-column>
@@ -76,18 +63,14 @@
       </el-table-column>
       <el-table-column prop="idNumber" label="身份证号码" width="200" align="center"> </el-table-column>
       <el-table-column prop="address" label="住址" align="center"> </el-table-column>
-      <el-table-column label="联系方式" width="120" align="center">
-        <template slot-scope="scope">
-          <el-input type="text" size="mini" v-model="scope.row.phone" placeholder="联系方式"></el-input>
-        </template>
-      </el-table-column>
+      <el-table-column prop="phone" label="联系方式" width="120" align="center"> </el-table-column>
       <el-table-column label="角色" width="150" align="center">
         <template slot-scope="scope">
           {{ scope.row.roleNames }}
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="150" align="center"> </el-table-column>
-      <el-table-column prop="state" label="状态" width="100" align="center">
+      <el-table-column prop="state" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-switch
             class="switch"
@@ -96,13 +79,13 @@
             active-color="rgb(0, 255, 149)"
             inactive-color="rgb(151, 148, 148)"
             v-model="scope.row.state"
+            @change="updateUserState(scope.row)"
           />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="150" align="center">
+      <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="updateDiolog(scope.row)">查看</el-button>
-          <el-button type="text" size="small" @click="updateSectionClient(scope.row)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -124,12 +107,12 @@
     <el-dialog title="用户信息" center :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="40%">
       <el-form ref="updateform" :model="userForm" label-width="80px">
         <el-form-item label="头像">
-          <img :src="userForm.imageUrl" width="100" height="100" />
-          <el-upload ref="upload" action="" :http-request="updateAllClient" :auto-upload="false" :limit="1">
+          <img :src="userForm.headerImgUrl" width="100" height="100" />
+          <el-upload ref="upload" action="" :http-request="uploadUserHeaderImg" :auto-upload="false" :limit="1">
             <el-button slot="trigger" size="small" type="primary">
               选取文件
             </el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitFormInfo"
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()"
               >上传到服务器</el-button
             >
           </el-upload>
@@ -138,8 +121,8 @@
           <el-input v-model="userForm.name"></el-input>
         </el-form-item>
         <el-form-item label="角色">
-          <el-checkbox-group v-model="userRoles">
-            <el-checkbox v-for="role in roleTypes" :label="role.name" :key="role.roleId">
+          <el-checkbox-group v-model="roleIds">
+            <el-checkbox v-for="role in roleTypes" :label="role.roleId" :key="role.roleId">
               {{ role.name }}
             </el-checkbox>
           </el-checkbox-group>
@@ -147,13 +130,13 @@
         <el-form-item label="联系方式">
           <el-input type="text" v-model="userForm.phone"></el-input>
         </el-form-item>
-        <el-form-item label="角色">
-          <el-input type="text" v-model="userForm.roleNames"></el-input>
+        <el-form-item label="地址">
+          <el-input type="text" v-model="userForm.address"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="updateDialog.visible = false">取 消</el-button>
-        <el-button type="success" @click="submitFormInfo">修 改</el-button>
+        <el-button type="success" @click="updateUserInfo()">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -179,24 +162,18 @@ export default {
       userForm: {
         userId: '',
         name: '',
-        imageUrl: '',
+        headerImgUrl: '',
         sex: '',
         IdNumber: '',
-        birthDate: false,
-        Address: [],
+        address: '',
         phone: '',
-        roleNames: '',
-        roles: [],
+        roleIdStr: '',
         state: 0,
       },
+      roleIds: [],
       userIds: [],
       roleTypes: [{ roleId: 0, name: '请选择类型' }],
     };
-  },
-  computed: {
-    userRoles() {
-      return this.userForm.roleNames.split('、');
-    },
   },
   methods: {
     //导入数据
@@ -250,7 +227,7 @@ export default {
         this.roleTypes = data;
       });
     },
-    //查找书籍
+    //查找用户
     selectUser() {
       this.loadData();
     },
@@ -279,18 +256,19 @@ export default {
     selectRows(selection) {
       this.userIds = [];
       selection.forEach((element) => {
-        this.bookIds.push(element.id);
+        this.userIds.push(element.userId);
       });
+      console.log(this.userIds);
     },
     //删除用户
-    deleteClients() {
+    deleteUsers() {
       if (this.userIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
           type: 'warning',
         });
       } else {
-        this.$api.user.deleteClients(this.userIds).then((res) => {
+        this.$api.user.deleteUsersById(this.userIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -304,18 +282,14 @@ export default {
     },
     //打开修改弹窗
     updateDiolog(row) {
-        console.log(row);
       this.userForm = { ...row };
+      if (this.userForm.roleIdStr !== null) {
+        this.roleIds = this.userForm.roleIdStr.split('、');
+      }
       this.updateDialog.visible = true;
     },
-    //提交修改
-    submitFormInfo() {
-        console.log(123);
-       console.log(this.userRoles()); 
-    //   this.$refs.upload.submit();
-    },
-    //修改用户全部数据
-    updateAllClient(param) {
+    //上传用户头像
+    uploadUserHeaderImg(param) {
       if (
         param.file.type != 'image/png' &&
         param.file.type != 'image/gif' &&
@@ -335,32 +309,54 @@ export default {
         //创建FormData对象(键值对集合) 将模型存在FormData中
         const formdata = new FormData();
         formdata.append('file', param.file);
-        for (let item in this.userForm) {
-          if (!formdata.has(item)) {
-            formdata.append(item, this.userForm[item]);
-          }
-        }
-        this.$api.user.updateAllClient(formdata).then((res) => {
+        formdata.append('userId', this.userForm.userId);
+        this.$api.user.UploadUserHeadImg(formdata).then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
-            console.log(message);
+            this.$message({ message: message, type: 'error' });
             return;
           } else {
             this.updateDialog.visible = false;
-            this.$message({ message: '修改成功！', type: 'success' });
+            this.$message({ message: '上传成功！', type: 'success' });
             this.loadData();
           }
         });
       }
     },
-    //修改用户部分数据
-    updateSectionClient(row) {
-      this.$api.user.updateSectionClient({ ...row }).then((res) => {
+    //修改用户数据
+    updateUserInfo() {
+      const user = {
+        userId: this.userForm.userId,
+        roleIds: this.roleIds,
+        phone: this.userForm.phone,
+        address: this.userForm.address,
+        sex: this.userForm.sex,
+        name: this.userForm.name,
+      };
+      this.$api.user.updateUser(user).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
-          console.log(message);
+          this.$message({ message: '修改失败！', type: 'error' });
         } else {
           this.$message({ message: '修改成功！', type: 'success' });
+          this.updateDialog.visible = false;
+          this.loadData();
+        }
+      });
+    },
+    //修改用户状态
+    updateUserState(row) {
+      this.$api.user.updateUserState(row.userId, row.state).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          this.$message({ message: '修改失败！', type: 'error' });
+        } else {
+          if (row.state == 1) {
+            this.$message({ message: '开启成功！', type: 'success' });
+          } else {
+            this.$message({ message: '禁用成功！', type: 'success' });
+          }
+          this.loadData();
         }
       });
     },
