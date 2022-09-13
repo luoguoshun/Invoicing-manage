@@ -2,7 +2,7 @@
   <div class="slide">
     <el-menu default-active="this.$route.name" background-color="#324157" text-color="#bfcbd9" active-text-color="#049eff" :router="true">
 
-      <el-menu-item index="home">
+      <el-menu-item index="/home">
         <i class="el-icon-menu"></i>
         首页
       </el-menu-item>
@@ -12,10 +12,10 @@
           <i class="el-icon-user"></i>
           <span>系统管理</span>
         </template>
-        <el-menu-item index="users" @click.native="createTab({ tabName: '用户列表', routeName: 'users' })">用户列表</el-menu-item>
-        <el-menu-item index="role">角色管理</el-menu-item>
-        <el-menu-item index="setting">系统设置</el-menu-item>
-        <el-menu-item index="dataInitialization">数据初始化</el-menu-item>
+        <el-menu-item index="/system/users" :to="{ name: 'users' }" @click.native="createTab({ tabName: '用户管理', routeName: 'users' })">用户管理</el-menu-item>
+        <el-menu-item index="/system/role">角色管理</el-menu-item>
+        <el-menu-item index="/system/setting">系统设置</el-menu-item>
+        <el-menu-item index="/system/dataInitialization">数据初始化</el-menu-item>
       </el-submenu>
 
       <el-submenu index="2">
@@ -43,11 +43,13 @@
           <i class="el-icon-setting"></i>
           <span>系统设置</span>
         </template>
-        <el-menu-item index="nLogList" @click.native="createTab({ tabName: '日志管理', routeName: 'nLogList' })">日志管理</el-menu-item>
         <el-menu-item index="4-2">基础设置</el-menu-item>
         <el-menu-item index="4-3">其他</el-menu-item>
       </el-submenu>
-      
+      <el-menu-item index="/logs" @click.native="createTab({ tabName: '日志管理', routeName: 'nLogList' })">
+        <i class="el-icon-chat-line-round"></i>
+        日志管理
+      </el-menu-item>
     </el-menu>
   </div>
 </template>

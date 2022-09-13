@@ -3,7 +3,7 @@ import user from './user';
 import role from './role';
 import book from './book';
 import system from './system';
-import nLog from './NLog';
+import log from './log';
 import admin from './admin';
 
 export default {
@@ -11,7 +11,7 @@ export default {
   book,
   system,
   user,
-  nLog,
+  log,
   admin,
   role,
 };
