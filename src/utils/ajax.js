@@ -2,8 +2,12 @@ import axios from 'axios';
 import store from '../store';
 import funs from './funs';
 import encrypt from './encrypt';
-import { Message } from 'element-ui';
-import { createThrottle } from './throttle';
+import {
+  Message
+} from 'element-ui';
+import {
+  createThrottle
+} from './throttle';
 import router from '@/router';
 
 const baseurl = 'http://127.0.0.1:36559';
@@ -39,7 +43,7 @@ const isEncrypt = (() => {
 //请求拦截器
 ajax.interceptors.request.use(
   (config) => {
-    const access_token = store.getters['token/access_token'];
+    const access_token = store.getters['token/accessToken'];
     if (access_token != null) {
       config.headers['Authorization'] = 'Bearer ' + access_token;
     }
@@ -77,13 +81,12 @@ ajax.interceptors.response.use(
       // 401未登录
       if (error.response.status === 401) {
         unauthorizedHandler();
-      }
-      //403没权限
-      else if (error.response.status === 403) {
+      } else if (error.response.status === 403) {
         Message.warning('没有权限访问');
-        // store.dispatch("user/logout");
       } else if (error.response.status === 400) {
-        Message.warning('参数错误');
+        Message.warning('请求参数错误');
+      } else if (error.response.status === 500) {
+        Message.warning('服务器错误');
       }
     }
     return Promise.reject(error.response);

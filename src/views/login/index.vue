@@ -9,22 +9,9 @@
             </div>
             <!-- 登录信息 -->
             <div class="login-info">
-              <el-input
-                placeholder="请输入账号"
-                prefix-icon="el-icon-user-solid"
-                style="width: 70%"
-                v-model="loginInfo.account"
-              >
-              </el-input>
+              <el-input placeholder="请输入账号" prefix-icon="el-icon-user-solid" style="width: 70%" v-model="loginInfo.account"> </el-input>
 
-              <el-input
-                placeholder="请输入密码"
-                prefix-icon="el-icon-lock"
-                show-password
-                style="width: 70%"
-                v-model="loginInfo.password"
-              >
-              </el-input>
+              <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" show-password style="width: 70%" v-model="loginInfo.password"> </el-input>
               <el-button @click="login" class="btn" v-loading="logining">登 录 </el-button>
             </div>
             <!-- 登录信息 -->
@@ -55,16 +42,20 @@ export default {
         this.$api.account.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
           const { data, success } = res.data;
           if (success) {
-            if (data != null) {
-              try {
-                this.setTokenInfo(data); //设置Token
-                this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' }); //设置登入用户信息
-                // this.$signalR.connection.start(); //连接signalR
-                // console.log('SignalR is Connection');
-                this.$router.push({ name: 'home' });
-              } catch (err) {
-                console.log(err);
+            try {
+              this.setTokenInfo(data); 
+              // this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' });
+              // this.$signalR.connection.start();
+              let redirectUrl = this.$route.query.redirectUrl;
+              if (redirectUrl) {
+                //跳转至进入登录页前的路由（重定向）
+                this.$router.replace(redirectUrl)
+              } else {
+                // 否则跳转至首页
+                 this.$router.replace('home')
               }
+            } catch (err) {
+              console.log(err);
             }
           } else {
             this.$message({
@@ -75,9 +66,6 @@ export default {
           }
         });
       }
-    },
-    resetForm() {
-      this.$refs['loginForm'].resetFields();
     },
     validateLoginInfo() {
       if (this.loginInfo.account == '') {
