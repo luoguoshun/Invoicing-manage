@@ -2,32 +2,36 @@ export default {
   namespaced: true,
   // 存放状态
   state: {
-    token: {
-      tokenInfo: JSON.parse(localStorage.getItem('tokenInfo')) || null, 
-      expires_time: 0,
-    },
+    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo')) || null,
   },
   //加工state成员给外界
   getters: {
-    access_token(state) {
-      if (state.token.tokenInfo == null) {
+    accessToken(state) {
+      if (state.tokenInfo == null) {
         return null;
       }
-      return state.token.tokenInfo;
+      return state.tokenInfo.accessToken;
     },
+<<<<<<< HEAD
+    expiresTime(state) {
+=======
     //到期时间方法
     expires(state) {
+>>>>>>> a703199a5bc4c5766e46ebc61b53edb7a0206097
       if (state.tokenInfo == null) {
         return true;
       }
-      return new Date().getTime() > state.tokenInfo.expires_time;
+      return new Date().getTime() > state.tokenInfo.expiresTime;
     },
   },
   // 操作state成员
   mutations: {
     setTokenInfo(state, tokenInfo) {
-      state.token.expires_time = new Date().getTime() + tokenInfo.expires_in * 1000;
-      localStorage.setItem('tokenInfo', JSON.stringify(tokenInfo));
+      //将token信息存入本地浏览器中
+      localStorage.setItem('tokenInfo', JSON.stringify({
+        accessToken: tokenInfo.accessToken,
+        expiresTime: new Date().getTime() + tokenInfo.expiresIn * 1000
+      }));
     },
     clearToken(state) {
       localStorage.removeItem('tokenInfo');

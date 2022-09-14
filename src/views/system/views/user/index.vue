@@ -4,9 +4,7 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openCreateDialog()"
-          >添加
-        </el-button>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()" round>
           移除
         </el-button>
@@ -38,26 +36,20 @@
       <el-table-column fixed prop="userId" label="编号" width="90" align="center"> </el-table-column>
       <el-table-column label="头像" width="100" align="center">
         <template slot-scope="scope">
-          <el-image
-            style="width: 60px; height: 50px"
-            :src="scope.row.headerImgUrl"
-            :preview-src-list="[scope.row.headerImgUrl]"
-          ></el-image>
+          <el-image style="width: 60px; height: 50px" :src="scope.row.headerImgUrl" :preview-src-list="[scope.row.headerImgUrl]"></el-image>
         </template>
       </el-table-column>
       <el-table-column label="用户名" width="80" align="center">
         <template slot-scope="scope">
-          <span style=" color:rgb(0, 153, 255)">
-            {{ scope.row.name }}
-          </span>
+          <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="sex" label="性别" width="80" align="center">
         <template slot-scope="scope">
-          <span v-if="(scope.row.sex = 1)">
+          <span v-if="scope.row.sex == 1">
             男
           </span>
-          <span v-else-if="(scope.row.sex = 2)">
+          <span v-else-if="(scope.row.sex ==2)">
             女
           </span>
         </template>
@@ -70,7 +62,11 @@
           {{ scope.row.roleNames }}
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="150" align="center"> </el-table-column>
+      <el-table-column label="创建时间" width="150" align="center"> 
+        <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
       <el-table-column prop="state" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-switch
@@ -105,7 +101,7 @@
       </el-pagination>
     </div>
     <!-- 修改用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="40%">
+    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
       <el-form ref="updateform" :model="userForm" label-width="80px">
         <el-form-item label="头像">
           <img :src="userForm.headerImgUrl" width="100" height="100" />
@@ -113,9 +109,7 @@
             <el-button slot="trigger" size="small" type="primary">
               选取文件
             </el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()"
-              >上传到服务器</el-button
-            >
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
           </el-upload>
         </el-form-item>
         <el-form-item label="用户名称">
@@ -136,8 +130,43 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateDialog.visible = false">取 消</el-button>
+        <el-button @click="dialogObject.updateVisible = false">取 消</el-button>
         <el-button type="success" @click="updateUserInfo()">修 改</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 添加用户信息对话框 -->
+    <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
+      <el-form :model="userForm" :rules="rules" ref="userForm" label-width="80px">
+        <el-form-item label="用户Id" prop="userId">
+          <el-input v-model="userForm.userId"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名" prop="name">
+          <el-input v-model="userForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="userForm.sex" placeholder="请选择性别">
+            <el-option label="男" value="1"></el-option>
+            <el-option label="女" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-checkbox-group v-model="roleIds">
+            <el-checkbox v-for="role in roleTypes" :label="role.roleId" :key="role.roleId">
+              {{ role.name }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item label="联系方式" prop="phone">
+          <el-input type="text" v-model="userForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="地址">
+          <el-input type="text" v-model="userForm.address"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogObject.addVisible = false">取 消</el-button>
+        <el-button type="success" @click="addUser()">修 改</el-button>
       </div>
     </el-dialog>
   </div>
@@ -146,6 +175,52 @@
 <script>
 export default {
   data() {
+    // 验证手机号的规则
+    const cheackMobile = (rule, value, callback) => {
+      // 手机号一般最小以“13”开头
+      const regMobile = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+      if (regMobile.test(value)) {
+        return callback();
+      }
+      callback(new Error('请输入合法的手机号!'));
+    };
+    //身份证校验
+    const cheackIdNumber = (rule, value, callback) => {
+      var arrExp = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //加权因子
+      var arrValid = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2]; //校验码
+      if (/^\d{17}\d|x$/i.test(value)) {
+        var sum = 0,
+          idx;
+        for (var i = 0; i < value.length - 1; i++) {
+          // 对前17位数字与权值乘积求和
+          sum += parseInt(value.substr(i, 1), 10) * arrExp[i];
+        }
+        // 计算模（固定算法）
+        idx = sum % 11;
+        // 检验第18为是否与校验码相等
+        if (arrValid[idx] == value.substr(17, 1).toUpperCase()) {
+          callback();
+        } else {
+          callback('身份证格式有误');
+        }
+      } else {
+        callback('身份证格式有误');
+      }
+    };
+    const cheackUserId = (rule, value, callback) => {
+      const regUserId = /^[A-Za-z0-9]+$/;
+      if (!regUserId.test(value)) {
+        return callback(new Error('用户id由英文和数字组成!'));
+      } else {
+        this.$api.user.checkUserExists(value).then((res) => {
+          const { data, success, message } = res.data;
+          if (success) {
+            return callback();
+          }
+          callback(new Error('用户Id重复!'));
+        });
+      }
+    };
     return {
       queryForm: {
         page: 1,
@@ -157,14 +232,15 @@ export default {
         userList: [],
         total: 0,
       },
-      updateDialog: {
-        visible: false,
+      dialogObject: {
+        updateVisible: false,
+        addVisible: false,
       },
       userForm: {
         userId: '',
         name: '',
         headerImgUrl: '',
-        sex: '',
+        sex: 1,
         IdNumber: '',
         address: '',
         phone: '',
@@ -174,6 +250,26 @@ export default {
       roleIds: [],
       userIds: [],
       roleTypes: [{ roleId: 0, name: '请选择类型' }],
+      rules: {
+        name: [
+          //^[\u4e00-\u9fa5]{0,}$ 纯汉字
+          { required: true, message: '姓名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+        ],
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: cheackMobile, trigger: 'blur' },
+        ],
+        idCardNumber: [
+          { required: true, message: '身份证不能为空', trigger: 'blur' },
+          { validator: cheackIdNumber, trigger: 'blur' },
+        ],
+        userId: [
+          { required: true, message: '用户Id不能为空', trigger: 'change' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
+          { validator: cheackUserId, trigger: 'blur' },
+        ],
+      },
     };
   },
   methods: {
@@ -192,7 +288,7 @@ export default {
           if (!success) {
             this.$message({ message: message, type: 'error' });
           } else {
-            this.updateDialog.visible = false;
+            this.dialogObject.updateVisible = false;
             this.$message({ message: '导入成功！', type: 'success' });
             this.loadData();
           }
@@ -204,18 +300,15 @@ export default {
     },
     //获取用户数据
     async getUserList() {
-      await this.$api.user
-        .GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.roleId)
-        .then((res) => {
-          const { data, success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            return;
-          }
-          console.log(data);
-          this.table.userList = data.users;
-          this.table.total = data.count;
-        });
+      await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.roleId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.table.userList = data.users;
+        this.table.total = data.count;
+      });
     },
     //获取角色列表
     async getRoleList() {
@@ -232,6 +325,7 @@ export default {
     selectUser() {
       this.loadData();
     },
+    //重置搜索条件
     resetQueryForm() {
       this.queryForm.conditions = '';
       this.queryForm.roleId = 0;
@@ -245,12 +339,6 @@ export default {
     //页数改变
     handleCurrentChange(page) {
       this.queryForm.page = page;
-      this.loadData();
-    },
-    //重置搜索条件
-    resetingForm() {
-      this.queryForm.conditions = '';
-      this.form.flag = 0;
       this.loadData();
     },
     //获取选中行的数据
@@ -281,22 +369,46 @@ export default {
         });
       }
     },
-    //打开修改弹窗
-    updateDiolog(row) {
-      this.userForm = { ...row };
-      if (this.userForm.roleIdStr !== null) {
-        this.roleIds = this.userForm.roleIdStr.split('、');
-      }
-      this.updateDialog.visible = true;
+    //打开添加弹窗
+    openAddDialog() {
+      this.dialogObject.addVisible = true;
+      this.userForm.userId = '';
+      this.userForm.name = '';
+      this.userForm.sex = '男';
+      this.userForm.address = '';
+      this.userForm.phone = '';
+      this.roleIds = [];
+    },
+    addUser() {
+      this.$refs['userForm'].validate((valid) => {
+        if (valid) {
+          const user = {
+            userId: this.userForm.userId,
+            name: this.userForm.name,
+            sex: this.userForm.sex == '男' ? 1 : 2,
+            address: this.userForm.address,
+            phone: this.userForm.phone,
+            roleIds: this.roleIds,
+          };
+          this.$api.user.addUser(user).then((res) => {
+            const { data, success, message } = res.data;
+            if (!success) {
+              console.log(message);
+              return;
+            }
+            this.$message({ message: '删除成功！', type: 'success' });
+            this.dialogObject.addVisible = false;
+            this.loadData();
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
     //上传用户头像
     uploadUserHeaderImg(param) {
-      if (
-        param.file.type != 'image/png' &&
-        param.file.type != 'image/gif' &&
-        param.file.type != 'image/jpg' &&
-        param.file.type != 'image/jpeg'
-      ) {
+      if (param.file.type != 'image/png' && param.file.type != 'image/gif' && param.file.type != 'image/jpg' && param.file.type != 'image/jpeg') {
         this.$notify.warning({
           title: '警告',
           message: '请上传格式为.png .gif .jpg .jpeg的图片',
@@ -317,12 +429,20 @@ export default {
             this.$message({ message: message, type: 'error' });
             return;
           } else {
-            this.updateDialog.visible = false;
+            this.dialogObject.updateVisible = false;
             this.$message({ message: '上传成功！', type: 'success' });
             this.loadData();
           }
         });
       }
+    },
+    //打开修改弹窗
+    updateDiolog(row) {
+      this.userForm = { ...row };
+      if (this.userForm.roleIdStr !== null) {
+        this.roleIds = this.userForm.roleIdStr.split('、');
+      }
+      this.dialogObject.updateVisible = true;
     },
     //修改用户数据
     updateUserInfo() {
@@ -340,7 +460,7 @@ export default {
           this.$message({ message: '修改失败！', type: 'error' });
         } else {
           this.$message({ message: '修改成功！', type: 'success' });
-          this.updateDialog.visible = false;
+          this.dialogObject.updateVisible = false;
           this.loadData();
         }
       });
