@@ -23,7 +23,7 @@
 </template>
 <script>
 import { mapMutations } from 'vuex';
-
+import store from '@/store';
 export default {
   data() {
     return {
@@ -43,16 +43,18 @@ export default {
           const { data, success } = res.data;
           if (success) {
             try {
-              this.setTokenInfo(data); 
+              this.setTokenInfo(data);
+              // console.log(store.getters['token/expiresTime']);
               // this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' });
               // this.$signalR.connection.start();
               let redirectUrl = this.$route.query.redirectUrl;
+              console.log('redirectUrl:' + redirectUrl);
               if (redirectUrl) {
                 //跳转至进入登录页前的路由（重定向）
-                this.$router.replace(redirectUrl)
+                this.$router.replace(redirectUrl);
               } else {
                 // 否则跳转至首页
-                 this.$router.replace('home')
+                this.$router.replace('home');
               }
             } catch (err) {
               console.log(err);

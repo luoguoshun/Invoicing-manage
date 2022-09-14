@@ -43,7 +43,12 @@ const isEncrypt = (() => {
 //请求拦截器
 ajax.interceptors.request.use(
   (config) => {
-    const access_token = store.getters['token/accessToken'];
+    // const access_token = store.getters['token/accessToken'];
+    let tokenInfo = JSON.parse(localStorage.getItem('tokenInfo')) || null;
+    let access_token = null;
+    if (tokenInfo !== null) {
+      access_token = tokenInfo.accessToken
+    }
     if (access_token != null) {
       config.headers['Authorization'] = 'Bearer ' + access_token;
     }

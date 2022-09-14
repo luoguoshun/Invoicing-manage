@@ -199,7 +199,7 @@ export default {
       try {
         this.closeAllTags();
         this.clearToken();
-        this.$signalR.connection.stop();
+        // this.$signalR.connection.stop();
         this.$router.push({ name: 'login' });
       } catch (err) {
         console.log(err);

@@ -207,6 +207,7 @@ export default {
         callback('身份证格式有误');
       }
     };
+    //检查用户编号是否存在
     const cheackUserId = (rule, value, callback) => {
       const regUserId = /^[A-Za-z0-9]+$/;
       if (!regUserId.test(value)) {

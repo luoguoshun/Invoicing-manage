@@ -81,9 +81,9 @@ const routes = [{
       },
       //基础资料管理
       {
-        path: '/baseinfo',
-        name: 'baseinfo',
-        component: () => import(`@/views/baseinfo`),
+        path: '/baseInfo',
+        name: 'baseInfo',
+        component: () => import(`@/views/baseInfo`),
         meta: {
           title: '基础资料设置',
           isAuth: true
@@ -91,17 +91,17 @@ const routes = [{
         children: [{
             path: 'supplier',
             name: 'supplier',
-            component: () => import('@/views/baseinfo/views/supplier'),
+            component: () => import('@/views/baseInfo/views/supplier'),
           },
           {
             path: 'goods',
             name: 'goods',
-            component: () => import('@/views/baseinfo/views/goods'),
+            component: () => import('@/views/baseInfo/views/goods'),
           },
           {
             path: 'warehouse',
             name: 'warehouse',
-            component: () => import('@/views/baseinfo/views/warehouse'),
+            component: () => import('@/views/baseInfo/views/warehouse'),
           }
         ]
       },
@@ -124,31 +124,30 @@ const router = new VueRouter({
 //全局前置守卫
 // 当一个导航触发时，全局前置守卫按照创建的顺序调用。守卫可以是异步解析执行，此时导航在所有守卫解析完之前一直处于挂起状态
 router.beforeEach(async (to, from, next) => {
-  // 判断该路由是否需要登录权限
   // 路由对象的matched属性是一个数组，包含了当前路由的所有嵌套路径片段的路由记录。
   //只需要给较高一级的路由添加isAuth即可，其下的所有子路由不必添加。
   // 函数执行次数 !== 数组长度
   // return true: 循环结束, 找到了满足条件的元素
   // return false: 循环继续, 没找到循环继续, 如果所有元素全部遍历还是没找到, 最终结果为false
   const isAuth = to.matched.some(i => i.meta.isAuth == true);
-  // 判断目标路由是否是/login，如果是，直接调用next()方法
-  if (to.path === '/login') {
-    next()
-  } else {
-    //判断目标路由是否需要验证
-    if (isAuth) {
-      // 否则判Token时间是否失效
-      if (store.getters["token/expiresTime"]) {
-        Message.warning("凭证过期，请重新登录!");
-        next({
-          name: "login",
-          query: {
-            redirectUrl: to.name,
-          },
-        });
-      }
+  //判断目标路由是否需要验证
+  if (isAuth) {
+    // 否则判Token时间是否失效
+    let tokenInfo = JSON.parse(localStorage.getItem('tokenInfo')) || null
+    let isExpires = true;
+    if (tokenInfo !== null) isExpires = new Date().getTime() > tokenInfo.expiresTime;
+    if (isExpires) {
+      Message.warning("凭证过期，请重新登录!");
+      next({
+        name: "login",
+        query: {
+          redirectUrl: to.fullPath
+        },
+      });
+    } else {
+      next();
     }
-    next();
   }
+  next();
 });
 export default router;

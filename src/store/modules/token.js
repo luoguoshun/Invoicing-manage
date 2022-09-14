@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   // 存放状态
   state: {
-    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo')) || null,
+    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo')),
   },
   //加工state成员给外界
   getters: {
@@ -12,12 +12,8 @@ export default {
       }
       return state.tokenInfo.accessToken;
     },
-<<<<<<< HEAD
     expiresTime(state) {
-=======
-    //到期时间方法
-    expires(state) {
->>>>>>> a703199a5bc4c5766e46ebc61b53edb7a0206097
+      debugger;
       if (state.tokenInfo == null) {
         return true;
       }

@@ -23,7 +23,7 @@
           <i class="el-icon-notebook-2"></i>
           <span>基础资料管理</span>
         </template>
-        <el-menu-item index="supplier">供应商</el-menu-item>
+        <el-menu-item index="/baseInfo/supplier">供应商</el-menu-item>
         <el-menu-item index="goods">物品信息</el-menu-item>
         <el-menu-item index="warehouse">仓库信息</el-menu-item>
         <el-menu-item index="2-2">其他信息</el-menu-item>
