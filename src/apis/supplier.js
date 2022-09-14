@@ -1,12 +1,13 @@
-import ajax from '../utils/ajax';
+import ajax from '@/utils/ajax';
 
-export default {
-    getSupplierList(page, row, conditions, supplierType) {
-      return ajax.post('/api/Background/Supplier/GetSupplierList', {
-        page,
-        row,
-        conditions,
-        supplierType,
-      });
-    },
-  };
+export default { 
+  //获取供应商信息
+  getSupplierList(page, row, conditions, SupplierType) {
+    return ajax.post('/api/Background/Supplier/GetSupplierList', {
+      page,
+      row,
+      conditions,
+      SupplierType,
+    });
+  },
+};

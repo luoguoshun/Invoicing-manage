@@ -21,7 +21,9 @@ export default {
   },
 
   //删除角色
-  deleteRoleIdById(roleId) {
-    return ajax.post('/api/Background/Role/deleteRoleIdById', roleId);
-  },
+  deleteRoleIdById(roleIds) {
+    return ajax.post("/api/Background/Role/DeleteRolesById", 
+    roleIds
+    );
+  }
 };
