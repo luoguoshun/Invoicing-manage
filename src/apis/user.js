@@ -34,7 +34,7 @@ export default {
   },
   //删除用户
   deleteUsersById(userIds) {
-    return ajax.post("/api/Background/User/DeleteUsersById", 
+    return ajax.post("/api/Background/Role/DeleteRolesById", 
       userIds
     );
   }

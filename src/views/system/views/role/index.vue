@@ -6,7 +6,7 @@
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openCreateDialog()"
           >添加
         </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" round>
+        <el-button type="danger" size="mini" class="el-icon-delete" round @click="deleteRoleIdById()">
           移除
         </el-button>
       </div>
@@ -31,7 +31,7 @@
     </el-table>
     
     <!-- 修改角色信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="55%">
+    <el-dialog title="角色信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="55%">
       <el-form ref="updateform" :model="RoleForm" label-width="80px">
         <el-form-item label="角色Id">
           <el-input v-model="RoleForm.roleId" disabled></el-input>
@@ -40,7 +40,7 @@
           <el-input v-model="RoleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input type="textarea" v-model="RoleForm.descripcion" hidden="50px"></el-input>
+          <el-input type="textarea" :rows="6" v-model="RoleForm.descripcion" hidden="50px"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -50,7 +50,7 @@
     </el-dialog>
 
    <!-- 添加角色信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.createVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog title="角色信息" center :visible.sync="dialogObject.createVisible" :close-on-click-modal="false" width="30%">
       <el-form ref="createform" :model="RoleForm" label-width="80px">
         <el-form-item label="角色Id">
           <el-input v-model="RoleForm.roleId"></el-input>
@@ -59,7 +59,7 @@
           <el-input v-model="RoleForm.name"></el-input>
         </el-form-item>
         <el-form-item label="角色描述">
-          <el-input type="textarea" v-model="RoleForm.descripcion" hidden="50px"></el-input>
+          <el-input type="textarea" :rows="6" v-model="RoleForm.descripcion" hidden="50px"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -82,12 +82,12 @@ export default {
       table:{
         roleList:[],
         total: 0,
-      }
-      ,
+      },
       dialogObject:{
         updateVisible:false,
         createVisible:false,
-      }
+      },
+      roleIds: [],
     };
   },
   computed: {
@@ -96,10 +96,6 @@ export default {
     },
   },
   methods: {
-    
-    selectRows() {
-      console.log(selectRows);
-    },
     loadData() {
       this.getRoleList();
     },
@@ -142,7 +138,6 @@ export default {
         }
       });
     },
-    
 
     //打开修改弹窗
     updateDiolog(row) {
@@ -168,6 +163,38 @@ export default {
           this.loadData();
         }
       });
+    },
+
+    //获取选中行的数据
+    selectRows(selection) {
+      console.log(selection)
+      this.roleIds = [];
+      selection.forEach((element) => {
+        this.roleIds.push(element.roleId);
+      });
+      console.log(this.roleIds);
+    },
+
+    //删除角色
+    deleteRoleIdById() {
+     console.log("asd");
+      if (this.roleIds.length == 0) {
+        this.$message({
+          message: '请选择要删除的数据',
+          type: 'warning',
+        });
+      } else {
+        this.$api.role.deleteRoleIdById(this.roleIds).then((res) => {
+          let { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('删除失败！');
+          } else {
+            this.$message({ message: '删除成功！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
     },
   },
     created() {

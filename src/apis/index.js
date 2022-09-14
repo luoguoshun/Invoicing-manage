@@ -6,6 +6,7 @@ import system from './system';
 import nLog from './NLog';
 import admin from './admin';
 import goods from './goods';
+import supplier from './supplier';
 
 export default {
   account,
@@ -16,4 +17,5 @@ export default {
   admin,
   role,
   goods,
+  supplier,
 };
