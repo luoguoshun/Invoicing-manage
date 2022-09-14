@@ -55,9 +55,6 @@
       <el-table-column prop="unit" label="单位"> </el-table-column>
       <el-table-column prop="specs" label="规格"> </el-table-column>
       <el-table-column prop="price" label="单价"> </el-table-column>
-      <!-- <el-table-column header-align="center" align="center" prop="warehouseName" label="隶属仓库"> </el-table-column> -->
-      <!-- <el-table-column prop="goodsCount" label="货品库存"></el-table-column> -->
-      <!-- <el-table-column prop="createTime" label="入库时间"> </el-table-column> -->
     </el-table>
 
     <!-- 分页 -->
