@@ -8,18 +8,37 @@
     <div class="edit_query">
       <div class="edit_queryinfo">
         <el-input
+          v-model="queryForm.GoodsId"
+          placeholder="请输入物品编号"
+          size="mini"
+          style="width: 200px; margin-right: 20px"
+        ></el-input>
+
+        <el-input
           v-model="queryForm.GoodsName"
           placeholder="请输入物品名称"
           size="mini"
           style="width: 200px; margin-right: 20px"
         ></el-input>
-        <!-- <el-select v-model="queryForm.WarehouseId" multiple placeholder="请选择仓库" size="mini">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-        </el-select>
-
-        <el-select size="mini" v-model="value2" multiple style="margin-left: 20px" placeholder="请选择物品类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+        <!-- <el-select v-model="queryForm.WarehouseId" placeholder="请选择仓库" size="mini">
+          <el-option
+            v-for="item in Warehouses"
+            :key="item.warehouseId"
+            :label="item.warehouseName"
+            :value="item.warehouseId"
+          >
+          </el-option>
         </el-select> -->
+
+        <el-select size="mini" v-model="queryForm.GoodsType" style="margin-left: 20px" placeholder="请选择物品类型">
+          <el-option
+            v-for="item in goodsTypes"
+            :key="item.goodsType"
+            :label="item.goodsTypeName"
+            :value="item.goodsType"
+          >
+          </el-option>
+        </el-select>
 
         <el-button type="primary" @click="getGoodsList()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
@@ -32,13 +51,13 @@
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column prop="goodsId" label="物品编号" width="180"> </el-table-column>
       <el-table-column prop="goodsName" label="物品名称" width="180"> </el-table-column>
-      <el-table-column prop="goodsType" label="物品类型(待分类)"></el-table-column>
+      <el-table-column prop="goodsTypeStr" label="物品类型"></el-table-column>
       <el-table-column prop="unit" label="单位"> </el-table-column>
       <el-table-column prop="specs" label="规格"> </el-table-column>
       <el-table-column prop="price" label="单价"> </el-table-column>
-      <el-table-column header-align="center" align="center" prop="warehouseId" label="隶属仓库"> </el-table-column>
-      <el-table-column prop="goodsCount" label="货品库存"></el-table-column>
-      <el-table-column prop="createTime" label="入库时间"> </el-table-column>
+      <!-- <el-table-column header-align="center" align="center" prop="warehouseName" label="隶属仓库"> </el-table-column> -->
+      <!-- <el-table-column prop="goodsCount" label="货品库存"></el-table-column> -->
+      <!-- <el-table-column prop="createTime" label="入库时间"> </el-table-column> -->
     </el-table>
 
     <!-- 分页 -->
@@ -68,30 +87,29 @@ export default {
         PublicationDates: [],
         GoodsName: '',
         GoodsType: 0,
+        GoodsTypeStr: '',
         WarehouseId: 0,
+        GoodsId:'',
       },
-      // goodsForm: {
-      //   PublicationDates: [],
-      //   GoodsName: '',
-      //   GoodsType: 0,
-      //   WarehouseId: 0,
-      // },
       tableData: {
         goodsList: [],
         total: 0,
       },
+      goodsTypes: [{ goodsType: 0, goodsTypeName: '请选择物品类型' }],
     };
   },
   extends: {},
   methods: {
     loadData() {
       this.getGoodsList();
+      this.getGoodsType();
     },
     async getGoodsList() {
       await this.$api.goods
         .getGoodsList(
           this.queryForm.page,
           this.queryForm.row,
+          parseInt(this.queryForm.GoodsId),
           this.queryForm.PublicationDates,
           this.queryForm.GoodsName,
           this.queryForm.GoodsType,
@@ -111,11 +129,24 @@ export default {
           this.tableData.total = data.count;
         });
     },
+
+    async getGoodsType() {
+      await this.$api.goods.getGoodInfoType().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+
+        this.goodsTypes = data;
+        console.log(this.goodsTypes);
+      });
+    },
   },
   //created是一个生命周期的钩子函数。在实例创建完成后被立即调用
   created() {
     this.loadData();
-    this.getGoodsList();
   },
 };
 </script>
