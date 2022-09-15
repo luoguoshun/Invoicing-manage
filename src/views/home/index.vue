@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <div id="myChart" :style="{ width: '500px', height: '400px' }"></div>
     home
+    <div id="myChart" :style="{ width: '500px', height: '400px' }"></div>
+   
   </div>
 </template>
 

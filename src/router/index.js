@@ -102,6 +102,20 @@ const routes = [{
             path: 'warehouse',
             name: 'warehouse',
             component: () => import('@/views/baseInfo/views/warehouse'),
+            meta: {
+              title: '仓库管理',
+              isAuth: true
+            },
+            children: [{
+              path: 'warehouseList',
+              name: 'warehouseList',
+              component: () => import('@/views/baseInfo/views/warehouse/views/warehouseList'),
+            },{
+              path: 'skuList',
+              name: 'skuList',
+              component: () => import('@/views/baseInfo/views/warehouse/views/skuList'),
+            },
+          ]
           }
         ]
       },
