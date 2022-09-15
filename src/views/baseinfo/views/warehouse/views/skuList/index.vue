@@ -32,17 +32,27 @@
       border=""
     >
       <el-table-column type="selection" width="45" align="center"> </el-table-column>
-      <el-table-column fixed prop="warehouseId" label="编号" width="90" align="center"> </el-table-column>
-      <el-table-column label="仓库名" width="80" align="center">
-        <template slot-scope="scope">
-          <el-tag disable-transitions>{{ scope.row.warehouseName }}</el-tag>
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="品牌">
+              <span>{{ props.row.spu.brand }}</span>
+            </el-form-item>
+            <el-form-item label="名称">
+              <span>{{ props.row.spu.name }}</span>
+            </el-form-item>
+          </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="warehouseTypeStr" label="类别" width="80" align="center"> </el-table-column>
+      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
+      <el-table-column label="物品物品名称" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="unit" label="单位" width="80" align="center"> </el-table-column>
       <el-table-column prop="leadCadre" label="负责人" width="200" align="center"> </el-table-column>
-      <el-table-column prop="warehouseAddr" label="住址" align="center"> </el-table-column>
       <el-table-column prop="phone" label="负责联系方式" width="120" align="center"> </el-table-column>
-      <el-table-column prop="goodsCount" label="仓库物品总数" align="center"> </el-table-column>
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
@@ -222,17 +232,15 @@ export default {
     },
     //获取用户数据
     async getSKUListByWhId() {
-      await this.$api.goods
-        .getSKUListByWhId(this.$route.query.warehouseId)
-        .then((res) => {
-          const { data, success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            return;
-          }
-          console.log(data);
-          this.table.skuList = data;
-        });
+      await this.$api.goods.getSKUListByWhId(this.$route.query.warehouseId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+        this.table.skuList = data;
+      });
     },
     //获取角色列表
     async getWarehouseTypeList() {
