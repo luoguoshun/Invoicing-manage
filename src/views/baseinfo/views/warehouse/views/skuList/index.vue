@@ -11,14 +11,14 @@
       <div class="edit_query">
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.WarehouseType" placeholder="请选择类别">
-            <el-option v-for="item in warehouseTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+            <el-option v-for="item in goodsType" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
           <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
         </div>
         <div class="edit_query_1">
-          <el-button type="primary" @click="selectWarehouse()" size="mini">查找</el-button>
+          <el-button type="primary" @click="selectGoods()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
         </div>
       </div>
@@ -35,24 +35,34 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="品牌">
-              <span>{{ props.row.spu.brand }}</span>
-            </el-form-item>
             <el-form-item label="名称">
-              <span>{{ props.row.spu.name }}</span>
+              <span>{{ props.row.spuName }}</span>
+            </el-form-item>
+            <el-form-item label="品牌">
+              <span>{{ props.row.brand }}</span>
+            </el-form-item>
+            <el-form-item label="位置">
+              <span>{{ props.row.Area }}</span>
             </el-form-item>
           </el-form>
         </template>
       </el-table-column>
       <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
+      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
       <el-table-column label="物品物品名称" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
+          <el-tag disable-transitions>{{ scope.row.skuName }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="unit" label="单位" width="80" align="center"> </el-table-column>
-      <el-table-column prop="leadCadre" label="负责人" width="200" align="center"> </el-table-column>
-      <el-table-column prop="phone" label="负责联系方式" width="120" align="center"> </el-table-column>
+      <el-table-column prop="Specs" label="规格" width="80" align="center"> </el-table-column>
+      <el-table-column prop="leadCadre" label="Count" width="200" align="center"> </el-table-column>
+      <el-table-column prop="WarnCount" label="警告库存" width="120" align="center"> </el-table-column>
+      <el-table-column label="入库时间" width="120" align="center">
+        <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
@@ -179,8 +189,9 @@ export default {
       queryForm: {
         page: 1,
         row: 10,
-        conditions: '',
-        WarehouseType: 0,
+        goodsName: '',
+        goodsType: 0,
+        warehouseId: '',
       },
       table: {
         userList: [],
@@ -203,7 +214,7 @@ export default {
       },
       roleIds: [],
       userIds: [],
-      warehouseTypes: [{ typeId: 0, typeName: '请选择类型' }],
+      goodsType: [{ typeId: 0, typeName: '请选择类型' }],
       rules: {
         name: [
           //^[\u4e00-\u9fa5]{0,}$ 纯汉字
@@ -230,31 +241,35 @@ export default {
     loadData() {
       this.getSKUListByWhId();
     },
-    //获取用户数据
+    //获取物品数据
     async getSKUListByWhId() {
-      await this.$api.goods.getSKUListByWhId(this.$route.query.warehouseId).then((res) => {
+      await this.$api.goods
+        .getSKUListByWhId(this.queryForm.page, this.queryForm.row, this.queryForm.warehouseId, this.queryForm.goodsName, this.queryForm.goodsType)
+        .then((res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            return;
+          }
+          console.log(data);
+          this.table.skuList = data.goods;
+          this.table.total = data.count;
+        });
+    },
+    //获取物品类型列表
+    async getGoodInfoType() {
+      await this.$api.goods.getGoodInfoType().then((res) => {
         const { data, success, message } = res.data;
+
         if (!success) {
           console.log(message);
           return;
         }
-        console.log(data);
-        this.table.skuList = data;
+        this.goodsType = data;
       });
     },
-    //获取角色列表
-    async getWarehouseTypeList() {
-      await this.$api.warehouse.getWarehouseTypeList().then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          console.log(message);
-          return;
-        }
-        this.warehouseTypes = data;
-      });
-    },
-    //查找用户
-    selectWarehouse() {
+    //查找物品
+    selectGoods() {
       this.loadData();
     },
     //重置搜索条件
@@ -398,9 +413,9 @@ export default {
     },
   },
   created() {
+    this.queryForm.warehouseId = this.$route.query.warehouseId;
     this.loadData();
-    this.getWarehouseTypeList();
-    console.log(this.$route.query.warehouseId);
+    // this.getGoodInfoType();
   },
 };
 </script>
