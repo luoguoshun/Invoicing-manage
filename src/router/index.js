@@ -92,6 +92,20 @@ const routes = [{
             path: 'supplier',
             name: 'supplier',
             component: () => import('@/views/baseInfo/views/supplier'),
+            meta: {
+              title: '供应商信息',
+              isAuth: true
+            },
+            children: [{
+              path: 'supplierdata',
+              name: 'supplierdata',
+              component: () => import('@/views/baseInfo/views/supplier/views/supplierdata'),
+            },{
+              path: 'supplierList',
+              name: 'supplierList',
+              component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
+            },
+          ]
           },
           {
             path: 'goods',
