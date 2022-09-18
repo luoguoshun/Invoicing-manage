@@ -34,12 +34,17 @@ export default {
     },
 
     addSpu(spu) {
-        console.log(spu)
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
             ...spu,
         })
     },
 
+    updateSpu(spu) {
+        console.log(spu)
+        return ajax.post('/api/Background/Googs/UpdateGoodsInfo', {
+            ...spu,
+        })
+    },
     deleteSpuById(spuIds) {
         return ajax.post("/api/Background/Googs/DeleteGoodsByid",
             spuIds
