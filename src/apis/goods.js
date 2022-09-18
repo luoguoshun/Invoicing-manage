@@ -1,24 +1,43 @@
 import ajax from "../utils/ajax"
 
 export default {
-    getGoodsList(page, row, goodsId, publicattionDates, goodsName, goodsType, warehouseId) {
-        return ajax.post('/api/Background/Googs/GetGoodsList', {
+    getSPUList(page, row, spuId, publicattionDates, goodsName, goodsTypeId, warehouseId) {
+        console.log(goodsTypeId)
+        return ajax.post('/api/Background/Googs/GetSPUList', {
             Page: page,
             Row: row,
-            GoodsId: goodsId,
+            SpuId: spuId,
             PublicationDates: publicattionDates,
             GoodsName: goodsName,
-            goodsType: goodsType,
+            goodsType: goodsTypeId,
             WarehouseId: warehouseId
         });
     },
-
+    //获取物品类别信息
     getGoodInfoType() {
         return ajax.post('/api/Background/Googs/GetGoodsTypeInfo')
     },
     //通过仓库编号获取物品
-    getSKUListByWhId(warehouseId) {
-        return ajax.get('/api/Background/Googs/GetSKUListByWhId?warehouseId=' + warehouseId + '')
+    getSKUListByWhId(page, row, warehouseId, goodName, GoodsType) {
+        console.log(warehouseId);
+        return ajax.post('/api/Background/Googs/GetSKUListByWhId', {
+            page,
+            row,
+            warehouseId,
+            goodName,
+            GoodsType,
+        })
+    },
+
+    getBrandType() {
+        return ajax.post('/api/Background/Googs/GetBrandType');
+    },
+
+    addSpu(spu) {
+        console.log(spu)
+        return ajax.post('/api/Background/Googs/AddGoodsInfo', {
+            ...spu,
+        })
     },
 
     //通过供应商编号获取供应商货品
@@ -32,4 +51,9 @@ export default {
             SupplierId:supplierId
         })
     },
+    deleteSpuById(spuIds) {
+        return ajax.post("/api/Background/Googs/DeleteGoodsByid",
+            spuIds
+        );
+    }
 };
