@@ -55,5 +55,18 @@ export default {
         return ajax.post("/api/Background/Googs/DeleteGoodsByid",
             spuIds
         );
-    }
+    },
+
+    //获取sku信息
+    GetSKUList(page, row, spuId, skuId, goodsName,goodsType,warehouseId) {
+        return ajax.post('/api/Background/Googs/GetSKUList', {
+            Page:page,
+            Row:row,
+            spuId:spuId,
+            skuId:skuId,
+            goodsName:goodsName, 
+            goodsType:goodsType, 
+            warehouseId:warehouseId,
+        })
+    },
 };
