@@ -1,6 +1,5 @@
 <template>
   <div class="user_container">
-
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
@@ -19,7 +18,7 @@
           <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
         </div>
         <div class="edit_query_1">
-          <el-button type="primary" @click="selectUser()" size="mini">查找</el-button>
+          <el-button type="primary" @click="loadData()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
         </div>
       </div>
@@ -49,7 +48,7 @@
           <span v-if="scope.row.sex == 1">
             男
           </span>
-          <span v-else-if="(scope.row.sex ==2)">
+          <span v-else-if="scope.row.sex == 2">
             女
           </span>
         </template>
@@ -62,7 +61,7 @@
           {{ scope.row.roleNames }}
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="150" align="center"> 
+      <el-table-column label="创建时间" width="150" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
@@ -321,10 +320,6 @@ export default {
         }
         this.roleTypes = data;
       });
-    },
-    //查找用户
-    selectUser() {
-      this.loadData();
     },
     //重置搜索条件
     resetQueryForm() {

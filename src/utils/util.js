@@ -430,3 +430,26 @@ export const setTitle = (routeItem, vm) => {
   const resTitle = pageTitle ? `${title} - ${pageTitle}` : title
   window.document.title = resTitle
 }
+//通过子节点找到所有父节点（ 从下往上递归）
+export const findParents = (treeData, id) => {
+  let allparents = []
+  if (treeData.length == 0) {
+    return;
+  }
+  let findElement = (data, id) => {
+    if (!id) return
+    data.forEach((item, index) => {
+      //找到对应的子节点值 将父级Id传回函数
+      if (item.value == id) {
+        allparents.unshift(item.parentId)
+        findElement(treeData, item.parentId)
+      } else {
+        if (!!item.children) {
+          findElement(item.children, id)
+        }
+      }
+    })
+  }
+  findElement(treeData, id)
+  return allparents
+}

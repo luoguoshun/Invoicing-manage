@@ -1,13 +1,13 @@
 <template>
-  <div class="financial">
-    <RouterView></RouterView>
+  <div class="approvalStateList">
+    approvalStateList
   </div>
 </template>
 
 <script>
 export default {
   data() {
-    return{}
+    return {};
   },
   computed: {},
   methods: {},
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.financial {
+.approvalStateList {
   height: 100%;
   width: 100%;
 }
