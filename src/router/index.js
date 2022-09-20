@@ -97,13 +97,13 @@ const routes = [{
               isAuth: true
             },
             children: [{
-              path: 'supplierdata',
-              name: 'supplierdata',
-              component: () => import('@/views/baseInfo/views/supplier/views/supplierdata'),
-            },{
               path: 'supplierList',
               name: 'supplierList',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
+            },{
+              path: 'supplierSku',
+              name: 'supplierSku',
+              component: () => import('@/views/baseInfo/views/supplier/views/supplierSku'),
             },
           ]
           },

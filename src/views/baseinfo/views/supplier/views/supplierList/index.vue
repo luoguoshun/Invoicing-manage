@@ -11,14 +11,14 @@
       <div class="edit_query">
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.supplierType" placeholder="请选择类别">
-            <el-option v-for="item in roleTypes" :key="item.roleId" :label="item.name" :value="item.roleId"></el-option>
+            <el-option v-for="item in supplierTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
           <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
         </div>
         <div class="edit_query_1">
-          <el-button type="primary" @click="selectsupplier()" size="mini">查找</el-button>
+          <el-button type="primary" @click="getSupplierList()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
         </div>
       </div>
@@ -26,18 +26,35 @@
     <!-- 表格 -->
     <el-table
       :data="table.supplierList"
+      @row-dblclick="updateDiolog"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
-      border="">
-      <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column prop="spuId" label="物品编码" align="center"> </el-table-column>
-      <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
-      <el-table-column prop="spuName" label="物品名称" align="center"> </el-table-column>
-      <el-table-column prop="typeStr" label="物品分类" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
+      border=""
+    >
+      <el-table-column type="selection" width="45" align="center"> </el-table-column>
+      <el-table-column fixed prop="supplierId" label="供应商编号" width="90" align="center"> </el-table-column>
+      <el-table-column label="供应商名称" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions>{{ scope.row.supplierName }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="supplierTypeStr" label="供应商分类" width="150" align="center"></el-table-column>
+      <el-table-column prop="supplierAddr" label="供应商地址" width="200" align="center"> </el-table-column>
+      <el-table-column prop="leadCadre" label="负责人" align="center"> </el-table-column>
+      <el-table-column prop="phone" label="联系方式" align="center"> </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="供应商货品" width="100" align="center">
+        <template slot-scope="scope">
+          <el-link type="primary" @click="GetSKUListBySupplierId(scope.row.supplierId)">查看</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="编辑" width="100" align="center">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -55,11 +72,46 @@
       >
       </el-pagination>
     </div>
-    <!-- 添加供应商货品对话框 -->
+    <!-- 修改供应商信息对话框 -->
+    <el-dialog title="供应商信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
+      <el-form ref="updateform" :rules="rules" :model="supplierForm" label-width="100px">
+        <el-form-item label="供应商编号">
+          <el-input v-model="supplierForm.supplierId" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-input v-model="supplierForm.supplierName"></el-input>
+        </el-form-item>
+        <el-form-item label="供应商分类">
+          <el-select size="mini" v-model="supplierForm.supplierType" placeholder="请选择">
+            <el-option v-for="item in supplierForm.supplierTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"> </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="供应商地址" prop="supplierAddr">
+          <el-input v-model="supplierForm.supplierAddr"></el-input>
+        </el-form-item>
+        <el-form-item label="负责人" prop="leadCadre">
+          <el-input v-model="supplierForm.leadCadre"></el-input>
+        </el-form-item>
+        <el-form-item label="联系方式" prop="phone">
+          <el-input v-model="supplierForm.phone"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogObject.updateVisible = false">取 消</el-button>
+        <el-button type="success" @click="updateSupplier()">修 改</el-button>
+      </div>
+    </el-dialog>
+    <!-- 添加供应商对话框 -->
     <el-dialog title="供应商信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
       <el-form :model="supplierForm" :rules="rules" ref="supplierForm" label-width="100px">
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="supplierForm.supplierName"></el-input>
+        </el-form-item>
+        <el-form-item label="供应商分类" prop="leadCadre">
+          <el-select size="mini" v-model="supplierForm.supplierType" placeholder="请选择类别">
+            <el-option v-for="item in supplierForm.supplierTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="供应商地址" prop="supplierAddr">
           <el-input v-model="supplierForm.supplierAddr"></el-input>
@@ -82,15 +134,25 @@
 <script>
 export default {
   data() {
+    // 验证手机号的规则
+    const cheackMobile = (rule, value, callback) => {
+      // 手机号一般最小以“13”开头
+      const regMobile = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
+      if (regMobile.test(value)) {
+        return callback();
+      }
+      callback(new Error('请输入合法的手机号!'));
+    };
     return {
       queryForm: {
         page: 1,
         row: 10,
-        GoodsName: '',
-        GoodsType: 0,
-        WarehouseId: '',
-        SupplierId: '',
-        conditions:'',
+        conditions: '',
+        supplierType: 0,
+        supplierId: 0,
+        supplierAddr: '',
+        supplierName: '',
+        leadCadre: '',
       },
       table: {
         supplierList: [],
@@ -101,16 +163,24 @@ export default {
         addVisible: false,
       },
       supplierForm: {
-        GoodsName:'',
-        GoodsType: 0,
-        WarehouseId: '',
-        SupplierId: 0,
+        supplierType: 0,
+        supplierId: 0,
+        supplierAddr: '',
+        supplierName: '',
+        leadCadre: '',
+        phone: '',
+        supplierTypes: [{ typeId: 0, typeName: '请选择类型' }],
       },
       supplierIds: [],
+      supplierTypes: [{ typeId: 0, typeName: '请选择类型' }],
       rules: {
         leadCadre: [
           { required: true, message: '负责人不能为空', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' },
+        ],
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: cheackMobile, trigger: 'blur' },
         ],
         supplierAddr: [{ required: true, message: '供应商地址不能为空', trigger: 'blur' }],
         supplierName: [{ required: true, message: '供应商名字不能为空', trigger: 'blur' }],
@@ -119,19 +189,29 @@ export default {
   },
   methods: {
     loadData() {
-      this.GetSKUListBySupplierId();
+      this.getSupplierList();
+      this.getSupplierTypeList();
     },
-    //根据供应商id获取供应商货品数据
-    async GetSKUListBySupplierId() {
-      await this.$api.goods
-        .GetSKUListBySupplierId(
-          this.queryForm.page,
-          this.queryForm.row,
-          this.queryForm.GoodsName,
-          this.queryForm.GoodsType,
-          this.queryForm.WarehouseId,
-          this.$route.query.supplierId,
-        )
+
+    //获取供应商分类
+    async getSupplierTypeList() {
+      await this.$api.supplier.getSupplierTypeList().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+        this.supplierTypes = data;
+        this.supplierForm.supplierTypes = data;
+      });
+    },
+
+    //获取供应商信息
+    async getSupplierList() {
+      console.log(this.queryForm.supplierType);
+      await this.$api.supplier
+        .getSupplierList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.supplierType)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -139,14 +219,14 @@ export default {
             return;
           }
           console.log(data);
-          this.table.supplierList = data.goods;
+          this.table.supplierList = data.suppliers;
           this.table.total = data.count;
         });
     },
     //查看供应商货品
-    lookSupplier(supplierId) {
+    GetSKUListBySupplierId(supplierId) {
       this.$router.push({
-        name: 'supplierList',
+        name: 'supplierSku',
         query: {
           supplierId: supplierId,
         },
@@ -161,6 +241,10 @@ export default {
     resetQueryForm() {
       this.queryForm.conditions = '';
       this.queryForm.supplierType = 0;
+      this.queryForm.supplierId = 0;
+      this.queryForm.supplierAddr = '';
+      this.queryForm.supplierName = '';
+      this.queryForm.leadCadre = '';
       this.loadData();
     },
     //条数改变
@@ -170,6 +254,7 @@ export default {
     },
     //页数改变
     handleCurrentChange(page) {
+
       this.queryForm.page = page;
       this.loadData();
     },
@@ -182,7 +267,7 @@ export default {
       });
       console.log(this.supplierIds);
     },
-    //删除供应商货品
+    //删除供应商
     deleteSupplier() {
       if (this.supplierIds.length == 0) {
         this.$message({
@@ -220,7 +305,7 @@ export default {
             supplierAddr: this.supplierForm.supplierAddr,
             phone: this.supplierForm.phone,
             leadCadre: this.supplierForm.leadCadre,
-            supplierType: 0,
+            supplierType: this.supplierForm.supplierType,
           };
           this.$api.supplier.addSupplier(supplier).then((res) => {
             console.log();
@@ -236,6 +321,40 @@ export default {
         } else {
           console.log('error submit!!');
           return false;
+        }
+      });
+    },
+    //打开修改弹窗
+    updateDiolog(row) {
+      //通过传过来的row赋值给supplierForm的时候，supplierForm的supplierTypesStr会被覆盖成单个字符串
+      //this.supplierForm = { ...row };
+      //通过手动赋值保留了原本的供应商分类数组，通过传过来的供应商分类Id来识别当前的供应商，渲染到下拉框
+      this.supplierForm.supplierId = row.supplierId;
+      this.supplierForm.supplierAddr = row.supplierAddr;
+      this.supplierForm.supplierName = row.supplierName;
+      this.supplierForm.supplierType = row.supplierType;
+      this.supplierForm.leadCadre = row.leadCadre;
+      this.supplierForm.phone = row.phone;
+      this.dialogObject.updateVisible = true;
+    },
+    //修改供应商数据
+    updateSupplier() {
+      const supplier = {
+        supplierId: this.supplierForm.supplierId,
+        phone: this.supplierForm.phone,
+        supplierAddr: this.supplierForm.supplierAddr,
+        supplierName: this.supplierForm.supplierName,
+        leadCadre: this.supplierForm.leadCadre,
+        supplierType: this.supplierForm.supplierType,
+      };
+      this.$api.supplier.updateSupplier(supplier).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          this.$message({ message: '修改失败！', type: 'error' });
+        } else {
+          this.$message({ message: '修改成功！', type: 'success' });
+          this.dialogObject.updateVisible = false;
+          this.loadData();
         }
       });
     },
