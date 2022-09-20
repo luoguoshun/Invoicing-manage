@@ -7,7 +7,6 @@ export default {
 
   //添加角色
   addRole(RoleForm) {
-
     return ajax.post('/api/Background/Role/AddRole', {
       ...RoleForm,
     });

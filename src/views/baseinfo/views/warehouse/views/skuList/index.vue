@@ -7,8 +7,13 @@
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
+<<<<<<< HEAD
           <el-select size="mini" v-model="queryForm.goodsTypeId" placeholder="请选择类别">
             <el-option v-for="item in goodsType" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+=======
+          <el-select size="mini" v-model="queryForm.WarehouseType" placeholder="请选择类别">
+            <el-option v-for="item in goodsType" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
           </el-select>
         </div>
         <div class="edit_query_1">
@@ -42,6 +47,7 @@
           </el-form>
         </template>
       </el-table-column>
+<<<<<<< HEAD
       <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
       <el-table-column prop="typeStr" label="类型" align="center"> </el-table-column>
       <el-table-column width="300" label="物品名称" align="center">
@@ -58,6 +64,24 @@
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
+=======
+      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
+      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
+      <el-table-column label="物品物品名称" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions>{{ scope.row.skuName }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="unit" label="单位" width="80" align="center"> </el-table-column>
+      <el-table-column prop="Specs" label="规格" width="80" align="center"> </el-table-column>
+      <el-table-column prop="leadCadre" label="Count" width="200" align="center"> </el-table-column>
+      <el-table-column prop="WarnCount" label="警告库存" width="120" align="center"> </el-table-column>
+      <el-table-column label="入库时间" width="120" align="center">
+        <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">保存数据</el-button>
@@ -115,7 +139,11 @@ export default {
         page: 1,
         row: 10,
         goodsName: '',
+<<<<<<< HEAD
         goodsTypeId: 0,
+=======
+        goodsType: 0,
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
         warehouseId: '',
       },
       table: {
@@ -127,10 +155,45 @@ export default {
         addVisible: false,
       },
       skuForm: {
+<<<<<<< HEAD
         skuId: '',
         goodsTypeId: 0,
         skuId: '',
         goodsName: '',
+=======
+        userId: '',
+        name: '',
+        headerImgUrl: '',
+        sex: 1,
+        IdNumber: '',
+        address: '',
+        phone: '',
+        roleIdStr: '',
+        state: 0,
+      },
+      roleIds: [],
+      userIds: [],
+      goodsType: [{ typeId: 0, typeName: '请选择类型' }],
+      rules: {
+        name: [
+          //^[\u4e00-\u9fa5]{0,}$ 纯汉字
+          { required: true, message: '姓名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+        ],
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: cheackMobile, trigger: 'blur' },
+        ],
+        idCardNumber: [
+          { required: true, message: '身份证不能为空', trigger: 'blur' },
+          { validator: cheackIdNumber, trigger: 'blur' },
+        ],
+        userId: [
+          { required: true, message: '用户Id不能为空', trigger: 'change' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
+          { validator: cheackUserId, trigger: 'blur' },
+        ],
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
       },
       skuIds: [],
       goodsType: [{ goodsTypeId: 0, goodsTypeName: '请选择类型' }],
@@ -143,7 +206,11 @@ export default {
     //获取物品数据
     async getSKUListByWhId() {
       await this.$api.goods
+<<<<<<< HEAD
         .getSKUListByWhId(this.queryForm.page, this.queryForm.row, this.queryForm.warehouseId, this.queryForm.goodsName, this.queryForm.goodsTypeId)
+=======
+        .getSKUListByWhId(this.queryForm.page, this.queryForm.row, this.queryForm.warehouseId, this.queryForm.goodsName, this.queryForm.goodsType)
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -159,6 +226,7 @@ export default {
     async getGoodInfoType() {
       await this.$api.goods.getGoodInfoType().then((res) => {
         const { data, success, message } = res.data;
+
         if (!success) {
           console.log(message);
           return;
@@ -166,6 +234,7 @@ export default {
         this.goodsType = data;
       });
     },
+<<<<<<< HEAD
     //获取货品数据选择绑定供应商
     async getSKUList() {
       await this.$api.goods
@@ -189,6 +258,8 @@ export default {
           this.table.total = data.count;
         });
     },
+=======
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
     //查找物品
     selectGoods() {
       this.loadData();
@@ -227,7 +298,11 @@ export default {
   created() {
     this.queryForm.warehouseId = this.$route.query.warehouseId;
     this.loadData();
+<<<<<<< HEAD
     this.getGoodInfoType();
+=======
+    // this.getGoodInfoType();
+>>>>>>> 3ed6c6ad7fa1e31a0a8a3fb39052bfe7d049fa3f
   },
 };
 </script>
