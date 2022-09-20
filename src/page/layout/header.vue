@@ -20,7 +20,7 @@
     <div class="header_tab">
       <div class="tabs">
         <el-tabs v-model="getDynamicTags.activeRoute" @tab-remove="removeTab" @tab-click="switchComponent" type="card">
-          <el-tab-pane key="homeIndex" label="首页" name="homeIndex" :closable="false"> </el-tab-pane>
+          <el-tab-pane key="home" label="首页" name="home" :closable="false"> </el-tab-pane>
           <el-tab-pane
             v-for="tab in getDynamicTags.tabs"
             :key="tab.routeName"

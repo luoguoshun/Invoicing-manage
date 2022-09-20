@@ -111,6 +111,19 @@ const routes = [{
             path: 'goods',
             name: 'goods',
             component: () => import('@/views/baseInfo/views/goods'),
+            meta:{
+              title:'货品档案',
+              isAuth:true
+            },
+            children:[{
+              path:'spuList',
+              name:'spuList',
+              component:()=>import('@/views/baseInfo/views/goods/views/spuList'),
+            },{
+              path:'skuList',
+              name:'skuList',
+              component:()=>import('@/views/baseInfo/views/goods/views/skuList'),
+            }]
           },
           {
             path: 'warehouse',

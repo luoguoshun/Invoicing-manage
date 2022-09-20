@@ -28,13 +28,12 @@ export default {
             GoodsType,
         })
     },
-
+    //获取品牌类型
     getBrandType() {
         return ajax.post('/api/Background/Googs/GetBrandType');
     },
-
+    //添加SPU
     addSpu(spu) {
-        console.log(spu)
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
             ...spu,
         })
@@ -51,22 +50,31 @@ export default {
             SupplierId:supplierId
         })
     },
+    ///修改SPU
+    updateSpu(spu) {
+        console.log(spu)
+        return ajax.post('/api/Background/Googs/UpdateGoodsInfo', {
+            ...spu,
+        })
+    },
+    //删除SPU
     deleteSpuById(spuIds) {
         return ajax.post("/api/Background/Googs/DeleteGoodsByid",
             spuIds
         );
     },
-
-    //获取sku信息
-    GetSKUList(page, row, spuId, skuId, goodsName,goodsType,warehouseId) {
-        return ajax.post('/api/Background/Googs/GetSKUList', {
-            Page:page,
-            Row:row,
-            spuId:spuId,
-            skuId:skuId,
-            goodsName:goodsName, 
-            goodsType:goodsType, 
-            warehouseId:warehouseId,
+    //查询SKU
+    getSKUList(page, row, spuId, publicattionDates, goodsName, goodsTypeId, warehouseId) {
+        console.log(spuId)
+        return ajax.post("/api/Background/Googs/GetSKUList", {
+            Page: page,
+            Row: row,
+            SpuId: spuId,
+            PublicationDates: publicattionDates,
+            GoodsName: goodsName,
+            goodsType: goodsTypeId,
+            WarehouseId: warehouseId
         })
     },
+
 };

@@ -3,15 +3,12 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()" round>
-          移除
-        </el-button>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="dialogObject.addVisible = true">添加 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.WarehouseType" placeholder="请选择类别">
-            <el-option v-for="item in goodsType" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+          <el-select size="mini" v-model="queryForm.goodsTypeId" placeholder="请选择类别">
+            <el-option v-for="item in goodsType" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
@@ -26,8 +23,6 @@
     <!-- 表格 -->
     <el-table
       :data="table.skuList"
-      @row-dblclick="updateDiolog"
-      :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
       border=""
     >
@@ -35,6 +30,9 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="名称">
+              <span>{{ props.row.spuName }}</span>
+            </el-form-item>
             <el-form-item label="名称">
               <span>{{ props.row.spuName }}</span>
             </el-form-item>
@@ -47,25 +45,25 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
-      <el-table-column fixed prop="skuId" label="物品编号" align="center"> </el-table-column>
-      <el-table-column label="物品物品名称" align="center">
+      <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+      <el-table-column prop="typeStr" label="类型" align="center"> </el-table-column>
+      <el-table-column width="300" label="物品名称" align="center">
         <template slot-scope="scope">
           <el-tag disable-transitions>{{ scope.row.skuName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="unit" label="单位" width="80" align="center"> </el-table-column>
-      <el-table-column prop="Specs" label="规格" width="80" align="center"> </el-table-column>
-      <el-table-column prop="leadCadre" label="Count" width="200" align="center"> </el-table-column>
-      <el-table-column prop="WarnCount" label="警告库存" width="120" align="center"> </el-table-column>
-      <el-table-column label="入库时间" width="120" align="center">
+      <el-table-column prop="unit" label="单位" align="center"> </el-table-column>
+      <el-table-column prop="specs" label="规格" align="center"> </el-table-column>
+      <el-table-column prop="count" label="库存" align="center"> </el-table-column>
+      <el-table-column prop="warnCount" label="警告库存" align="center"> </el-table-column>
+      <el-table-column label="入库时间" width="150" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
+          <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">保存数据</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -83,53 +81,30 @@
       >
       </el-pagination>
     </div>
-    <!-- 修改用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
-      <el-form ref="updateform" :model="skuForm" label-width="80px">
-        <el-form-item label="头像">
-          <img :src="skuForm.headerImgUrl" width="100" height="100" />
-          <el-upload ref="upload" action="" :http-request="uploadUserHeaderImg" :auto-upload="false" :limit="1">
-            <el-button slot="trigger" size="small" type="primary">
-              选取文件
-            </el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="用户名称">
-          <el-input v-model="skuForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系方式">
-          <el-input type="text" v-model="skuForm.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="地址">
-          <el-input type="text" v-model="skuForm.address"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.updateVisible = false">取 消</el-button>
-        <el-button type="success" @click="updateUserInfo()">修 改</el-button>
+    <!-- 添加供应商货品对话框 -->
+    <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="50%">
+      <div class="selectInput">
+        <el-input size="mini" v-model="skuForm.spuId" placeholder="请输入SPU编号"></el-input>
+        <el-input size="mini"  v-model="skuForm.skuId" placeholder="请输入SKU编号"></el-input>
+        <el-input size="mini" v-model="skuForm.goodsName" placeholder="请输入物品名称"></el-input>
+        <el-select size="mini" v-model="skuForm.goodsTypeId">
+          <el-option v-for="item in goodsType" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+        </el-select>
+        <el-button type="primary" @click="selectsupplier()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
-    </el-dialog>
-
-    <!-- 添加用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
-      <el-form :model="skuForm" :rules="rules" ref="skuForm" label-width="80px">
-        <el-form-item label="用户Id" prop="userId">
-          <el-input v-model="skuForm.userId"></el-input>
-        </el-form-item>
-        <el-form-item label="用户名" prop="name">
-          <el-input v-model="skuForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系方式" prop="phone">
-          <el-input type="text" v-model="skuForm.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="地址">
-          <el-input type="text" v-model="skuForm.address"></el-input>
-        </el-form-item>
-      </el-form>
+      <el-divider></el-divider>
+      <el-table :data="table.supplierSku" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="">
+        <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column prop="spuId" label="物品编码" align="center"> </el-table-column>
+        <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
+        <el-table-column prop="spuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="spuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="addUser()">修 改</el-button>
+        <el-button type="success" @click="addSkuToWarehouse()">添 加</el-button>
       </div>
     </el-dialog>
   </div>
@@ -138,103 +113,30 @@
 <script>
 export default {
   data() {
-    // 验证手机号的规则
-    const cheackMobile = (rule, value, callback) => {
-      // 手机号一般最小以“13”开头
-      const regMobile = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-      if (regMobile.test(value)) {
-        return callback();
-      }
-      callback(new Error('请输入合法的手机号!'));
-    };
-    //身份证校验
-    const cheackIdNumber = (rule, value, callback) => {
-      var arrExp = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //加权因子
-      var arrValid = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2]; //校验码
-      if (/^\d{17}\d|x$/i.test(value)) {
-        var sum = 0,
-          idx;
-        for (var i = 0; i < value.length - 1; i++) {
-          // 对前17位数字与权值乘积求和
-          sum += parseInt(value.substr(i, 1), 10) * arrExp[i];
-        }
-        // 计算模（固定算法）
-        idx = sum % 11;
-        // 检验第18为是否与校验码相等
-        if (arrValid[idx] == value.substr(17, 1).toUpperCase()) {
-          callback();
-        } else {
-          callback('身份证格式有误');
-        }
-      } else {
-        callback('身份证格式有误');
-      }
-    };
-    //检查用户编号是否存在
-    const cheackUserId = (rule, value, callback) => {
-      const regUserId = /^[A-Za-z0-9]+$/;
-      if (!regUserId.test(value)) {
-        return callback(new Error('用户id由英文和数字组成!'));
-      } else {
-        this.$api.user.checkUserExists(value).then((res) => {
-          const { data, success, message } = res.data;
-          if (success) {
-            return callback();
-          }
-          callback(new Error('用户Id重复!'));
-        });
-      }
-    };
     return {
       queryForm: {
         page: 1,
         row: 10,
         goodsName: '',
-        goodsType: 0,
+        goodsTypeId: 0,
         warehouseId: '',
       },
       table: {
-        userList: [],
+        skuList: [],
+        supplierSku: [],
         total: 0,
       },
       dialogObject: {
-        updateVisible: false,
         addVisible: false,
       },
       skuForm: {
-        userId: '',
-        name: '',
-        headerImgUrl: '',
-        sex: 1,
-        IdNumber: '',
-        address: '',
-        phone: '',
-        roleIdStr: '',
-        state: 0,
+        skuId: '',
+        goodsTypeId: 0,
+        skuId: '',
+        goodsName: '',
       },
-      roleIds: [],
-      userIds: [],
-      goodsType: [{ typeId: 0, typeName: '请选择类型' }],
-      rules: {
-        name: [
-          //^[\u4e00-\u9fa5]{0,}$ 纯汉字
-          { required: true, message: '姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
-        ],
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          { validator: cheackMobile, trigger: 'blur' },
-        ],
-        idCardNumber: [
-          { required: true, message: '身份证不能为空', trigger: 'blur' },
-          { validator: cheackIdNumber, trigger: 'blur' },
-        ],
-        userId: [
-          { required: true, message: '用户Id不能为空', trigger: 'change' },
-          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
-          { validator: cheackUserId, trigger: 'blur' },
-        ],
-      },
+      skuIds: [],
+      goodsType: [{ goodsTypeId: 0, goodsTypeName: '请选择类型' }],
     };
   },
   methods: {
@@ -244,7 +146,7 @@ export default {
     //获取物品数据
     async getSKUListByWhId() {
       await this.$api.goods
-        .getSKUListByWhId(this.queryForm.page, this.queryForm.row, this.queryForm.warehouseId, this.queryForm.goodsName, this.queryForm.goodsType)
+        .getSKUListByWhId(this.queryForm.page, this.queryForm.row, this.queryForm.warehouseId, this.queryForm.goodsName, this.queryForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -260,13 +162,35 @@ export default {
     async getGoodInfoType() {
       await this.$api.goods.getGoodInfoType().then((res) => {
         const { data, success, message } = res.data;
-
         if (!success) {
           console.log(message);
           return;
         }
         this.goodsType = data;
       });
+    },
+    //获取货品数据选择绑定供应商
+    async getSKUList() {
+      await this.$api.goods
+        .getSKUList(
+          this.SkuForm.page,
+          this.SkuForm.row,
+          this.SkuForm.spuId,
+          this.SkuForm.skuId,
+          this.SkuForm.goodsName,
+          this.SkuForm.goodsType,
+          this.$route.query.supplierId,
+        )
+        .then((res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            return;
+          }
+          console.log(data);
+          this.table.SkuForm = data.goods;
+          this.table.total = data.count;
+        });
     },
     //查找物品
     selectGoods() {
@@ -290,132 +214,23 @@ export default {
     },
     //获取选中行的数据
     selectRows(selection) {
-      this.userIds = [];
+      this.skuIds = [];
       selection.forEach((element) => {
-        this.userIds.push(element.warehouseId);
+        this.skuIds.push(element.warehouseId);
       });
     },
-    //删除用户
-    deleteUsers() {
-      if (this.userIds.length == 0) {
-        this.$message({
-          message: '请选择要删除的数据',
-          type: 'warning',
-        });
-      } else {
-        this.$api.user.deleteUsersById(this.userIds).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('删除失败！');
-          } else {
-            this.$message({ message: '删除成功！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
+    addSkuToWarehouse(){
+    console.log(this.skuIds);
     },
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;
-      this.skuForm.userId = '';
-      this.skuForm.name = '';
-      this.skuForm.sex = '男';
-      this.skuForm.address = '';
-      this.skuForm.phone = '';
-      this.roleIds = [];
-    },
-    addUser() {
-      this.$refs['skuForm'].validate((valid) => {
-        if (valid) {
-          const user = {
-            userId: this.skuForm.userId,
-            name: this.skuForm.name,
-            sex: this.skuForm.sex == '男' ? 1 : 2,
-            address: this.skuForm.address,
-            phone: this.skuForm.phone,
-            roleIds: this.roleIds,
-          };
-          this.$api.user.addUser(user).then((res) => {
-            const { data, success, message } = res.data;
-            if (!success) {
-              console.log(message);
-              return;
-            }
-            this.$message({ message: '删除成功！', type: 'success' });
-            this.dialogObject.addVisible = false;
-            this.loadData();
-          });
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-    },
-    //上传用户头像
-    uploadUserHeaderImg(param) {
-      if (param.file.type != 'image/png' && param.file.type != 'image/gif' && param.file.type != 'image/jpg' && param.file.type != 'image/jpeg') {
-        this.$notify.warning({
-          title: '警告',
-          message: '请上传格式为.png .gif .jpg .jpeg的图片',
-        });
-      } else if (param.file.size / 1024 / 1024 / 2 > 2) {
-        this.$notify.warning({
-          title: '警告',
-          message: '图片大小必须小于2M',
-        });
-      } else {
-        //创建FormData对象(键值对集合) 将模型存在FormData中
-        const formdata = new FormData();
-        formdata.append('file', param.file);
-        formdata.append('userId', this.skuForm.userId);
-        this.$api.user.UploadUserHeadImg(formdata).then((res) => {
-          const { data, success, message } = res.data;
-          if (!success) {
-            this.$message({ message: message, type: 'error' });
-            return;
-          } else {
-            this.dialogObject.updateVisible = false;
-            this.$message({ message: '上传成功！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
-    },
-    //打开修改弹窗
-    updateDiolog(row) {
-      this.skuForm = { ...row };
-      if (this.skuForm.roleIdStr !== null) {
-        this.roleIds = this.skuForm.roleIdStr.split('、');
-      }
-      this.dialogObject.updateVisible = true;
-    },
-    //修改用户数据
-    updateUserInfo() {
-      const user = {
-        userId: this.skuForm.userId,
-        roleIds: this.roleIds,
-        phone: this.skuForm.phone,
-        address: this.skuForm.address,
-        sex: this.skuForm.sex,
-        name: this.skuForm.name,
-      };
-      this.$api.user.updateUser(user).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          this.$message({ message: '修改失败！', type: 'error' });
-        } else {
-          this.$message({ message: '修改成功！', type: 'success' });
-          this.dialogObject.updateVisible = false;
-          this.loadData();
-        }
-      });
     },
   },
   created() {
     this.queryForm.warehouseId = this.$route.query.warehouseId;
     this.loadData();
-    // this.getGoodInfoType();
+    this.getGoodInfoType();
   },
 };
 </script>
@@ -448,6 +263,23 @@ export default {
         text-align: center;
       }
     }
+  }
+  .demo-table-expand {
+    font-size: 0;
+  }
+  .demo-table-expand label {
+    width: 90px;
+    color: #99a9bf;
+  }
+  .demo-table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 50%;
+  }
+  .selectInput{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-column-gap: 3px;
   }
 }
 </style>

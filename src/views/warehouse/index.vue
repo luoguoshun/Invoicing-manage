@@ -1,12 +1,14 @@
 <template>
-  <div class="warehouse">
+  <div class="warehouse__container">
     <RouterView></RouterView>
   </div>
 </template>
 
 <script>
 export default {
-  data() {},
+  data() {
+    return {};
+  },
   computed: {},
   methods: {},
 };

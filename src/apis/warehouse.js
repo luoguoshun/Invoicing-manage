@@ -12,8 +12,28 @@ export default {
     },
     //获取仓库类别列表
     getWarehouseTypeList() {
-        return ajax.post('/api/Background/Warehouse/GetWarehouseTypeList', 
+        return ajax.post('/api/Background/Warehouse/GetWarehouseTypeList', );
+    },
+
+    //获取仓库类别列表
+    updateWarehouse(warehouse) {
+        return ajax.post('/api/Background/Warehouse/UpdateWarehouse',
+            warehouse
         );
     },
 
+    //检查仓库编号是否存在
+    checkWarehouseExists(warehouseId) {
+        return ajax.get("/api/Background/Warehouse/CheckWarehouseExists?warehouseId=" + warehouseId + "");
+    },
+
+    //新增仓库
+    addWarehouses(warehouse) {
+        return ajax.post('/api/Background/Warehouse/AddWarehouses', [warehouse]);
+    },
+
+     //删除仓库
+     deleteWarehouseById(warehouseIds) {
+        return ajax.post('/api/Background/Warehouse/DeleteWarehouseById', {warehouseIds});
+    },
 };
