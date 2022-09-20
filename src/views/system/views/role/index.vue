@@ -23,9 +23,9 @@
       <el-table-column prop="descripcion" label="角色描述" align="center"></el-table-column>
       
     <!-- 操作 -->
-    <el-table-column fixed="right" label="操作" width="100" align="center">
+    <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="updateDiolog(scope.row)">查看</el-button>
+          <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>

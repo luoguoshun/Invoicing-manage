@@ -28,11 +28,11 @@ export default {
             warehouseId,
         });
     },
-
+    //获取品牌类型
     getBrandType() {
         return ajax.post('/api/Background/Googs/GetBrandType');
     },
-
+    //添加SPU
     addSpu(spu) {
         console.log(spu)
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
@@ -41,39 +41,40 @@ export default {
     },
 
     //通过供应商编号获取供应商货品
-    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId, supplierId) {
+    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId,supplierId) {
         return ajax.post('/api/Background/Googs/GetSKUListBySupplierId', {
-            Page: page,
-            Row: row,
-            GoodsName: GoodsName,
-            GoodsType: GoodsType,
-            WarehouseId: WarehouseId,
-            SupplierId: supplierId
+            Page:page,
+            Row:row,
+            GoodsName:GoodsName, 
+            GoodsType:GoodsType, 
+            WarehouseId:WarehouseId,
+            SupplierId:supplierId
         })
     },
+    ///修改SPU
+    updateSpu(spu) {
+        console.log(spu)
+        return ajax.post('/api/Background/Googs/UpdateGoodsInfo', {
+            ...spu,
+        })
+    },
+    //删除SPU
     deleteSpuById(spuIds) {
         return ajax.post("/api/Background/Googs/DeleteGoodsByid",
             spuIds
         );
     },
-
-    //获取sku信息
-    GetSKUList(page, row, spuId, skuId, goodsName, goodsType) {
-        return ajax.post('/api/Background/Googs/GetSKUList', {
+    //查询SKU
+    getSKUList(page, row, spuId, publicattionDates, goodsName, goodsTypeId, warehouseId) {
+        console.log(spuId)
+        return ajax.post("/api/Background/Googs/GetSKUList", {
             Page: page,
             Row: row,
-            spuId: spuId,
-            skuId: skuId,
-            goodsName: goodsName,
-            goodsType: goodsType,
-        })
-    },
-
-    //物品绑定供应商
-    GoodsAddtoSupplier(supplier) {
-        console.log(supplier)
-        return ajax.post('/api/Background/Googs/GoodsAddtoSupplier', {
-            ...supplier
+            SpuId: spuId,
+            PublicationDates: publicattionDates,
+            GoodsName: goodsName,
+            goodsType: goodsTypeId,
+            WarehouseId: warehouseId
         })
     },
 

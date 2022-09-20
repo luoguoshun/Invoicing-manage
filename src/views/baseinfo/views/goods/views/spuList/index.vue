@@ -42,10 +42,11 @@
     </el-table>
 
     <!-- 分页 -->
-    <!-- @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" -->
+
     <div class="block">
       <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
         :total="tableData.total"
         :page-sizes="[5, 10, 15, 20]"
         :current-page="queryForm.page"
@@ -152,7 +153,7 @@ export default {
           }
           data.goods.forEach((element) => {
             element.createTime = this.$timeFormat.timeUTCToTime(element.createTime, 'second');
-            element.updateTime=this.$timeFormat.timeUTCToTime(element.updateTime, 'second');
+            element.updateTime = this.$timeFormat.timeUTCToTime(element.updateTime, 'second');
           });
           this.tableData.goodsList = data.goods;
           this.tableData.total = data.count;
@@ -247,17 +248,16 @@ export default {
         Brand: this.SpuForm.Brand,
         Type: this.SpuForm.GoodsTypeId,
       };
-      this.$api.goods.updateSpu(spu).then((res=>{
-        const{data,success,message}=res.data;
-        if(!success)
-        {
+      this.$api.goods.updateSpu(spu).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
           this.$message({ message: '修改失败！', type: 'error' });
-        }else{
+        } else {
           this.$message({ message: '修改成功！', type: 'success' });
           this.dialogObject.dialogVisible = false;
           this.loadData();
         }
-      }))
+      });
     },
     //删除Spu
     deleteSpu() {
@@ -294,6 +294,15 @@ export default {
           spuId: spuId,
         },
       });
+    },
+    handleSizeChange(row) {
+      this.queryForm.row = row;
+      this.loadData();
+    },
+    //页数改变
+    handleCurrentChange(page) {
+      this.queryForm.page = page;
+      this.loadData();
     },
   }, //methods----end
   //created是一个生命周期的钩子函数。在实例创建完成后被立即调用
