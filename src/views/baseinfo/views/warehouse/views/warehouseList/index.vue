@@ -367,7 +367,7 @@ export default {
     //查看库存
     lookSKUList(warehouseId) {
       this.$router.push({
-        name: 'skuList',
+        name: 'warehouseSkuList',
         query: {
           warehouseId: warehouseId,
         },
