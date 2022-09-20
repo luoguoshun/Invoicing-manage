@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     //将 this.setToken(token) 映射为 this.$store.commit('setToken'，token)
-    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setAdminInfo: 'adminInfo/setAdminInfo' }),
+    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setAdminInfo: 'adminInfo/setAdminInfo',setRouters:'routers/setRouters' }),
     login() {
       if (this.validateLoginInfo()) {
         this.$api.account.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
@@ -44,11 +44,11 @@ export default {
           if (success) {
             try {
               this.setTokenInfo(data);
-              // console.log(store.getters['token/expiresTime']);
+              this.setRouters(data.routers);
               // this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' });
               // this.$signalR.connection.start();
               let redirectUrl = this.$route.query.redirectUrl;
-              console.log('redirectUrl:' + redirectUrl);
+              
               if (redirectUrl) {
                 //跳转至进入登录页前的路由（重定向）
                 this.$router.replace(redirectUrl);
@@ -89,6 +89,10 @@ export default {
       return true;
     },
   },
+  created(){
+    localStorage.removeItem("tokenInfo");
+    localStorage.removeItem("routersData");
+  }
 };
 </script>
 <style lang="less" scoped>

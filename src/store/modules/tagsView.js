@@ -25,7 +25,7 @@ export default {
           tabs.splice(index, 1); 
           //如果为数组最后一个元素 则直接激活首页路由
           if (tabs.length === 0) {
-            state.dynamicTag.activeRoute = 'homeIndex';
+            state.dynamicTag.activeRoute = 'home';
           } else {
             //判断删掉的标签是否为当前打开的路由 如果是 则激活上一个tab路由
             if (element.routeName === state.dynamicTag.activeRoute) {

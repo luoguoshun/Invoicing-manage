@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   // 存放状态
   state: {
-    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo')),
+    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo'))||null,
   },
   //加工state成员给外界
   getters: {

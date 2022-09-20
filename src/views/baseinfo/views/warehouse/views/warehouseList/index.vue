@@ -1,10 +1,10 @@
 <template>
-  <div class="user_container">
+  <div class="warehouseList_container">
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()" round>
+        <el-button type="primary" size="mini" class="el-icon-folder-add"  @click="openDiolog('add', '')">添加 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteWarehouse()" >
           移除
         </el-button>
       </div>
@@ -26,10 +26,9 @@
     <!-- 表格 -->
     <el-table
       :data="table.warehouseList"
-      @row-dblclick="updateDiolog"
+      @row-dblclick="openDiolog('update')"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
-      border=""
     >
       <el-table-column type="selection" width="45" align="center"> </el-table-column>
       <el-table-column fixed prop="warehouseId" label="编号" width="90" align="center"> </el-table-column>
@@ -38,10 +37,10 @@
           <el-tag disable-transitions>{{ scope.row.warehouseName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="warehouseTypeStr" label="类别" width="80" align="center"> </el-table-column>
-      <el-table-column prop="leadCadre" label="负责人" width="200" align="center"> </el-table-column>
-      <el-table-column prop="warehouseAddr" label="住址" align="center"> </el-table-column>
-      <el-table-column prop="phone" label="负责联系方式" width="120" align="center"> </el-table-column>
+      <el-table-column prop="warehouseTypeStr" label="类别" align="center"> </el-table-column>
+      <el-table-column prop="leadCadre" label="负责人" align="center"> </el-table-column>
+      <el-table-column prop="warehouseAddr" label="仓库" align="center"> </el-table-column>
+      <el-table-column prop="phone" label="负责人联系方式" width="120" align="center"> </el-table-column>
       <el-table-column prop="goodsCount" label="仓库物品总数" align="center"> </el-table-column>
       <el-table-column fixed="right" label="库存清单" width="100" align="center">
         <template slot-scope="scope">
@@ -50,7 +49,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="updateDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
+          <el-button type="text" size="small" @click="openDiolog('update', scope.row)" icon="el-icon-edit">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -68,53 +67,37 @@
       >
       </el-pagination>
     </div>
-    <!-- 修改用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
-      <el-form ref="updateform" :model="warehouseForm" label-width="80px">
-        <el-form-item label="头像">
-          <img :src="warehouseForm.headerImgUrl" width="100" height="100" />
-          <el-upload ref="upload" action="" :http-request="uploadUserHeaderImg" :auto-upload="false" :limit="1">
-            <el-button slot="trigger" size="small" type="primary">
-              选取文件
-            </el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
-          </el-upload>
+    <!-- 添加修改仓库信息对话框 -->
+    <el-dialog title="仓库信息" center :visible.sync="dialogObject.editVisible" :close-on-click-modal="false" width="40%">
+      <el-form ref="warehouseForm" :model="warehouseForm" :rules="rules" label-width="80px">
+        <el-form-item label="仓库编号" prop="warehouseId" v-if="dialogObject.editName == 'add'">
+          <el-input v-model="warehouseForm.warehouseId"></el-input>
         </el-form-item>
-        <el-form-item label="用户名称">
-          <el-input v-model="warehouseForm.name"></el-input>
+        <el-form-item label="仓库名称" prop="warehouseName">
+          <el-input v-model="warehouseForm.warehouseName"></el-input>
         </el-form-item>
-        <el-form-item label="联系方式">
-          <el-input type="text" v-model="warehouseForm.phone"></el-input>
+        <el-form-item label="仓库类别" prop="warehouseType">
+          <el-select size="mini" v-model="warehouseForm.warehouseType" placeholder="请选择仓库类别">
+            <el-option v-for="item in warehouseTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="地址">
-          <el-input type="text" v-model="warehouseForm.address"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.updateVisible = false">取 消</el-button>
-        <el-button type="success" @click="updateUserInfo()">修 改</el-button>
-      </div>
-    </el-dialog>
 
-    <!-- 添加用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
-      <el-form :model="warehouseForm" :rules="rules" ref="warehouseForm" label-width="80px">
-        <el-form-item label="用户Id" prop="userId">
-          <el-input v-model="warehouseForm.userId"></el-input>
+        <el-form-item label="负责人" prop="leadCadreId">
+          <el-select size="mini" v-model="warehouseForm.leadCadreId" placeholder="请选择负责人">
+            <el-option v-for="item in userList" :key="item.userId" :label="item.name" :value="item.userId"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="用户名" prop="name">
-          <el-input v-model="warehouseForm.name"></el-input>
-        </el-form-item>
+
         <el-form-item label="联系方式" prop="phone">
           <el-input type="text" v-model="warehouseForm.phone"></el-input>
         </el-form-item>
-        <el-form-item label="地址">
-          <el-input type="text" v-model="warehouseForm.address"></el-input>
+        <el-form-item label="仓库地址">
+          <el-input type="text" v-model="warehouseForm.warehouseAddr"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="addUser()">修 改</el-button>
+        <el-button @click="dialogObject.editVisible = false">取 消</el-button>
+        <el-button type="success" @click="submitInfo()">提 交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -132,41 +115,18 @@ export default {
       }
       callback(new Error('请输入合法的手机号!'));
     };
-    //身份证校验
-    const cheackIdNumber = (rule, value, callback) => {
-      var arrExp = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2]; //加权因子
-      var arrValid = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2]; //校验码
-      if (/^\d{17}\d|x$/i.test(value)) {
-        var sum = 0,
-          idx;
-        for (var i = 0; i < value.length - 1; i++) {
-          // 对前17位数字与权值乘积求和
-          sum += parseInt(value.substr(i, 1), 10) * arrExp[i];
-        }
-        // 计算模（固定算法）
-        idx = sum % 11;
-        // 检验第18为是否与校验码相等
-        if (arrValid[idx] == value.substr(17, 1).toUpperCase()) {
-          callback();
-        } else {
-          callback('身份证格式有误');
-        }
-      } else {
-        callback('身份证格式有误');
-      }
-    };
-    //检查用户编号是否存在
-    const cheackUserId = (rule, value, callback) => {
+    //检查仓库编号是否存在
+    const cheackWarehouseId = (rule, value, callback) => {
       const regUserId = /^[A-Za-z0-9]+$/;
       if (!regUserId.test(value)) {
-        return callback(new Error('用户id由英文和数字组成!'));
+        return callback(new Error('仓库编号由英文和数字组成!'));
       } else {
-        this.$api.user.checkUserExists(value).then((res) => {
+        this.$api.warehouse.checkWarehouseExists(value).then((res) => {
           const { data, success, message } = res.data;
           if (success) {
             return callback();
           }
-          callback(new Error('用户Id重复!'));
+          callback(new Error('仓库编号重复!'));
         });
       }
     };
@@ -182,42 +142,36 @@ export default {
         total: 0,
       },
       dialogObject: {
-        updateVisible: false,
-        addVisible: false,
+        editVisible: false,
+        editName: '',
       },
       warehouseForm: {
-        userId: '',
-        name: '',
-        headerImgUrl: '',
-        sex: 1,
-        IdNumber: '',
-        address: '',
+        warehouseId: '',
+        warehouseName: '',
+        warehouseType: '',
+        leadCadreId: '',
+        warehouseAddr: '',
         phone: '',
-        roleIdStr: '',
-        state: 0,
       },
-      roleIds: [],
-      userIds: [],
+      userList: [],
+      warehouseIds: [],
       warehouseTypes: [{ typeId: 0, typeName: '请选择类型' }],
       rules: {
-        name: [
-          //^[\u4e00-\u9fa5]{0,}$ 纯汉字
-          { required: true, message: '姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+        warehouseId: [
+          { required: true, message: '仓库Id不能为空', trigger: 'change' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
+          { validator: cheackWarehouseId, trigger: 'blur' },
+        ],
+        warehouseName: [
+          { required: true, message: '仓库名不能为空', trigger: 'blur' },
+          { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' },
         ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { validator: cheackMobile, trigger: 'blur' },
         ],
-        idCardNumber: [
-          { required: true, message: '身份证不能为空', trigger: 'blur' },
-          { validator: cheackIdNumber, trigger: 'blur' },
-        ],
-        userId: [
-          { required: true, message: '用户Id不能为空', trigger: 'change' },
-          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
-          { validator: cheackUserId, trigger: 'blur' },
-        ],
+        warehouseType: [{ required: true, message: '请选择类别', trigger: 'blur' }],
+        leadCadreId: [{ required: true, message: '请选择负责人', trigger: 'blur' }],
       },
     };
   },
@@ -237,7 +191,7 @@ export default {
           if (!success) {
             this.$message({ message: message, type: 'error' });
           } else {
-            this.dialogObject.updateVisible = false;
+            this.dialogObject.editVisible = false;
             this.$message({ message: '导入成功！', type: 'success' });
             this.loadData();
           }
@@ -247,7 +201,7 @@ export default {
     loadData() {
       this.getWarehouseList();
     },
-    //获取用户数据
+    //获取仓库数据
     async getWarehouseList() {
       await this.$api.warehouse
         .getWarehouseList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.WarehouseType)
@@ -257,11 +211,12 @@ export default {
             console.log(message);
             return;
           }
+          console.log(data.warehouses);
           this.table.warehouseList = data.warehouses;
           this.table.total = data.count;
         });
     },
-    //获取角色列表
+    //获取仓库类型列表
     async getWarehouseTypeList() {
       await this.$api.warehouse.getWarehouseTypeList().then((res) => {
         const { data, success, message } = res.data;
@@ -269,10 +224,22 @@ export default {
           console.log(message);
           return;
         }
+        console.log(data);
         this.warehouseTypes = data;
       });
     },
-    //查找用户
+    //获取所有角色为仓库管理员的仓库
+    async getUsersByRoleId() {
+      await this.$api.user.getUsersByRoleId('4').then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.userList = data;
+      });
+    },
+    //查找仓库
     selectWarehouse() {
       this.loadData();
     },
@@ -294,20 +261,20 @@ export default {
     },
     //获取选中行的数据
     selectRows(selection) {
-      this.userIds = [];
+      this.warehouseIds = [];
       selection.forEach((element) => {
-        this.userIds.push(element.warehouseId);
+        this.warehouseIds.push(element.warehouseId);
       });
     },
-    //删除用户
-    deleteUsers() {
-      if (this.userIds.length == 0) {
+    //删除仓库
+    deleteWarehouse() {
+      if (this.warehouseIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
           type: 'warning',
         });
       } else {
-        this.$api.user.deleteUsersById(this.userIds).then((res) => {
+        this.$api.warehouse.deleteWarehouseById(this.warehouseIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -319,34 +286,24 @@ export default {
         });
       }
     },
-    //打开添加弹窗
-    openAddDialog() {
-      this.dialogObject.addVisible = true;
-      this.warehouseForm.userId = '';
-      this.warehouseForm.name = '';
-      this.warehouseForm.sex = '男';
-      this.warehouseForm.address = '';
-      this.warehouseForm.phone = '';
-      this.roleIds = [];
-    },
-    addUser() {
+    addWarehouse() {
       this.$refs['warehouseForm'].validate((valid) => {
         if (valid) {
-          const user = {
-            userId: this.warehouseForm.userId,
-            name: this.warehouseForm.name,
-            sex: this.warehouseForm.sex == '男' ? 1 : 2,
-            address: this.warehouseForm.address,
+          const warehouse = {
+            warehouseId: this.warehouseForm.warehouseId,
+            warehouseType: this.warehouseForm.warehouseType,
             phone: this.warehouseForm.phone,
-            roleIds: this.roleIds,
+            warehouseAddr: this.warehouseForm.warehouseAddr,
+            leadCadreId: this.warehouseForm.leadCadreId,
+            warehouseName: this.warehouseForm.warehouseName,
           };
-          this.$api.user.addUser(user).then((res) => {
+          this.$api.warehouse.addWarehouses(warehouse).then((res) => {
             const { data, success, message } = res.data;
             if (!success) {
               console.log(message);
               return;
             }
-            this.$message({ message: '删除成功！', type: 'success' });
+            this.$message({ message: '添加成功！', type: 'success' });
             this.dialogObject.addVisible = false;
             this.loadData();
           });
@@ -356,64 +313,56 @@ export default {
         }
       });
     },
-    //上传用户头像
-    uploadUserHeaderImg(param) {
-      if (param.file.type != 'image/png' && param.file.type != 'image/gif' && param.file.type != 'image/jpg' && param.file.type != 'image/jpeg') {
-        this.$notify.warning({
-          title: '警告',
-          message: '请上传格式为.png .gif .jpg .jpeg的图片',
-        });
-      } else if (param.file.size / 1024 / 1024 / 2 > 2) {
-        this.$notify.warning({
-          title: '警告',
-          message: '图片大小必须小于2M',
-        });
-      } else {
-        //创建FormData对象(键值对集合) 将模型存在FormData中
-        const formdata = new FormData();
-        formdata.append('file', param.file);
-        formdata.append('userId', this.warehouseForm.userId);
-        this.$api.user.UploadUserHeadImg(formdata).then((res) => {
-          const { data, success, message } = res.data;
-          if (!success) {
-            this.$message({ message: message, type: 'error' });
-            return;
-          } else {
-            this.dialogObject.updateVisible = false;
-            this.$message({ message: '上传成功！', type: 'success' });
-            this.loadData();
-          }
-        });
+    openDiolog(editName, row) {
+      switch (editName) {
+        case 'add':
+          this.warehouseForm.warehouseId = '';
+          this.warehouseForm.warehouseType = 1;
+          this.warehouseForm.warehouseName = '';
+          this.warehouseForm.warehouseAddr = '';
+          this.warehouseForm.phone = '';
+          this.warehouseForm.leadCadreId = '';
+          break;
+        case 'update':
+          this.warehouseForm = { ...row };
+        default:
+          break;
       }
+      this.dialogObject.editName = editName;
+      this.dialogObject.editVisible = true;
     },
-    //打开修改弹窗
-    updateDiolog(row) {
-      this.warehouseForm = { ...row };
-      if (this.warehouseForm.roleIdStr !== null) {
-        this.roleIds = this.warehouseForm.roleIdStr.split('、');
-      }
-      this.dialogObject.updateVisible = true;
-    },
-    //修改用户数据
-    updateUserInfo() {
-      const user = {
-        userId: this.warehouseForm.userId,
-        roleIds: this.roleIds,
+    //修改仓库数据
+    updateWarehouseInfo() {
+      const warehouse = {
+        warehouseId: this.warehouseForm.warehouseId,
+        warehouseType: this.warehouseForm.warehouseType,
         phone: this.warehouseForm.phone,
-        address: this.warehouseForm.address,
-        sex: this.warehouseForm.sex,
-        name: this.warehouseForm.name,
+        warehouseAddr: this.warehouseForm.warehouseAddr,
+        leadCadreId: this.warehouseForm.leadCadreId,
+        warehouseName: this.warehouseForm.warehouseName,
       };
-      this.$api.user.updateUser(user).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          this.$message({ message: '修改失败！', type: 'error' });
-        } else {
-          this.$message({ message: '修改成功！', type: 'success' });
-          this.dialogObject.updateVisible = false;
-          this.loadData();
+      this.$refs['warehouseForm'].validate((valid) => {
+        if (valid) {
+          this.$api.warehouse.updateWarehouse(warehouse).then((res) => {
+            const { data, success, message } = res.data;
+            if (!success) {
+              this.$message({ message: '修改失败！', type: 'error' });
+            } else {
+              this.$message({ message: '修改成功！', type: 'success' });
+              this.dialogObject.editVisible = false;
+              this.loadData();
+            }
+          });
         }
       });
+    },
+    submitInfo() {
+      console.log(this.dialogObject.editName);
+      if (this.dialogObject.editName == 'add') {
+        this.addWarehouse();
+      } else {
+        this.updateWarehouseInfo();
+      }
     },
     //查看库存
     lookSKUList(warehouseId) {
@@ -428,12 +377,13 @@ export default {
   created() {
     this.loadData();
     this.getWarehouseTypeList();
+    this.getUsersByRoleId();
   },
 };
 </script>
 
 <style lang="less" scoped>
-.user_container {
+.warehouseList_container {
   width: 100%;
   height: 100%;
   .editbar {

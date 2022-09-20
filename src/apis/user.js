@@ -49,6 +49,11 @@ export default {
   checkUserExists(userId) {
     return ajax.get("/api/Background/User/CheckUserExists?userId=" + userId + "");
   },
+
+  //通过角色获取用户列表
+  getUsersByRoleId(roleId) {
+    return ajax.get("/api/Background/User/GetUsersByRoleId?roleId=" + roleId + "");
+  },
   //修改密码
   updatePwd(adminNo, oldPwd, newPwd) {
     return ajax.post('/api/Background/User/UpdatePwd', {

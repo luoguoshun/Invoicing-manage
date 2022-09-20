@@ -1,6 +1,6 @@
 <template>
   <div class="slide">
-    <el-menu default-active="this.$route.name" :router="true" background-color="#324157" text-color="#bfcbd9" active-text-color="#049eff" >
+    <el-menu default-active="this.$route.name" :router="true" background-color="#324157" text-color="#bfcbd9" active-text-color="#049eff">
       <el-menu-item index="/home">
         <i class="el-icon-menu"></i>
         首页
@@ -27,7 +27,7 @@
         <el-menu-item index="/baseInfo/supplier">供应商</el-menu-item>
         <el-menu-item index="/baseInfo/goods/spuList">物品信息(货品档案)</el-menu-item>
         <el-menu-item index="/baseInfo/warehouse/warehouseList">仓库信息</el-menu-item>
-        <el-menu-item index="/baseInfo/other">其他信息</el-menu-item>
+        <el-menu-item index="/baseInfo/other/goodsTypeList">其他信息</el-menu-item>
       </el-submenu>
 
       <el-submenu index="purchase">

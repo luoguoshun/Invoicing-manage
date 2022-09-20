@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+//数据持久化
+import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 // require.context(文件的路径,是否遍历文件的子目录,匹配文件的正则)接收三个参数
 const modulesFiles = require.context('./modules', true, /\.js$/);
@@ -16,6 +18,15 @@ const modules = modulesFiles.keys().reduce((modules, modulePath) => {
   return modules;
 }, {});
 const store = new Vuex.Store({
-  modules,
+  modules: modules,
+  // 数据持久化
+  plugins: [
+    createPersistedState({
+      //key是存储数据的键名
+      key: 'routersData',
+      //paths是存储state中的那些数据，如果是模块下具体的数据需要加上模块名称，如user.token  
+      paths: ["routers.dynamicRouters"]
+    })
+  ]
 });
 export default store;

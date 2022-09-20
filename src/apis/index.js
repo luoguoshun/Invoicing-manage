@@ -6,6 +6,8 @@ import log from './log';
 import goods from './goods';
 import supplier from './supplier'
 import warehouse from './warehouse';
+import vueRouter from './vueRouter'
+import goodsType from './goodsType'
 
 export default {
   account,
@@ -16,4 +18,6 @@ export default {
   goods,
   supplier,
   warehouse,
+  vueRouter,
+  goodsType,
 };
