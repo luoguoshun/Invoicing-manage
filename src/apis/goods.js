@@ -39,6 +39,17 @@ export default {
         })
     },
 
+    //通过供应商编号获取供应商货品
+    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId,supplierId) {
+        return ajax.post('/api/Background/Googs/GetSKUListBySupplierId', {
+            Page:page,
+            Row:row,
+            GoodsName:GoodsName, 
+            GoodsType:GoodsType, 
+            WarehouseId:WarehouseId,
+            SupplierId:supplierId
+        })
+    },
     ///修改SPU
     updateSpu(spu) {
         console.log(spu)
