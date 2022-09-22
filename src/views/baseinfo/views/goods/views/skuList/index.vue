@@ -24,8 +24,6 @@
       <el-table-column prop="spuId" label="货品编码"></el-table-column>
       <el-table-column prop="skuName" label="物品名称"> </el-table-column>
       <el-table-column prop="typeStr" label="物品类型"></el-table-column>
-      <el-table-column prop="supplierName" label="供应商"> </el-table-column>
-      <el-table-column prop="brand" label="品牌"> </el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column prop="updateTime" label="修改时间"> </el-table-column>
 
@@ -147,6 +145,7 @@ export default {
             console.log(message);
             return;
           }
+          console.log(data);
           data.goods.forEach((element) => {
             element.createTime = this.$timeFormat.timeUTCToTime(element.createTime, 'second');
             element.updateTime = this.$timeFormat.timeUTCToTime(element.updateTime, 'second');
