@@ -100,12 +100,11 @@ const routes = [{
               path: 'supplierList',
               name: 'supplierList',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
-            },{
+            }, {
               path: 'supplierSku',
               name: 'supplierSku',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierSku'),
-            },
-          ]
+            }, ]
           },
           {
             path: 'goods',
@@ -159,6 +158,45 @@ const routes = [{
           }
         ]
       },
+      //采购管理
+      {
+        path: '/purchas',
+        name: 'purchas',
+        component: () => import(`@/views/purchas`),
+        meta: {
+          title: '采购管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'purchasOrder',
+          name: 'purchasOrder',
+          component: () => import('@/views/purchas/views/purchasOrder'),
+          meta: {
+            title: '采购订单管理',
+            isAuth: true
+          }
+        }, {
+          path: 'purchasPlan',
+          name: 'purchasPlan',
+          component: () => import('@/views/purchas/views/purchasPlan'),
+          meta: {
+            title: '采购计划管理',
+            isAuth: true
+          },
+          children: [{
+              path: 'applicationPlan',
+              name: 'applicationPlan',
+              component: () => import('@/views/purchas/views/purchasPlan/views/applicationPlan'),
+            },
+            {
+              path: 'purchasPlanList',
+              name: 'purchasPlanList',
+              component: () => import('@/views/purchas/views/purchasPlan/views/purchasPlanList'),
+            }
+          ]
+        }]
+      },
+      //日志
       {
         path: '/logs',
         name: 'logs',

@@ -3,8 +3,8 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()" round>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()">添加 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()">
           移除
         </el-button>
       </div>
@@ -55,8 +55,8 @@
       </el-table-column>
       <el-table-column prop="idNumber" label="身份证号码" width="200" align="center"> </el-table-column>
       <el-table-column prop="address" label="住址" align="center"> </el-table-column>
-      <el-table-column prop="phone" label="联系方式" width="120" align="center"> </el-table-column>
-      <el-table-column label="角色" width="150" align="center">
+      <el-table-column prop="phone" label="联系方式" align="center"> </el-table-column>
+      <el-table-column label="角色" align="center">
         <template slot-scope="scope">
           {{ scope.row.roleNames }}
         </template>
@@ -437,6 +437,8 @@ export default {
       this.userForm = { ...row };
       if (this.userForm.roleIdStr !== null) {
         this.roleIds = this.userForm.roleIdStr.split('、');
+      } else {
+        this.roleIds = [];
       }
       this.dialogObject.updateVisible = true;
     },

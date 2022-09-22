@@ -32,11 +32,11 @@
 
       <el-submenu index="purchase">
         <template slot="title">
-          <i class="el-icon-shopping-cart-1"></i>
+          <i class="el-icon-circle-plus"></i>
           <span>采购管理</span>
         </template>
-        <el-menu-item index="3-1">最新订单</el-menu-item>
-        <el-menu-item index="3-2">其他</el-menu-item>
+        <el-menu-item index="/purchas/purchasPlan/purchasPlanList">采购计划管理</el-menu-item>
+        <el-menu-item index="/purchas/purchasOrder">采购订单管理</el-menu-item>
       </el-submenu>
 
       <el-submenu index="warehouse">
