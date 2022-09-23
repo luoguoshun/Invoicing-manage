@@ -178,7 +178,7 @@ export default {
     //获取货品数据选择绑定供应商
     async getAllSKUList() {
       await this.$api.goods
-        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.spuId, this.skuForm.skuId, this.skuForm.goodsName, this.skuForm.goodsTypeId)
+        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.skuId,this.skuForm.spuId,  this.skuForm.goodsName, this.skuForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {

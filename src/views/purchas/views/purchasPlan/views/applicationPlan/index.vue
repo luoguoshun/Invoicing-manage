@@ -268,8 +268,8 @@ export default {
         .getSKUList(
           this.applicationPlanDiolog.skuQueryForm.page,
           this.applicationPlanDiolog.skuQueryForm.row,
-          this.applicationPlanDiolog.skuQueryForm.spuId,
           this.applicationPlanDiolog.skuQueryForm.skuId,
+          this.applicationPlanDiolog.skuQueryForm.spuId,   
           this.applicationPlanDiolog.skuQueryForm.goodsName,
           this.applicationPlanDiolog.skuQueryForm.goodsTypeId,
         )
