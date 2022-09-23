@@ -53,7 +53,7 @@
 
     <!--SPu模态框-->
     <el-dialog
-      :title="this.dialogType == 'add' ? '新增SPU' : '修改SPU'"
+      :title="this.dialogType == 'add' ? '新增SKU' : '修改SKU'"
       center
       :visible.sync="dialogObject.dialogVisible"
       :close-on-click-modal="false"
