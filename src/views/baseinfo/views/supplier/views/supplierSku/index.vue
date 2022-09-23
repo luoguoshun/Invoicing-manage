@@ -4,9 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="DeleteSupplierSKU()" round>
-          移除
-        </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="DeleteSupplierSKU()" round> 移除 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -40,7 +38,7 @@
           <el-input v-model="scope.row.purchasePrice" placeholder="" align="center" />
         </template>
       </el-table-column>
-      <el-table-column prop="typeStr" label="物品分类" align="center"> </el-table-column>
+      <el-table-column prop="goodsTypeName" label="物品分类" align="center"> </el-table-column>
       <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
@@ -61,8 +59,8 @@
     <!-- 分页 -->
     <div class="block">
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        @size-change="handleSizeChangeByOut"
+        @current-change="handleCurrentChangeByOut"
         :total="table.totalBySupplier"
         :page-sizes="[5, 10, 15, 20]"
         :current-page="queryForm.page"
@@ -78,31 +76,30 @@
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入物品编号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.skuId" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入货品编号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.spuId" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入物品名称 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.goodsName" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请选择类别 </span>
             <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.GoodsType" placeholder="请选择类别">
-            <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-          </el-select>
-        </div>
-            </div
+              <el-select size="mini" v-model="SkuForm.goodsType" placeholder="请选择类别">
+                <el-option v-for="item in SkuForm.goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+              </el-select>
+            </div></div
         ></el-col>
       </el-row>
       <div class="edit_query_1">
-        <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
+        <el-button type="primary" @click="GetSKUList()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
@@ -117,8 +114,8 @@
       <!-- 分页 -->
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @size-change="handleSizeChangeDialog"
+          @current-change="handleCurrentChangeDialog"
           :total="table.totalByDialog"
           :page-sizes="[5, 10, 15, 20]"
           :current-page="SkuForm.page"
@@ -142,7 +139,7 @@ export default {
     return {
       queryForm: {
         page: 1,
-        row: 10,
+        row: 5,
         GoodsName: '',
         goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         WarehouseId: '',
@@ -157,7 +154,8 @@ export default {
         goodsName: '',
         goodsType: 0,
         warehouseId: '',
-        supplierId: '',
+        goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
+        supplierId: 0,
       },
       table: {
         supplierList: [],
@@ -178,7 +176,7 @@ export default {
         goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         price: 0,
       },
-      supplierGoods: '',
+      supplierGoods: [],
       skuIds: [],
       goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择类型' }],
     };
@@ -186,17 +184,31 @@ export default {
   methods: {
     loadData() {
       this.GetSKUListBySupplierId();
-      this.getGoodsType();
       this.GetSKUList();
+      this.getGoodsType();
     },
-    //获取选中行的数据
+    //获取选中行的数据--模态框
     selectRowsGoods(selection) {
-      this.supplierGoods = '';
+      this.supplierGoods = [];
       selection.forEach((element) => {
-        this.supplierGoods = element.skuId;
+        this.supplierGoods.push(element.skuId);
       });
+      console.log(this.supplierGoods);
+
+    },
+
+    //获取选中行的数据--外面
+    selectRows(selection) {
+      //if (editType == 'edit')
+      //this.editSupplierSkuGoodsPrice(selection.purchasePrice);
+      this.skuIds = [];
+      selection.forEach((element) => {
+        this.skuIds.push(element.skuId);
+      });
+      console.log(this.skuIds);
     },
     editSupplierSkuGoodsPrice(row) {
+      console.log(row)
       this.$api.supplier.EditSupplierPurchasePrice(this.$route.query.supplierId, row.purchasePrice, row.skuId).then((res) => {
         console.log();
         const { data, success, message } = res.data;
@@ -204,21 +216,19 @@ export default {
           console.log(message);
           return;
         }
-        this.$message({ message: '添加成功！', type: 'success' });
+        this.$message({ message: '删除成功！', type: 'success' });
         this.dialogObject.addVisible = false;
         this.loadData();
       });
     },
-
     //修改供应商货品采购价
     GoodsAddtoSupplier() {
       const supplier = {
-        SkuId: this.supplierGoods,
+        SkuIds: this.supplierGoods,
         supplierId: this.$route.query.supplierId,
       };
       console.log(supplier);
       this.$api.supplier.GoodsAddtoSupplier(supplier).then((res) => {
-        console.log();
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -231,8 +241,9 @@ export default {
     },
     //获取货品数据选择绑定供应商
     async GetSKUList() {
+      console.log(this.SkuForm.goodsType);
       await this.$api.goods
-        .GetSKUList(this.SkuForm.page, this.SkuForm.row, this.SkuForm.spuId, this.SkuForm.skuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
+        .getSKUList(this.SkuForm.page, this.SkuForm.row,this.SkuForm.skuId, this.SkuForm.spuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -255,9 +266,11 @@ export default {
         }
         data.forEach((element) => {
           this.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
+          this.SkuForm.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
         });
         // console.log(data);
         // this.goodsTypes = data;
+        this.SkuForm.goodsTypes=data;
         this.supplierForm.goodsTypes = data;
       });
     },
@@ -272,6 +285,7 @@ export default {
           this.queryForm.GoodsType,
           this.queryForm.WarehouseId,
           this.$route.query.supplierId,
+          this.queryForm.conditions,
         )
         .then((res) => {
           const { data, success, message } = res.data;
@@ -293,32 +307,41 @@ export default {
     resetQueryForm() {
       this.queryForm.GoodsName = '';
       this.queryForm.GoodsType = 0;
+      (this.queryForm.conditions = ''), this.loadData();
+    },
+
+    //重置供应商添加货品界面搜索条件
+    resetQueryForm() {
+      this.SkuForm.GoodsName = '';
+      this.SkuForm.GoodsType = 0;
+      (this.SkuForm.conditions = ''), this.loadData();
+    },
+
+    //条数改变--外面
+    handleSizeChangeByOut(row) {
+      this.queryForm.row = row;
       this.loadData();
     },
-    //条数改变
-    handleSizeChange(row) {
-      this.queryForm.row = row;
+    //页数改变--外面
+    handleCurrentChangeByOut(page) {
+      this.queryForm.page = page;
+      this.loadData();
+    },
+
+        //条数改变--模态框
+    handleSizeChangeDialog(row) {
       this.SkuForm.row = row;
       this.loadData();
     },
-    //页数改变
-    handleCurrentChange(page) {
-      this.queryForm.page = page;
+    //页数改变--模态框
+    handleCurrentChangeDialog(page) {
+      console.log(page)
       this.SkuForm.page = page;
       this.loadData();
     },
-    //获取选中行的数据
-    selectRows(selection) {
-      console.log(selection);
-      if (editType == 'edit') editSupplierSkuGoodsPrice(selection.purchasePrice);
-      this.skuIds = [];
-      selection.forEach((element) => {
-        this.skuIds.push(element.skuId);
-      });
-      console.log(this.skuIds);
-    },
     //删除供应商货品
     DeleteSupplierSKU() {
+      console.log(this.skuIds);
       if (this.skuIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
@@ -337,6 +360,7 @@ export default {
         });
       }
     },
+
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;

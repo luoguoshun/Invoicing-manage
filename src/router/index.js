@@ -196,7 +196,39 @@ const routes = [{
           ]
         }]
       },
-      //日志
+      //仓库管理
+      {
+        path: '/warehouse',
+        name: 'warehouse',
+        component: () => import(`@/views/warehouse`),
+        meta: {
+          title: '仓库管理',
+          isAuth: true
+        },
+        children: [{
+            path: 'putInWarehouse',
+            name: 'putInWarehouse',
+            component: () => import(`@/views/warehouse/views/putInWarehouse`),
+            meta: {
+              title: '入库管理',
+              isAuth: true
+            },
+            children: [{
+              path: 'PurchaseReceipt',
+              name: 'PurchaseReceipt',
+              component: () => import('@/views/warehouse/views/putInWarehouse/views/PurchaseReceipt'),
+            },{
+              path: 'ReturnReceipt',
+              name: 'ReturnReceipt',
+              component: () => import('@/views/warehouse/views/putInWarehouse/views/ReturnReceipt'),
+            },{
+              path: 'ReceiptDoc',
+              name: 'ReceiptDoc',
+              component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
+            }],
+          },
+        ]
+      },
       {
         path: '/logs',
         name: 'logs',
