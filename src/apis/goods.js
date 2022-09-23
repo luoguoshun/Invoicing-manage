@@ -67,12 +67,13 @@ export default {
         );
     },
     //查询SKU
-    getSKUList(page, row, spuId, goodsName, goodsType) {
-        console.log(typeof goodsType);
+    getSKUList(page, row, skuId,spuId, goodsName, goodsType) {
+        console.log(goodsType);
         return ajax.post("/api/Background/Googs/GetSKUList", {
             Page: page,
             Row: row,
             SpuId: spuId,
+            SkuId:skuId,
             GoodsName: goodsName,
             GoodsType: goodsType
         })

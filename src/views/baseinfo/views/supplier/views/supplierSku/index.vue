@@ -4,9 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="DeleteSupplierSKU()" round>
-          移除
-        </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="DeleteSupplierSKU()" round> 移除 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -61,8 +59,8 @@
     <!-- 分页 -->
     <div class="block">
       <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        @size-change="handleSizeChangeByOut"
+        @current-change="handleCurrentChangeByOut"
         :total="table.totalBySupplier"
         :page-sizes="[5, 10, 15, 20]"
         :current-page="queryForm.page"
@@ -78,24 +76,24 @@
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入物品编号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.skuId" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入货品编号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.spuId" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请输入物品名称 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
+            <el-input v-model="SkuForm.goodsName" placeholder="请输入内容"></el-input></div
         ></el-col>
         <el-col :span="6"
           ><div class="grid-content bg-purple">
             <span>请选择类别 </span>
             <div class="edit_query_1">
-              <el-select size="mini" v-model="queryForm.GoodsType" placeholder="请选择类别">
-                <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+              <el-select size="mini" v-model="SkuForm.goodsType" placeholder="请选择类别">
+                <el-option v-for="item in SkuForm.goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
               </el-select>
             </div></div
         ></el-col>
@@ -116,8 +114,8 @@
       <!-- 分页 -->
       <div class="block">
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @size-change="handleSizeChangeDialog"
+          @current-change="handleCurrentChangeDialog"
           :total="table.totalByDialog"
           :page-sizes="[5, 10, 15, 20]"
           :current-page="SkuForm.page"
@@ -141,7 +139,7 @@ export default {
     return {
       queryForm: {
         page: 1,
-        row: 10,
+        row: 5,
         GoodsName: '',
         goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         WarehouseId: '',
@@ -156,6 +154,7 @@ export default {
         goodsName: '',
         goodsType: 0,
         warehouseId: '',
+        goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         supplierId: 0,
       },
       table: {
@@ -185,20 +184,23 @@ export default {
   methods: {
     loadData() {
       this.GetSKUListBySupplierId();
+      this.GetSKUList();
       this.getGoodsType();
     },
-    //获取选中行的数据
+    //获取选中行的数据--模态框
     selectRowsGoods(selection) {
       this.supplierGoods = [];
       selection.forEach((element) => {
         this.supplierGoods.push(element.skuId);
       });
+      console.log(this.supplierGoods);
+
     },
 
-    //获取选中行的数据
+    //获取选中行的数据--外面
     selectRows(selection) {
-      console.log(selection);
-      if (editType == 'edit') editSupplierSkuGoodsPrice(selection.purchasePrice);
+      //if (editType == 'edit')
+      //this.editSupplierSkuGoodsPrice(selection.purchasePrice);
       this.skuIds = [];
       selection.forEach((element) => {
         this.skuIds.push(element.skuId);
@@ -206,6 +208,7 @@ export default {
       console.log(this.skuIds);
     },
     editSupplierSkuGoodsPrice(row) {
+      console.log(row)
       this.$api.supplier.EditSupplierPurchasePrice(this.$route.query.supplierId, row.purchasePrice, row.skuId).then((res) => {
         console.log();
         const { data, success, message } = res.data;
@@ -218,7 +221,6 @@ export default {
         this.loadData();
       });
     },
-
     //修改供应商货品采购价
     GoodsAddtoSupplier() {
       const supplier = {
@@ -241,7 +243,7 @@ export default {
     async GetSKUList() {
       console.log(this.SkuForm.goodsType);
       await this.$api.goods
-        .getSKUList(this.SkuForm.page, this.SkuForm.row, this.SkuForm.spuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
+        .getSKUList(this.SkuForm.page, this.SkuForm.row,this.SkuForm.skuId, this.SkuForm.spuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -264,9 +266,11 @@ export default {
         }
         data.forEach((element) => {
           this.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
+          this.SkuForm.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
         });
         // console.log(data);
         // this.goodsTypes = data;
+        this.SkuForm.goodsTypes=data;
         this.supplierForm.goodsTypes = data;
       });
     },
@@ -313,21 +317,31 @@ export default {
       (this.SkuForm.conditions = ''), this.loadData();
     },
 
-    //条数改变
-    handleSizeChange(row) {
+    //条数改变--外面
+    handleSizeChangeByOut(row) {
       this.queryForm.row = row;
-      this.SkuForm.row = row;
       this.loadData();
     },
-    //页数改变
-    handleCurrentChange(page) {
+    //页数改变--外面
+    handleCurrentChangeByOut(page) {
       this.queryForm.page = page;
-      this.SkuForm.page = page;
       this.loadData();
     },
 
+        //条数改变--模态框
+    handleSizeChangeDialog(row) {
+      this.SkuForm.row = row;
+      this.loadData();
+    },
+    //页数改变--模态框
+    handleCurrentChangeDialog(page) {
+      console.log(page)
+      this.SkuForm.page = page;
+      this.loadData();
+    },
     //删除供应商货品
     DeleteSupplierSKU() {
+      console.log(this.skuIds);
       if (this.skuIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
