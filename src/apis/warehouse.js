@@ -32,8 +32,25 @@ export default {
         return ajax.post('/api/Background/Warehouse/AddWarehouses', [warehouse]);
     },
 
-     //删除仓库
-     deleteWarehouseById(warehouseIds) {
-        return ajax.post('/api/Background/Warehouse/DeleteWarehouseById', {warehouseIds});
+    //删除仓库
+    deleteWarehouseById(warehouseIds) {
+        return ajax.post('/api/Background/Warehouse/DeleteWarehouseById', {
+            warehouseIds
+        });
+    },
+    //物品入库（手动添加）
+    addSkuToWarehouse(warehouseId, skuIds) {
+        return ajax.post('/api/Background/Warehouse/AddSkuToWarehouse', {
+            WarehouseId: warehouseId,
+            SKUIds: skuIds
+        });
+    },
+    updateWarehouseSku(warehouseId, skuId, count, warnCount) {
+        return ajax.post('/api/Background/Warehouse/UpdateWarehouseSku', {
+            warehouseId,
+            skuId,
+            count,
+            warnCount
+        });
     },
 };

@@ -1,6 +1,6 @@
 <template>
-  <div class="puchas_container">
-    <RouterView></RouterView>
+  <div class="purchasPlanList">
+    purchasPlanList
   </div>
 </template>
 
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.puchas_container {
+.purchasPlanList {
   height: 100%;
   width: 100%;
 }

@@ -1,9 +1,11 @@
 import ajax from '@/utils/ajax';
 
 export default {
+    //获取vue路由表
     getDynamicRouter() {
         return ajax.post('/api/Background/VueRouter/GetDynamicRouter');
     },
+    //获取路标表全部信息
     getAllRouterInfo(page, row, conditions) {
         return ajax.post('/api/Background/VueRouter/GetAllRouterInfo', {
             page,
@@ -14,6 +16,10 @@ export default {
     //构造路由级联数据
     constructRouteCascadeData() {
         return ajax.post('/api/Background/VueRouter/ConstructRouteCascadeData');
+    },
+    //构造路由级联数据
+    constructRouteTreeData() {
+        return ajax.post('/api/Background/VueRouter/ConstructRouteTreeData');
     },
     //配置路由
     addRouter(router) {
