@@ -18,15 +18,15 @@ export default {
         return ajax.post('/api/Background/Googs/GetGoodsTypeInfo')
     },
     //通过仓库编号获取物品
-    getSKUListByWhId(page, row, warehouseId, goodName, GoodsType) {
-        console.log(warehouseId);
-        return ajax.post('/api/Background/Googs/GetSKUListByWhId', {
+    getSKUListByWhId(page, row, warehouseId, goodName, goodsType) {
+        return ajax.post('/api/Background/Googs/GetSKUListByWarehouseId', {
             page,
             row,
             warehouseId,
             goodName,
-            GoodsType,
-        })
+            goodsType,
+            warehouseId,
+        });
     },
     //获取品牌类型
     getBrandType() {
@@ -34,6 +34,7 @@ export default {
     },
     //添加SPU
     addSpu(spu) {
+        console.log(spu)
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
             ...spu,
         })

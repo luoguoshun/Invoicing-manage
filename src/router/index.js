@@ -100,29 +100,28 @@ const routes = [{
               path: 'supplierList',
               name: 'supplierList',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
-            },{
+            }, {
               path: 'supplierSku',
               name: 'supplierSku',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierSku'),
-            },
-          ]
+            }, ]
           },
           {
             path: 'goods',
             name: 'goods',
             component: () => import('@/views/baseInfo/views/goods'),
-            meta:{
-              title:'货品档案',
-              isAuth:true
+            meta: {
+              title: '货品档案',
+              isAuth: true
             },
-            children:[{
-              path:'spuList',
-              name:'spuList',
-              component:()=>import('@/views/baseInfo/views/goods/views/spuList'),
-            },{
-              path:'skuList',
-              name:'skuList',
-              component:()=>import('@/views/baseInfo/views/goods/views/skuList'),
+            children: [{
+              path: 'spuList',
+              name: 'spuList',
+              component: () => import('@/views/baseInfo/views/goods/views/spuList'),
+            }, {
+              path: 'skuList',
+              name: 'skuList',
+              component: () => import('@/views/baseInfo/views/goods/views/skuList'),
             }]
           },
           {
@@ -137,15 +136,67 @@ const routes = [{
               path: 'warehouseList',
               name: 'warehouseList',
               component: () => import('@/views/baseInfo/views/warehouse/views/warehouseList'),
-            },{
-              path: 'skuList',
-              name: 'skuList',
-              component: () => import('@/views/baseInfo/views/warehouse/views/skuList'),
+            }, {
+              path: 'warehouseSkuList',
+              name: 'warehouseSkuList',
+              component: () => import('@/views/baseInfo/views/warehouse/views/warehouseSkuList'),
+            }, ]
+          },
+          {
+            path: 'others',
+            name: 'others',
+            component: () => import('@/views/baseInfo/views/others'),
+            meta: {
+              title: '其他信息',
+              isAuth: true
             },
-          ]
+            children: [{
+              path: 'goodsTypeList',
+              name: 'goodsTypeList',
+              component: () => import('@/views/baseInfo/views/others/views/goodsTypeList'),
+            }]
           }
         ]
       },
+      //采购管理
+      {
+        path: '/purchas',
+        name: 'purchas',
+        component: () => import(`@/views/purchas`),
+        meta: {
+          title: '采购管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'purchasOrder',
+          name: 'purchasOrder',
+          component: () => import('@/views/purchas/views/purchasOrder'),
+          meta: {
+            title: '采购订单管理',
+            isAuth: true
+          }
+        }, {
+          path: 'purchasPlan',
+          name: 'purchasPlan',
+          component: () => import('@/views/purchas/views/purchasPlan'),
+          meta: {
+            title: '采购计划管理',
+            isAuth: true
+          },
+          children: [{
+              path: 'applicationPlan',
+              name: 'applicationPlan',
+              component: () => import('@/views/purchas/views/purchasPlan/views/applicationPlan'),
+            },
+            {
+              path: 'purchasPlanList',
+              name: 'purchasPlanList',
+              component: () => import('@/views/purchas/views/purchasPlan/views/purchasPlanList'),
+            }
+          ]
+        }]
+      },
+      //日志
       {
         path: '/logs',
         name: 'logs',
