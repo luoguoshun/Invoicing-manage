@@ -101,7 +101,7 @@
         ></el-col>
       </el-row>
       <div class="edit_query_1">
-        <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
+        <el-button type="primary" @click="GetSKUList()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
@@ -305,6 +305,14 @@ export default {
       this.queryForm.GoodsType = 0;
       (this.queryForm.conditions = ''), this.loadData();
     },
+
+    //重置供应商添加货品界面搜索条件
+    resetQueryForm() {
+      this.SkuForm.GoodsName = '';
+      this.SkuForm.GoodsType = 0;
+      (this.SkuForm.conditions = ''), this.loadData();
+    },
+
     //条数改变
     handleSizeChange(row) {
       this.queryForm.row = row;
