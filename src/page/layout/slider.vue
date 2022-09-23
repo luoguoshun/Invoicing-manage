@@ -44,7 +44,7 @@
           <i class="el-icon-setting"></i>
           <span>仓库管理</span>
         </template>
-        <el-menu-item index="4-2">基础设置</el-menu-item>
+        <el-menu-item index="/warehouse/putInWarehouse/PurchaseReceipt">入库管理</el-menu-item>
         <el-menu-item index="4-3">其他</el-menu-item>
       </el-submenu>
 

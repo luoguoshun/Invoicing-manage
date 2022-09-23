@@ -40,14 +40,16 @@ export default {
     },
 
     //通过供应商编号获取供应商货品
-    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId,supplierId) {
+    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId,supplierId,conditions) {
         return ajax.post('/api/Background/Googs/GetSKUListBySupplierId', {
             Page:page,
             Row:row,
             GoodsName:GoodsName, 
             GoodsType:GoodsType, 
             WarehouseId:WarehouseId,
-            SupplierId:supplierId
+            SupplierId:supplierId,
+            Conditions:conditions,
+
         })
     },
     ///修改SPU
@@ -64,16 +66,14 @@ export default {
         );
     },
     //查询SKU
-    getSKUList(page, row, spuId, publicattionDates, goodsName, goodsTypeId, warehouseId) {
-        console.log(spuId)
+    getSKUList(page, row, spuId, goodsName, goodsType) {
+        console.log(typeof goodsType);
         return ajax.post("/api/Background/Googs/GetSKUList", {
             Page: page,
             Row: row,
             SpuId: spuId,
-            PublicationDates: publicattionDates,
             GoodsName: goodsName,
-            goodsType: goodsTypeId,
-            WarehouseId: warehouseId
+            GoodsType: goodsType
         })
     },
 

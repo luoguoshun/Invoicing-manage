@@ -40,7 +40,7 @@
           <el-input v-model="scope.row.purchasePrice" placeholder="" align="center" />
         </template>
       </el-table-column>
-      <el-table-column prop="typeStr" label="物品分类" align="center"> </el-table-column>
+      <el-table-column prop="goodsTypeName" label="物品分类" align="center"> </el-table-column>
       <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
@@ -94,11 +94,10 @@
           ><div class="grid-content bg-purple">
             <span>请选择类别 </span>
             <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.GoodsType" placeholder="请选择类别">
-            <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-          </el-select>
-        </div>
-            </div
+              <el-select size="mini" v-model="queryForm.GoodsType" placeholder="请选择类别">
+                <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+              </el-select>
+            </div></div
         ></el-col>
       </el-row>
       <div class="edit_query_1">
@@ -157,7 +156,7 @@ export default {
         goodsName: '',
         goodsType: 0,
         warehouseId: '',
-        supplierId: '',
+        supplierId: 0,
       },
       table: {
         supplierList: [],
@@ -178,7 +177,7 @@ export default {
         goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         price: 0,
       },
-      supplierGoods: '',
+      supplierGoods: [],
       skuIds: [],
       goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择类型' }],
     };
@@ -187,14 +186,24 @@ export default {
     loadData() {
       this.GetSKUListBySupplierId();
       this.getGoodsType();
-      this.GetSKUList();
     },
     //获取选中行的数据
     selectRowsGoods(selection) {
-      this.supplierGoods = '';
+      this.supplierGoods = [];
       selection.forEach((element) => {
-        this.supplierGoods = element.skuId;
+        this.supplierGoods.push(element.skuId);
       });
+    },
+
+    //获取选中行的数据
+    selectRows(selection) {
+      console.log(selection);
+      if (editType == 'edit') editSupplierSkuGoodsPrice(selection.purchasePrice);
+      this.skuIds = [];
+      selection.forEach((element) => {
+        this.skuIds.push(element.skuId);
+      });
+      console.log(this.skuIds);
     },
     editSupplierSkuGoodsPrice(row) {
       this.$api.supplier.EditSupplierPurchasePrice(this.$route.query.supplierId, row.purchasePrice, row.skuId).then((res) => {
@@ -204,7 +213,7 @@ export default {
           console.log(message);
           return;
         }
-        this.$message({ message: '添加成功！', type: 'success' });
+        this.$message({ message: '删除成功！', type: 'success' });
         this.dialogObject.addVisible = false;
         this.loadData();
       });
@@ -213,12 +222,11 @@ export default {
     //修改供应商货品采购价
     GoodsAddtoSupplier() {
       const supplier = {
-        SkuId: this.supplierGoods,
+        SkuIds: this.supplierGoods,
         supplierId: this.$route.query.supplierId,
       };
       console.log(supplier);
       this.$api.supplier.GoodsAddtoSupplier(supplier).then((res) => {
-        console.log();
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -231,8 +239,9 @@ export default {
     },
     //获取货品数据选择绑定供应商
     async GetSKUList() {
+      console.log(this.SkuForm.goodsType);
       await this.$api.goods
-        .GetSKUList(this.SkuForm.page, this.SkuForm.row, this.SkuForm.spuId, this.SkuForm.skuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
+        .getSKUList(this.SkuForm.page, this.SkuForm.row, this.SkuForm.spuId, this.SkuForm.goodsName, this.SkuForm.goodsType)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -272,6 +281,7 @@ export default {
           this.queryForm.GoodsType,
           this.queryForm.WarehouseId,
           this.$route.query.supplierId,
+          this.queryForm.conditions,
         )
         .then((res) => {
           const { data, success, message } = res.data;
@@ -293,7 +303,7 @@ export default {
     resetQueryForm() {
       this.queryForm.GoodsName = '';
       this.queryForm.GoodsType = 0;
-      this.loadData();
+      (this.queryForm.conditions = ''), this.loadData();
     },
     //条数改变
     handleSizeChange(row) {
@@ -307,16 +317,7 @@ export default {
       this.SkuForm.page = page;
       this.loadData();
     },
-    //获取选中行的数据
-    selectRows(selection) {
-      console.log(selection);
-      if (editType == 'edit') editSupplierSkuGoodsPrice(selection.purchasePrice);
-      this.skuIds = [];
-      selection.forEach((element) => {
-        this.skuIds.push(element.skuId);
-      });
-      console.log(this.skuIds);
-    },
+
     //删除供应商货品
     DeleteSupplierSKU() {
       if (this.skuIds.length == 0) {
@@ -337,6 +338,7 @@ export default {
         });
       }
     },
+
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;
