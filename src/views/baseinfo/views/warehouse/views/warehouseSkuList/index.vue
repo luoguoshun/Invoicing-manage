@@ -51,12 +51,12 @@
       <el-table-column prop="unit" label="单位" align="center"> </el-table-column>
       <el-table-column prop="specs" label="规格" align="center"> </el-table-column>
       <el-table-column label="库存" align="center">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-input type="number" size="mini" v-model.number="scope.row.count"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="警告库存" align="center">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-input type="number" size="mini" v-model.number="scope.row.warnCount"></el-input>
         </template>
       </el-table-column>
@@ -94,15 +94,15 @@
         <el-select size="mini" v-model="skuForm.goodsTypeId">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
-        <el-button type="primary" @click="selectsupplier()" size="mini">查找</el-button>
-        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+        <el-button type="primary" @click="getAllSKUList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetDialogQueryForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
-      <el-table :data="table.supplierSku" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="">
+      <el-table :data="table.warehouseSku" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="">
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
-        <el-table-column prop="spuId" label="物品编码" align="center"> </el-table-column>
-        <el-table-column prop="spuName" label="物品名称" align="center"> </el-table-column>
-        <el-table-column prop="typeStr" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
+        <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="typeStr" label="物品类别" align="center"> </el-table-column>
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
@@ -126,7 +126,7 @@ export default {
       },
       table: {
         skuList: [],
-        supplierSku: [],
+        warehouseSku: [],
         total: 0,
       },
       dialogObject: {
@@ -173,14 +173,12 @@ export default {
         data.forEach((element) => {
           this.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
         });
-        console.log(data);
-        // this.goodsType = data;
       });
     },
     //获取货品数据选择绑定供应商
     async getAllSKUList() {
       await this.$api.goods
-        .GetSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.spuId, this.skuForm.skuId, this.skuForm.goodsName, this.skuForm.goodsType)
+        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.spuId, this.skuForm.skuId, this.skuForm.goodsName, this.skuForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -188,7 +186,7 @@ export default {
             return;
           }
           console.log(data.goods);
-          this.table.supplierSku = data.goods;
+          this.table.warehouseSku = data.goods;
         });
     },
     //查找物品
@@ -200,6 +198,13 @@ export default {
       this.queryForm.conditions = '';
       this.queryForm.goodsType = 0;
       this.loadData();
+    },
+    resetDialogQueryForm() {
+      this.skuForm.spuId = '';
+      this.skuForm.skuId = '';
+      this.skuForm.goodsName = '';
+      this.skuForm.goodsTypeId = 0;
+      this.getAllSKUList();
     },
     //条数改变
     handleSizeChange(row) {

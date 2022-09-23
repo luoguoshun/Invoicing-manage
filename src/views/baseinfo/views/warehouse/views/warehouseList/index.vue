@@ -18,7 +18,7 @@
           <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
         </div>
         <div class="edit_query_1">
-          <el-button type="primary" @click="selectWarehouse()" size="mini">查找</el-button>
+          <el-button type="primary" @click="getWarehouseList()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
         </div>
       </div>
@@ -88,9 +88,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="联系方式" prop="phone">
+        <!-- <el-form-item label="联系方式" prop="phone">
           <el-input type="text" v-model="warehouseForm.phone"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="仓库地址">
           <el-input type="text" v-model="warehouseForm.warehouseAddr"></el-input>
         </el-form-item>
@@ -200,6 +200,7 @@ export default {
     },
     loadData() {
       this.getWarehouseList();
+      this.getUsersByRoleId();
     },
     //获取仓库数据
     async getWarehouseList() {
@@ -236,6 +237,7 @@ export default {
           console.log(message);
           return;
         }
+        console.log(data);
         this.userList = data;
       });
     },
@@ -281,7 +283,7 @@ export default {
             this.$message.error('删除失败！');
           } else {
             this.$message({ message: '删除成功！', type: 'success' });
-            this.loadData();
+            this.getWarehouseList();
           }
         });
       }
@@ -305,7 +307,7 @@ export default {
             }
             this.$message({ message: '添加成功！', type: 'success' });
             this.dialogObject.addVisible = false;
-            this.loadData();
+            this.getWarehouseList();
           });
         } else {
           console.log('error submit!!');
@@ -350,7 +352,7 @@ export default {
             } else {
               this.$message({ message: '修改成功！', type: 'success' });
               this.dialogObject.editVisible = false;
-              this.loadData();
+              this.getWarehouseList();
             }
           });
         }
@@ -377,7 +379,6 @@ export default {
   created() {
     this.loadData();
     this.getWarehouseTypeList();
-    this.getUsersByRoleId();
   },
 };
 </script>

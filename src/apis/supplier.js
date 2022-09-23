@@ -28,7 +28,9 @@ export default {
   //删除供应商
   deleteSupplier(supplierIds) {
     console.log(supplierIds);
-    return ajax.post('/api/Background/Supplier/DeleteSupplier', { supplierIds });
+    return ajax.post('/api/Background/Supplier/DeleteSupplier', {
+      supplierIds
+    });
   },
 
   //调取供应商分类
@@ -38,27 +40,30 @@ export default {
 
   //删除供应商关联的货品
   DeleteSupplierSKU(skuId, supplierId) {
-    return ajax.post('/api/Background/Supplier/DeleteSupplierSKU', { SKUIds: skuId, SupplierId: supplierId });
+    return ajax.post('/api/Background/Supplier/DeleteSupplierSKU', {
+      SKUIds: skuId,
+      SupplierId: supplierId
+    });
   },
 
-  
-    //物品绑定供应商
-    GoodsAddtoSupplier(supplier) {
-      console.log(supplier)
-      return ajax.post('/api/Background/Supplier/GoodsAddtoSupplier', {         
-          ...supplier
-      })
+
+  //物品绑定供应商
+  GoodsAddtoSupplier(supplier) {
+    console.log(supplier)
+    return ajax.post('/api/Background/Supplier/GoodsAddtoSupplier', {
+      ...supplier
+    })
   },
   //修改供应商绑定的SKU的采购价
-  EditSupplierPurchasePrice(supplierId,PurchasePrice,SKUId)
-  {   
-      console.log(typeof SKUId + SKUId)
-      console.log(typeof parseInt(supplierId) + parseFloat(supplierId))
-      console.log(typeof PurchasePrice + PurchasePrice)
-      return ajax.post('/api/Background/Supplier/EditSupplierPurchasePrice', {
-          SkuId:SKUId,         
-          SupplierId:parseInt(supplierId),
-          PurchasePrice:parseFloat(PurchasePrice),
-      })
+  EditSupplierPurchasePrice(supplierId, PurchasePrice, SKUId) {
+    return ajax.post('/api/Background/Supplier/EditSupplierPurchasePrice', {
+      SkuId: SKUId,
+      SupplierId: parseInt(supplierId),
+      PurchasePrice: parseFloat(PurchasePrice),
+    })
+  },
+  //构造供应商下拉选择数据
+  constructDropDownData(skuId) {
+    return ajax.get('/api/Background/Supplier/ConstructDropDownData?skuId=' + skuId + '')
   }
 };

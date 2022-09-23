@@ -21,12 +21,18 @@
     <!-- 当el-table元素中注入data对象数组后，在el-table-column中用prop属性来对应对象中的键名即可填入数据 -->
     <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
       <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column label="图片" width="100" align="center">
+        <template slot-scope="scope">
+          <el-image style="width: 60px; height: 50px" :src="scope.row.SKULogoUrl"></el-image>
+        </template>
+      </el-table-column>
       <el-table-column prop="spuId" label="货品编码"></el-table-column>
       <el-table-column prop="skuName" label="物品名称"> </el-table-column>
       <el-table-column prop="typeStr" label="物品类型"></el-table-column>
+      <el-table-column prop="Specs" label="规格"></el-table-column>
+      <el-table-column prop="unit" label="单位"></el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column prop="updateTime" label="修改时间"> </el-table-column>
-
       <!-- 操作 -->
       <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
@@ -93,6 +99,7 @@ export default {
         page: 1,
         row: 10,
         PublicationDates: [],
+        SkuId: '',
         GoodsName: '',
         GoodsTypeId: 0,
         WarehouseId: '',
@@ -128,13 +135,13 @@ export default {
       this.getbrandType();
     },
     async getSKUList() {
-      console.log(this.queryForm.SpuId)
+      console.log(this.queryForm.SpuId);
       await this.$api.goods
         .getSKUList(
           this.queryForm.page,
           this.queryForm.row,
           this.queryForm.SpuId,
-          this.queryForm.PublicationDates,
+          this.queryForm.SkuId,
           this.queryForm.GoodsName,
           this.queryForm.GoodsTypeId,
         )
@@ -150,6 +157,7 @@ export default {
             element.createTime = this.$timeFormat.timeUTCToTime(element.createTime, 'second');
             element.updateTime = this.$timeFormat.timeUTCToTime(element.updateTime, 'second');
           });
+          console.log(data.goods);
           this.tableData.goodsList = data.goods;
           this.tableData.total = data.count;
         });

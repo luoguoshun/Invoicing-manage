@@ -15,7 +15,7 @@ export default {
         return ajax.post('/api/Background/Warehouse/GetWarehouseTypeList', );
     },
 
-    //获取仓库类别列表
+    //修改仓库信息
     updateWarehouse(warehouse) {
         return ajax.post('/api/Background/Warehouse/UpdateWarehouse',
             warehouse
@@ -45,6 +45,7 @@ export default {
             SKUIds: skuIds
         });
     },
+    //修改库存 警戒数量
     updateWarehouseSku(warehouseId, skuId, count, warnCount) {
         return ajax.post('/api/Background/Warehouse/UpdateWarehouseSku', {
             warehouseId,

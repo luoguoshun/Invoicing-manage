@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     //将 this.setToken(token) 映射为 this.$store.commit('setToken'，token)
-    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setAdminInfo: 'adminInfo/setAdminInfo',setRouters:'routers/setRouters' }),
+    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setUserInfo: 'userInfo/setAdminInfo',setRouters:'routers/setRouters' }),
     login() {
       if (this.validateLoginInfo()) {
         this.$api.account.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
@@ -45,7 +45,7 @@ export default {
             try {
               this.setTokenInfo(data);
               this.setRouters(data.routers);
-              // this.setAdminInfo({ adminNo: 'luo', name: 'luoguoshun' });
+              this.setUserInfo({ adminNo: 'luo', name: 'luoguoshun' });
               // this.$signalR.connection.start();
               let redirectUrl = this.$route.query.redirectUrl;
               

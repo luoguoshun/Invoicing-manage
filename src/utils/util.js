@@ -2,7 +2,6 @@ import Cookies from 'js-cookie'
 // cookie保存的天数
 import config from '@/config'
 import {
-  forEach,
   hasOneOf,
   objEqual
 } from './tools'

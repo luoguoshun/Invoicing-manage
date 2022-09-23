@@ -8,6 +8,7 @@ import supplier from './supplier'
 import warehouse from './warehouse';
 import vueRouter from './vueRouter'
 import goodsType from './goodsType'
+import purchase from './purchase'
 
 export default {
   account,
@@ -20,4 +21,5 @@ export default {
   warehouse,
   vueRouter,
   goodsType,
+  purchase,
 };
