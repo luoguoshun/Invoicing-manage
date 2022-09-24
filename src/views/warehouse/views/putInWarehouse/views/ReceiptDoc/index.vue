@@ -2,22 +2,27 @@
   <div class="ReceiptDoc_container">
     <!-- 操作 -->
     <div class="editbar">
+      <div class="edit_btn">
+        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" round>确认入库</el-button>
+      </div>
       <div class="edit_query">
         <div class="edit_query_1">
-           <label>收货仓库 </label>
-          <el-select size="mini"  placeholder="请选择类别">
+          <el-select size="mini"  placeholder="请选择入库仓库">
             <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
-          <el-input  size="mini" label-width="80px" placeholder="请输入单据的关键字"></el-input>
+          <el-input  size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
         </div>
         <div class="edit_query_1">
-          <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
+          <el-button type="primary" @click="selectGoods()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
         </div>
       </div>
     </div>
+
+    
 
     <!-- 表格 -->
     <el-table :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="" ref="supplierSkuTable">
