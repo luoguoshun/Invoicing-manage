@@ -32,6 +32,12 @@ export default {
             ...purchaseForm
         });
     },
+    //修改采购计划
+    updatePurchasePlan(purchaseForm) {
+        return ajax.post('/api/Background/Purchase/UpdatePurchasePlan', {
+            ...purchaseForm
+        });
+    },
     /**
      * @description:修改采购计划项目列表
      * @param {purchaseId}  采购计划Id
@@ -55,7 +61,7 @@ export default {
     /**
      * @description:移除采购计划单的子项目
      * @param {purchasIds}  采购计划Id
-     * @return {Array} 购计划项目列表
+     * @return {bool} 
      */
     deletePurchaseDetail(purchaseId, purchaseDetailId) {
         return ajax.post('/api/Background/Purchase/DeletePurchaseDetail', {
@@ -63,4 +69,29 @@ export default {
             purchaseDetailId
         });
     },
+    /**
+     * @description:提交采购申请单
+     * @param {purchasIds}  采购计划Ids
+     * @return {bool} 
+     */
+    submitApplications(purchaseIds) {
+        return ajax.post('/api/Background/Purchase/SubmitApplications', purchaseIds);
+    },
+    /**
+     * @description: 审核采购申请单
+     * @param {purchasIds}  采购计划Ids
+     * @return {bool} 
+     */
+     adoptPurchaseRequest(purchaseIds) {
+        return ajax.post('/api/Background/Purchase/ConfirmPurchaseRequest', purchaseIds);
+    },
+    /**
+     * @description:驳回采购申请单
+     * @param {purchasIds}  采购计划Ids
+     * @return {bool} 
+     */
+    rejectPurchaseRequest(purchaseIds) {
+        return ajax.post('/api/Background/Purchase/RejectPurchaseRequest', purchaseIds);
+    },
+    
 }

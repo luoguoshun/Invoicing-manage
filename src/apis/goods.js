@@ -41,16 +41,13 @@ export default {
     },
 
     //通过供应商编号获取供应商货品
-    GetSKUListBySupplierId(page, row, GoodsName, GoodsType, WarehouseId,supplierId,conditions) {
+    GetSKUListBySupplierId(page, row, GoodsType,supplierId,conditions) {
         return ajax.post('/api/Background/Googs/GetSKUListBySupplierId', {
             Page:page,
             Row:row,
-            GoodsName:GoodsName, 
             GoodsType:GoodsType, 
-            WarehouseId:WarehouseId,
             SupplierId:supplierId,
             Conditions:conditions,
-
         })
     },
     ///修改SPU

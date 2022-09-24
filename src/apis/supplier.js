@@ -63,7 +63,7 @@ export default {
     })
   },
   //构造供应商下拉选择数据
-  constructDropDownData(skuId) {
-    return ajax.get('/api/Background/Supplier/ConstructDropDownData?skuId=' + skuId + '')
+  constructDropDownData() {
+    return ajax.post('/api/Background/Supplier/ConstructDropDownData')
   }
 };
