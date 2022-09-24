@@ -7,8 +7,9 @@ import goods from './goods';
 import supplier from './supplier'
 import warehouse from './warehouse';
 import vueRouter from './vueRouter'
-import goodsType from './goodsType'
-import purchase from './purchase'
+import goodsType from './goodsType';
+import purchase from './purchase';
+import stock from './stock';
 
 export default {
   account,
@@ -22,4 +23,5 @@ export default {
   vueRouter,
   goodsType,
   purchase,
+  stock,//仓库管理
 };
