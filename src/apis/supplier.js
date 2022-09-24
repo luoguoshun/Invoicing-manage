@@ -54,6 +54,7 @@ export default {
       ...supplier
     })
   },
+  
   //修改供应商绑定的SKU的采购价
   EditSupplierPurchasePrice(supplierId, PurchasePrice, SKUId) {
     return ajax.post('/api/Background/Supplier/EditSupplierPurchasePrice', {

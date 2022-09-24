@@ -4,6 +4,8 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()"> 引用采购单 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" round>提交</el-button>
       </div>
     </div>
 
@@ -16,31 +18,86 @@
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column  label="采购单号" align="center"> </el-table-column>
-      <el-table-column  label="物品编码" align="center"> </el-table-column>
-      <el-table-column  label="物品名称" align="center"> </el-table-column>
-      <el-table-column  label="物品采购价" align="center" width="120px">
+      <el-table-column  label="状态" align="center"> </el-table-column>
+      <el-table-column  label="物品采购总价" align="center" width="120px">
         <template slot-scope="scope">
           <el-input v-model="scope.row.purchasePrice" placeholder="" align="center" />
         </template>
       </el-table-column>
-      <el-table-column prop="typeStr" label="物品分类" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
-      <el-table-column label="创建时间" align="center">
-        <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
-      </el-table-column>
+      <el-table-column prop="unit" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="unit" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="typeStr" label="订单总价" align="center"> </el-table-column>
+      <el-table-column prop="typeStr" label="采购总数" align="center"> </el-table-column>
+      <el-table-column prop="typeStr" label="入库总数" align="center"> </el-table-column>
+      <el-table-column prop="typeStr" label="备注" align="center"> </el-table-column>
       <el-table-column label="修改时间" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.updateTime) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <!-- 操作 -->
+      <el-table-column fixed="right" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="success" icon="el-icon-check" circle @click="editSupplierSkuGoodsPrice(scope.row)"></el-button>
+          <el-button type="text" size="small" @click="showEditTable(scope.row)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页
+    <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="table.total"
+        :page-sizes="[5, 10, 15, 20]"
+        :current-page="queryForm.page"
+        :page-size="queryForm.row"
+        layout="total, sizes, prev, pager, next, jumper"
+        background
+      >
+      </el-pagination>
+    </div> -->
+
+    <!-- 操作表格 -->
+    <div class="editPlanItem">
+      <el-divider></el-divider>
+      <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
+      <el-table  :header-cell-style="{ 'text-align': 'center' }" border>
+        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
+          <template >
+            <el-tag disable-transitions></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+        <el-table-column prop="skuId" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="count" label="采购数量" align="center">
+          <template >
+            <el-input type="number" size="mini"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="count" label="入库数量" align="center">
+          <template >
+            <el-input type="number" size="mini" ></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="物品采购价" align="center">
+          <template >
+            <el-tag type="success"></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="物品总价" align="center">
+          <template >
+            <el-tag type="success"></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
+        <el-table-column label="操作" width="150" align="center">
+          <template >
+            <el-button size="mini" type="danger" >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     
     <!-- 引用采购单 -->
     <el-dialog title="退换单据信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%">

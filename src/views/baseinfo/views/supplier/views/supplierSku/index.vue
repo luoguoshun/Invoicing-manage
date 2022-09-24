@@ -100,7 +100,7 @@
       </el-row>
       <div class="edit_query_1">
         <el-button type="primary" @click="GetSKUList()" size="mini">查找</el-button>
-        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+        <el-button type="primary" @click="resetStuForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
       <el-table :data="table.supplierSku" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRowsGoods" border="">
@@ -156,6 +156,7 @@ export default {
         warehouseId: '',
         goodsTypes: [{ typeId: 0, typeName: '请选择类型' }],
         supplierId: 0,
+        conditions: '',
       },
       table: {
         supplierList: [],
@@ -223,6 +224,7 @@ export default {
     },
     //修改供应商货品采购价
     GoodsAddtoSupplier() {
+      console.log(this.supplierGoods);
       const supplier = {
         SkuIds: this.supplierGoods,
         supplierId: this.$route.query.supplierId,
@@ -307,14 +309,16 @@ export default {
     resetQueryForm() {
       this.queryForm.GoodsName = '';
       this.queryForm.GoodsType = 0;
-      (this.queryForm.conditions = ''), this.loadData();
+      (this.queryForm.conditions = '')
+      this.loadData();
     },
 
     //重置供应商添加货品界面搜索条件
-    resetQueryForm() {
-      this.SkuForm.GoodsName = '';
+    resetStuForm() {
+      this.SkuForm.goodsName = '';
       this.SkuForm.GoodsType = 0;
-      (this.SkuForm.conditions = ''), this.loadData();
+      this.SkuForm.spuId='',
+      this.SkuForm.skuId = '';
     },
 
     //条数改变--外面
@@ -328,7 +332,7 @@ export default {
       this.loadData();
     },
 
-        //条数改变--模态框
+    //条数改变--模态框
     handleSizeChangeDialog(row) {
       this.SkuForm.row = row;
       this.loadData();
