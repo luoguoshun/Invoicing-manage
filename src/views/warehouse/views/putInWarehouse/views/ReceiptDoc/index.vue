@@ -4,7 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round>确认入库</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" round @click="submitPutinWarehousApply()">确认入库</el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -23,13 +23,14 @@
     </div>
 
     <!-- 表格 -->
-    <el-table 
-    @row-click="getPutinWarehouseOrderDetail"
-    :header-cell-style="{ 'text-align': 'center' }" 
-    @selection-change="selectRows" 
-    border=""
-    ref="supplierSkuTable"
-    :data="table.PutinWareOrderList">
+    <el-table
+      @row-click="getPutinWarehouseOrderDetail"
+      :header-cell-style="{ 'text-align': 'center' }"
+      @selection-change="selectRows"
+      border=""
+      ref="supplierSkuTable"
+      :data="table.PutinWareOrderList"
+    >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column prop="putinWarehousId" label="入库单号" align="center"> </el-table-column>
       <el-table-column prop="putStateStr" label="状态" align="center"> </el-table-column>
@@ -43,40 +44,37 @@
       <el-table-column prop="putTotalNum" label="入库数量" align="center"> </el-table-column>
     </el-table>
 
-
-        <!-- 操作表格 -->
+    <!-- 操作表格 -->
     <div class="editPlanItem">
       <el-divider></el-divider>
-      <el-table  :header-cell-style="{ 'text-align': 'center' }" border 
-      :data="table.PutinWarehousDetailList">
-        <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center">
-        </el-table-column>
+      <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="table.PutinWarehousDetailList">
+        <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="count" label="采购数量" align="center">
-          <template >
+          <template>
             <el-input type="number" size="mini"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="count" label="入库数量" align="center">
-          <template >
-            <el-input type="number" size="mini" ></el-input>
+          <template>
+            <el-input type="number" size="mini"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="物品采购价" align="center">
-          <template >
+          <template>
             <el-tag type="success"></el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="物品总价" align="center">
-          <template >
+          <template>
             <el-tag type="success"></el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
         <el-table-column label="操作" width="150" align="center">
-          <template >
-            <el-button size="mini" type="danger" >删除</el-button>
+          <template>
+            <el-button size="mini" type="danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -97,10 +95,12 @@ export default {
       },
       table: {
         PutinWareOrderList: [],
-        PutinWarehousDetailList:[],
+        PutinWarehousDetailList: [],
         PutinWareOrdertotal: 0,
-        PutinWarehousDetailtotal:0,
+        PutinWarehousDetailtotal: 0,
       },
+      PutinWarehousIds: [],
+      PutinWarehousState: [],
     };
   },
   methods: {
@@ -109,27 +109,22 @@ export default {
     },
 
     async getPutinWarehouseOrder() {
-      await this.$api.stock.getPutInWarehouseOrder(
-        this.queryForm.page, 
-        this.queryForm.row, 
-        this.queryForm.conditions, 
-        this.queryForm.WarehouseType).then((res) => {
-        const { data, success, message } = res.data;
-        console.log(data);
-        if (!success) {
-          console.log(message);
-          return;
-        }
-        this.table.PutinWareOrderList = data.data;
-        this.table.PutinWareOrdertotal = data.count;
-      });
+      await this.$api.stock
+        .getPutInWarehouseOrder(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.WarehouseType)
+        .then((res) => {
+          const { data, success, message } = res.data;
+          console.log(data);
+          if (!success) {
+            console.log(message);
+            return;
+          }
+          this.table.PutinWareOrderList = data.data;
+          this.table.PutinWareOrdertotal = data.count;
+        });
     },
 
-    async getPutinWarehouseOrderDetail(row){
-      await this.$api.stock.GetPutinWarehousDetail(
-        this.queryForm.page, 
-        this.queryForm.row, 
-        row.putinWarehousId).then((res) => {
+    async getPutinWarehouseOrderDetail(row) {
+      await this.$api.stock.GetPutinWarehousDetail(this.queryForm.page, this.queryForm.row, row.putinWarehousId).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
@@ -140,7 +135,48 @@ export default {
         this.table.PutinWarehousDetailtotal = data.count;
       });
     },
+
+    async submitPutinWarehousApply() {
+      for (let i =0;i<this.PutinWarehousState.length;i++) {
+        debugger;
+        if (this.PutinWarehousState[i]=="已完成") {
+          this.$message({
+            message: '只能提交编辑中的入库单！',
+            type: 'warning',
+          });
+          this.PutinWarehousState=[];
+          return false;
+        }
+      }
+      if (this.PutinWarehousIds.length == 0) {
+        this.$message({
+          message: '请选择提交的入库单',
+          type: 'warning',
+        });
+      } else {
+        await this.$api.stock.SubmitPutinWarehousApply(this.PutinWarehousIds).then((res) => {
+          const { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('提交失败！');
+          } else {
+            this.$message({ message: '提交成功！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
+
+    selectRows(selection) {
+      this.PutinWarehousIds = [];
+      selection.forEach((element) => {
+        this.PutinWarehousIds.push(element.putinWarehousId);
+        this.PutinWarehousState.push(element.putStateStr);
+      });
+      console.log(this.PutinWarehousState);
+    },
   },
+
   created() {
     this.loadData();
     //this.getWarehouseTypeList();

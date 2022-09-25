@@ -14,4 +14,11 @@ export default {
         page,row,putinWarehousId
         });
     },
+    //提交入库申请
+    SubmitPutinWarehousApply(putinWarehousIds){
+        console.log(putinWarehousIds);
+        return ajax.post('/api/Background/Stock/SubmitPutinWarehousApply',{
+            putinWarehousIds
+        })
+    }
 }
