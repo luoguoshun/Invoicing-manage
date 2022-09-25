@@ -36,7 +36,7 @@
           <span>采购管理</span>
         </template>
         <el-menu-item index="/purchas/purchasPlan/purchasPlanList">采购计划管理</el-menu-item>
-        <el-menu-item index="/purchas/purchasOrder">采购订单管理</el-menu-item>
+        <el-menu-item index="/purchas/purchasOrder/purchasOrderList">采购订单管理</el-menu-item>
       </el-submenu>
 
       <el-submenu index="warehouse">

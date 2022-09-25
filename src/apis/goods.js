@@ -9,7 +9,7 @@ export default {
             SpuId: spuId,
             PublicationDates: publicattionDates,
             GoodsName: goodsName,
-            goodsType: goodsTypeId,
+            goodsTypeId: goodsTypeId,
             WarehouseId: warehouseId
         });
     },
@@ -41,11 +41,11 @@ export default {
     },
 
     //通过供应商编号获取供应商货品
-    GetSKUListBySupplierId(page, row, GoodsType,supplierId,conditions) {
+    GetSKUListBySupplierId(page, row, goodsTypeId,supplierId,conditions) {
         return ajax.post('/api/Background/Googs/GetSKUListBySupplierId', {
             Page:page,
             Row:row,
-            GoodsType:GoodsType, 
+            GoodsTypeId:goodsTypeId, 
             SupplierId:supplierId,
             Conditions:conditions,
         })

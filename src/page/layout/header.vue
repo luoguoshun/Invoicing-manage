@@ -21,13 +21,7 @@
       <div class="tabs">
         <el-tabs v-model="getDynamicTags.activeRoute" @tab-remove="removeTab" @tab-click="switchComponent" type="card">
           <el-tab-pane key="home" label="首页" name="home" :closable="false"> </el-tab-pane>
-          <el-tab-pane
-            v-for="tab in getDynamicTags.tabs"
-            :key="tab.routeName"
-            :label="tab.tabName"
-            :name="tab.routeName"
-            :closable="true"
-          >
+          <el-tab-pane v-for="tab in getDynamicTags.tabs" :key="tab.routeName" :label="tab.tabName" :name="tab.routeName" :closable="true">
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -39,21 +33,8 @@
       </div>
     </div>
     <!-- 日志详细信息对话框 -->
-    <el-dialog
-      title="修改登入密码"
-      :visible.sync="updateDialog.visible"
-      :close-on-click-modal="false"
-      width="25%"
-      center
-    >
-      <el-form
-        :model="updateForm"
-        :rules="updatePwdRules"
-        ref="updateForm"
-        label-width="100px"
-        class="demo-ruleForm"
-        status-icon
-      >
+    <el-dialog title="修改登入密码" :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="25%" center>
+      <el-form :model="updateForm" :rules="updatePwdRules" ref="updateForm" label-width="100px" class="demo-ruleForm" status-icon>
         <el-form-item label="原密码" prop="oldPwd">
           <el-input type="password" v-model="updateForm.oldPwd" autocomplete="off"></el-input>
         </el-form-item>

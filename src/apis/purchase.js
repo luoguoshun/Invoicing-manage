@@ -26,6 +26,12 @@ export default {
     getDetailPlanListByPurchasId(purchaseId) {
         return ajax.get('/api/Background/Purchase/GetDetailPlanListByPurchasId?purchasId=' + purchaseId + '');
     },
+    //获取通过审核的采购计划列表
+    getPassPurchasePlanList(queryForm) {
+        return ajax.post('/api/Background/Purchase/GetPassPurchasePlanList', {
+            ...queryForm
+        });
+    },
     //新建采购计划
     addPurchasePlan(purchaseForm) {
         return ajax.post('/api/Background/Purchase/AddPurchasePlan', {
