@@ -37,16 +37,26 @@
       <el-table-column prop="sourceOrderId" label="来源单号" align="center"> </el-table-column>
       <el-table-column prop="operationPerson" label="提交人" align="center"> </el-table-column>
       <el-table-column prop="warehouseName" label="仓库名称" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="货款总价" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="货品成本" align="center"> </el-table-column>
-      <el-table-column prop="totalPrice" label="总价" align="center"> </el-table-column>
+      <el-table-column prop="unit" label="采购总价" align="center"> </el-table-column>
+      <el-table-column prop="unit" label="物品总成本" align="center"> </el-table-column>
+      <el-table-column prop="totalPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="totalPrice" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="totalPrice" label="订单总价" align="center"> </el-table-column>
       <el-table-column prop="putTotalNum" label="入库数量" align="center"> </el-table-column>
+      <el-table-column label="编辑" width="200" align="center">
+        <template slot-scope="scope">
+          <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button>
+          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>详情</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
 
-        <!-- 操作表格 -->
+    <!-- 操作表格 -->
     <div class="editPlanItem">
       <el-divider></el-divider>
+      <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
       <el-table  :header-cell-style="{ 'text-align': 'center' }" border 
       :data="table.PutinWarehousDetailList">
         <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center">
@@ -68,7 +78,17 @@
             <el-tag type="success"></el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="totalPrice" label="物品总价" align="center">
+        <el-table-column prop="totalPrice" label="物品成本" align="center">
+          <template >
+            <el-tag type="success"></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="物品采购总价" align="center">
+          <template >
+            <el-tag type="success"></el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="物品总成本" align="center">
           <template >
             <el-tag type="success"></el-tag>
           </template>
