@@ -92,6 +92,8 @@ ajax.interceptors.response.use(
         Message.warning('请求参数错误');
       } else if (error.response.status === 500) {
         Message.warning('服务器错误');
+      } else if (error.response.status === 415) {
+        Message.warning('不支持的媒体类型');
       }
     }
     return Promise.reject(error.response);

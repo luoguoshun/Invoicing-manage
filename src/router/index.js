@@ -174,7 +174,26 @@ const routes = [{
           meta: {
             title: '采购订单管理',
             isAuth: true
-          }
+          },
+          children: [{
+              path: 'purchasOrderList',
+              name: 'purchasOrderList',
+              component: () => import('@/views/purchas/views/purchasOrder/views/purchasOrderList'),
+              meta: {
+                title: '采购订单列表',
+                isAuth: true
+              },
+            },
+            {
+              path: 'applyForBilling',
+              name: 'applyForBilling',
+              component: () => import('@/views/purchas/views/purchasOrder/views/applyForBilling'),
+              meta: {
+                title: '申请采购开单',
+                isAuth: true
+              },
+            }
+          ]
         }, {
           path: 'purchasPlan',
           name: 'purchasPlan',
@@ -206,28 +225,27 @@ const routes = [{
           isAuth: true
         },
         children: [{
-            path: 'putInWarehouse',
-            name: 'putInWarehouse',
-            component: () => import(`@/views/warehouse/views/putInWarehouse`),
-            meta: {
-              title: '入库管理',
-              isAuth: true
-            },
-            children: [{
-              path: 'PurchaseReceipt',
-              name: 'PurchaseReceipt',
-              component: () => import('@/views/warehouse/views/putInWarehouse/views/PurchaseReceipt'),
-            },{
-              path: 'ReturnReceipt',
-              name: 'ReturnReceipt',
-              component: () => import('@/views/warehouse/views/putInWarehouse/views/ReturnReceipt'),
-            },{
-              path: 'ReceiptDoc',
-              name: 'ReceiptDoc',
-              component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
-            }],
+          path: 'putInWarehouse',
+          name: 'putInWarehouse',
+          component: () => import(`@/views/warehouse/views/putInWarehouse`),
+          meta: {
+            title: '入库管理',
+            isAuth: true
           },
-        ]
+          children: [{
+            path: 'PurchaseReceipt',
+            name: 'PurchaseReceipt',
+            component: () => import('@/views/warehouse/views/putInWarehouse/views/PurchaseReceipt'),
+          }, {
+            path: 'ReturnReceipt',
+            name: 'ReturnReceipt',
+            component: () => import('@/views/warehouse/views/putInWarehouse/views/ReturnReceipt'),
+          }, {
+            path: 'ReceiptDoc',
+            name: 'ReceiptDoc',
+            component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
+          }],
+        }, ]
       },
       {
         path: '/logs',
