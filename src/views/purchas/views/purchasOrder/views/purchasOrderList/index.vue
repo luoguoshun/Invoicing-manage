@@ -55,7 +55,7 @@
       </el-table-column>
       <el-table-column prop="orderStateStr" label="采购单状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions type="warning" effect="plain">{{ scope.row.orderStateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.orderStateStr }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="orderTypeStr" label="开单类型" align="center"> </el-table-column>
@@ -75,7 +75,7 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>订单详情</el-button>
+          <el-button type="info" size="mini" @click="showorderDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -93,11 +93,11 @@
       >
       </el-pagination>
     </div>
-    <!-- 操作表格 -->
-    <div class="editPlanItem" v-show="editTable.show">
+     <!-- 采购单详情 -->
+     <el-dialog title="采购单详情" :visible.sync="orderDetailDiolog.show" center width="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
-      <el-table :data="editTable.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-button size="mini" type="primary" @click="orderDetailDiolog.show = false" plain>关闭</el-button>
+      <el-table :data="orderDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
             <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
@@ -116,9 +116,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
-        <el-table-column prop="createTime" label="添加时间" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center">
+          <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+        </el-table-column>
       </el-table>
-    </div>
+     </el-dialog>
   </div>
 </template>
 
@@ -150,7 +154,7 @@ export default {
         total: 0,
         loading: true,
       },
-      editTable: {
+      orderDetailDiolog: {
         editPurchaseId: '',
         show: false,
         detailPlanItems: [],
@@ -212,7 +216,7 @@ export default {
           console.log(message);
           return;
         }
-        this.editTable.detailPlanItems = data;
+        this.orderDetailDiolog.detailPlanItems = data;
       });
     },
     //获取通过
@@ -368,10 +372,19 @@ export default {
       }
     },
     //显示采购单子项目
-    showEditTable(row) {
-      this.editTable.editPurchaseId = row.purchaseId;
+    showorderDetailDiolog(row) {
+      this.orderDetailDiolog.editPurchaseId = row.purchaseId;
       this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.editTable.show = true;
+      this.orderDetailDiolog.show = true;
+    },
+    getElTagClass(row) {
+      if (row.orderStateStr=="已审核") {
+        return 'success'
+      } else if(row.orderStateStr=="待审核") {
+        return 'warning';
+      }else {
+        return '';
+      }
     },
   },
   created() {
@@ -386,6 +399,7 @@ export default {
 .purchasOrder {
   width: 100%;
   height: 100%;
+  position: relative;
   .editbar {
     width: 100%;
     margin: 10px 0px;
@@ -398,31 +412,19 @@ export default {
       justify-content: flex-start; //左对齐lex-end：右对齐 space-between：两端对齐，项目之间的间隔都相等
     }
     .edit_query {
-      width: 100%;
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
       .edit_query_1 {
-        width: 100%;
-        text-align: center;
         div {
           width: 100%;
-          color: rgb(0, 153, 255);
         }
       }
+      .edit_query_1:last-child {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
     }
-  }
-  .warning-row {
-    background: rgb(194, 173, 135);
-  }
-
-  .success-row {
-    background: #f0f9eb;
-  }
-  .editPlanItem {
-    position: relative;
-    z-index: 999;
-    bottom: -120px;
   }
   .dialogSelectInput {
     display: grid;

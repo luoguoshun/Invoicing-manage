@@ -4,7 +4,7 @@ export default {
     userInfo: JSON.parse(localStorage.getItem('userInfo')) || null,
   },
   getters: {
-    getuserInfo(state) {
+    getUserInfo(state) {
       if (state.userInfo == null) {
         return null;
       }
@@ -13,10 +13,10 @@ export default {
   },
   //mutations是唯一一种方式来修改state中的状态的；
   mutations: {
-    setuserInfo(state, userInfo) {
-      state.userInfo = JSON.parse(JSON.stringify(userInfo));
+    setUserInfo(state, userInfo) {
+      localStorage.setItem("userInfo",JSON.stringify(userInfo))
     },
-    clearuserInfo(state) {
+    clearUserInfo(state) {
       localStorage.removeItem('userInfo');
     },
   },
