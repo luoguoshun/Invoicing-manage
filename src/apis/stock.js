@@ -20,5 +20,12 @@ export default {
         return ajax.post('/api/Background/Stock/SubmitPutinWarehousApply',{
             putinWarehousIds
         })
-    }
+    },
+    //生成入库单和入库详情
+    CreatePutinWarehousIdt(putinWarehousIds){
+        return ajax.post('/api/Background/Stock/CreatePutinWarehousIdt',{
+            putinWarehousIds
+        })
+    },
+
 }
