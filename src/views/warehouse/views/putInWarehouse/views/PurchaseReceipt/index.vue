@@ -24,7 +24,8 @@
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="orderTotalPrice" label="订单总价" align="center"> </el-table-column>
       <el-table-column prop="totalCount" label="采购总数" align="center"> </el-table-column>
-      <el-table-column prop="typeStr" label="入库总数" align="center"> </el-table-column>
+      <!-- <el-table-column prop="typeStr" label="入库总数" align="center">
+      </el-table-column> -->
       <el-table-column label="备注" align="center">
         <template slot-scope="scope">
           {{scope.row.remarks||"无"}}
@@ -73,13 +74,13 @@
         <el-table-column prop="skuId" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="count" label="采购数量" align="center">
         </el-table-column>
-        <el-table-column  label="入库数量" align="center">
-
-        </el-table-column>
+        <!-- <el-table-column  label="入库数量" align="center">
+          <el-input type="number" size="mini" ></el-input>
+        </el-table-column> -->
         <el-table-column prop="totalPrice" label="物品采购价" align="center">
         <template slot-scope="scope">
           {{scope.row.totalPrice/scope.row.count}}
-        </template>
+        </template> 
         </el-table-column>
         <el-table-column prop="totalPrice" label="物品总价" align="center"></el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
@@ -161,7 +162,6 @@ export default {
         drawerName: '',
         orderState: 3,
       },
-      certinfoKey: Boolean,
       dialogObject: {
         addVisible: false,
       },
