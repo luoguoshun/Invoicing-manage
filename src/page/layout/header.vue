@@ -5,8 +5,8 @@
       <div class="title">
         <p>翻斗花园进销存管理系统</p>
       </div>
-      <div class="adminInfo">
-        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      <div class="user">
+        <el-avatar  :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>    
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -32,6 +32,12 @@
         </el-button>
       </div>
     </div>
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>活动管理</el-breadcrumb-item>
+      <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+      <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+    </el-breadcrumb>
     <!-- 日志详细信息对话框 -->
     <el-dialog title="修改登入密码" :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="25%" center>
       <el-form :model="updateForm" :rules="updatePwdRules" ref="updateForm" label-width="100px" class="demo-ruleForm" status-icon>
@@ -58,7 +64,7 @@ import { mapGetters, mapMutations } from 'vuex';
 export default {
   computed: {
     //将this.getDynamicTags 映射为 this.$store.getters.getDynamicTags
-    ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getAdminInfo: 'adminInfo/getAdminInfo' }),
+    ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getUserInfo: 'userInfo/getUserInfo' }),
   },
   data() {
     var checkOldPwd = (value, callback) => {
@@ -147,8 +153,6 @@ export default {
     },
     //修改密码
     updatePwd(updateForm) {
-      let adminInfo = this.getAdminInfo;
-      console.log(adminInfo);
       this.$refs[updateForm].validate((valid) => {
         if (valid) {
           this.$api.admin.updatePwd('luo', this.updateForm.oldPwd, this.updateForm.newPwd).then((res) => {
@@ -187,6 +191,9 @@ export default {
       }
     },
   },
+  created() {
+    console.log(this.getUserInfo);
+  },
 };
 </script>
 
@@ -201,7 +208,7 @@ export default {
     height: 60px;
     display: flex;
     flex-direction: row;
-    border: 1px solid rgb(230, 215, 215);
+    background-color: rgb(247, 250, 253);
     margin-bottom: 5px;
     .title {
       flex-grow: 30;
@@ -211,13 +218,13 @@ export default {
         color: rgb(14, 13, 11);
       }
     }
-    .adminInfo {
+    .user {
       flex-grow: 1;
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      // border: 1px solid rgb(245, 238, 238);
+      grid-gap: 5px;
     }
   }
   .header_tab {

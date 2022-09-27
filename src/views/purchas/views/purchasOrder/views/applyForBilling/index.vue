@@ -95,7 +95,7 @@
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updatePurchaseOrder(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>订单详情</el-button>
+          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -113,11 +113,11 @@
       >
       </el-pagination>
     </div>
-    <!-- 操作表格 -->
-    <div class="editPlanItem" v-show="editTable.show">
+    <!-- 采购单详情 -->
+    <el-dialog title="采购单详情" :visible.sync="planDetailDiolog.show" center width="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
-      <el-table :data="editTable.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
+      <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
             <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
@@ -136,11 +136,15 @@
           </template>
         </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
-        <el-table-column prop="createTime" label="添加时间" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center">
+          <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+        </el-table-column>
       </el-table>
-    </div>
+    </el-dialog>
     <!-- 引入计划单对话框 -->
-    <el-dialog title="引入采购计划申请" center :visible.sync="introducePlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
+    <el-dialog title="引入采购计划单" center :visible.sync="introducePlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
       <div class="dialogSelectInput">
         <div>
           <el-button type="primary" size="mini" class="el-icon-plus" @click="importPurhaseOrder()"> 引入 </el-button>
@@ -228,7 +232,7 @@ export default {
         total: 0,
         loading: true,
       },
-      editTable: {
+      planDetailDiolog: {
         editPurchaseId: '',
         show: false,
         detailPlanItems: [],
@@ -305,7 +309,7 @@ export default {
           console.log(message);
           return;
         }
-        this.editTable.detailPlanItems = data;
+        this.planDetailDiolog.detailPlanItems = data;
       });
     },
     //获取通过
@@ -469,10 +473,10 @@ export default {
       });
     },
     //显示采购单子项目
-    showEditTable(row) {
-      this.editTable.editPurchaseId = row.purchaseId;
+    showplanDetailDiolog(row) {
+      this.planDetailDiolog.editPurchaseId = row.purchaseId;
       this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.editTable.show = true;
+      this.planDetailDiolog.show = true;
     },
   },
   created() {
@@ -499,26 +503,20 @@ export default {
       justify-content: flex-start; //左对齐lex-end：右对齐 space-between：两端对齐，项目之间的间隔都相等
     }
     .edit_query {
-      width: 100%;
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
+
       .edit_query_1 {
-        width: 100%;
-        text-align: center;
         div {
           width: 100%;
-          color: rgb(0, 153, 255);
         }
       }
+      .edit_query_1:last-child {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
     }
-  }
-  .warning-row {
-    background: rgb(194, 173, 135);
-  }
-
-  .success-row {
-    background: #f0f9eb;
   }
   .editPlanItem {
     position: relative;

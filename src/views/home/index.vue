@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-    home
-    <div id="myChart" :style="{ width: '500px', height: '400px' }"></div>
-   
+    <!-- <div id="myChart" :style="{ width: '500px', height: '400px' }"></div> -->
+    <div id="columnChart" :style="{ width: '500px', height: '400px' }"></div>
   </div>
 </template>
 
@@ -11,21 +10,13 @@ import * as echarts from 'echarts';
 // import signalR from "@/utils/signalR.js";
 export default {
   data() {
-    return {
-      chartValue: [
-        { value: 1048, name: '文学' },
-        { value: 735, name: '励志' },
-        { value: 580, name: '小说' },
-        { value: 484, name: '故事' },
-        { value: 300, name: '言情' },
-      ],
-      num: 1,
-    };
+    return {};
   },
   //实例被挂载后调用
   mounted() {
     // this.startConnection();
     // this.drawLine();
+    this.initializeColumnChart();
   },
   methods: {
     //启动连接
@@ -88,6 +79,28 @@ export default {
       myChart.on('click', function(event) {
         console.log(event);
       });
+    },
+    initializeColumnChart() {
+      var chartDom = document.getElementById('columnChart');
+      var myChart = echarts.init(chartDom);
+      var option;
+      option = {
+        legend: {},
+        tooltip: {},
+        dataset: {
+          source: [
+            ['product', '2015', '2016', '2017'],
+            ['Matcha Latte', 43.3, 85.8, 93.7],
+            ['Milk Tea', 83.1, 73.4, 55.1],
+            ['Cheese Cocoa', 86.4, 65.2, 82.5],
+            ['Walnut Brownie', 72.4, 53.9, 39.1],
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: {},
+        series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+      };
+      option && myChart.setOption(option);
     },
   },
 };

@@ -41,7 +41,7 @@
 
       <el-submenu index="warehouse">
         <template slot="title">
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-s-grid"></i>
           <span>仓库管理</span>
         </template>
         <el-menu-item index="/warehouse/putInWarehouse/PurchaseReceipt">入库管理</el-menu-item>
@@ -50,7 +50,7 @@
 
       <el-submenu index="sales">
         <template slot="title">
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-s-data"></i>
           <span>销售管理</span>
         </template>
         <el-menu-item index="4-2">基础设置</el-menu-item>
@@ -59,7 +59,7 @@
 
       <el-submenu index="finance">
         <template slot="title">
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-s-order"></i>
           <span>财务管理</span>
         </template>
         <el-menu-item index="4-2">基础设置</el-menu-item>

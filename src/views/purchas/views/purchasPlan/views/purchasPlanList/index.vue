@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column prop="stateStr" label="状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions type="warning" effect="plain">{{ scope.row.stateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.stateStr }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商名称" align="center"> </el-table-column>
@@ -71,7 +71,7 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>申请详情</el-button>
+          <el-button type="info" size="mini" @click="showPlanDetail(scope.row)" plain>申请详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -89,11 +89,10 @@
       >
       </el-pagination>
     </div>
-    <!-- 操作表格 -->
-    <div class="editPlanItem" v-show="editTable.show">
+      <!-- 采购计划详情对话框 -->
+    <el-dialog title="采购计划详情" :visible.sync="planDetailDiolog.show" center width="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
-      <el-table :data="editTable.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
             <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
@@ -112,9 +111,13 @@
           </template>
         </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
-        <el-table-column prop="createTime" label="添加时间" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center">
+          <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+        </el-table-column>
       </el-table>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,7 +133,7 @@ export default {
         warehouseId: '',
         approvalName: '',
         state: '',
-        IsToBeSubmitted:false,
+        IsToBeSubmitted: false,
       },
       //新建采购计划表
       purchasPlanForm: {
@@ -143,11 +146,11 @@ export default {
         applicanSKUIds: [],
       },
       table: {
-        purchasPlanList: [],
+        purchasePlanList: [],
         total: 0,
         loading: true,
       },
-      editTable: {
+      planDetailDiolog: {
         editPurchaseId: '',
         show: false,
         detailPlanItems: [],
@@ -234,7 +237,7 @@ export default {
           console.log(message);
           return;
         }
-        this.editTable.detailPlanItems = data;
+        this.planDetailDiolog.detailPlanItems = data;
       });
     },
     //获取指定供应商指定货品数据
@@ -272,6 +275,7 @@ export default {
     //条数改变
     handleSizeChange(row) {
       this.queryForm.row = row;
+      console.log(row);
       this.loadData();
     },
     //页数改变
@@ -405,10 +409,21 @@ export default {
       }
     },
     //显示采购单子项目
-    showEditTable(row) {
-      this.editTable.editPurchaseId = row.purchaseId;
+    showPlanDetail(row) {
+      this.planDetailDiolog.editPurchaseId = row.purchaseId;
       this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.editTable.show = true;
+      this.planDetailDiolog.show = true;
+    },
+    getElTagClass(row) {
+      if (row.stateStr == '已审核') {
+        return 'success';
+      } else if (row.stateStr == '待审核') {
+        return 'warning';
+      } else if (row.stateStr == '已引用') {
+        return 'info';
+      } else {
+        return '';
+      }
     },
   },
   created() {
@@ -445,20 +460,6 @@ export default {
         }
       }
     }
-  }
-  .warning-row {
-    background: rgb(194, 173, 135);
-  }
-
-  .success-row {
-    background: #f0f9eb;
-  }
-  .editPlanItem {
-    position: relative;
-    z-index: 999;
-    bottom: -120px;
-    // border: 1px solid red;
-    // width: 100%;
   }
 }
 </style>

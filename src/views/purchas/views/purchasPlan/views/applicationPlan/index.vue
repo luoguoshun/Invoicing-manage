@@ -34,7 +34,7 @@
     </div>
     <!-- 表格 -->
     <el-table
-      :data="table.purchasPlanList"
+      :data="table.purchasePlanList"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectPlanRows"
       v-loading="table.loading"
@@ -47,7 +47,7 @@
       </el-table-column>
       <el-table-column prop="stateStr" label="状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions effect="plain">{{ scope.row.stateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.stateStr }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商名称" align="center"> </el-table-column>
@@ -74,7 +74,7 @@
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>详情</el-button>
+          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,49 +92,9 @@
       >
       </el-pagination>
     </div>
-    <!-- 操作表格 -->
-    <div class="editPlanItem" v-show="editTable.show">
-      <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
-      <el-table :data="editTable.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
-        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
-          <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
-        <el-table-column label="供应商进价" width="120" align="center">
-          <template slot-scope="scope">
-            <el-tag type="success">{{ scope.row.purchasePrice }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="count" label="采购数量" align="center">
-          <template slot-scope="scope">
-            <el-input type="number" size="mini" v-model.number="scope.row.count" @change="addGoodsCount(scope.$index, scope.row)"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPrice" label="总价" align="center">
-          <template slot-scope="scope">
-            <el-tag type="success">{{ scope.row.totalPrice }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="remarks" label="备注" align="center">
-          <template slot-scope="scope">
-            <el-input type="textare" rows="2" size="mini" v-model="scope.row.remarks"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="添加时间" align="center"></el-table-column>
-        <el-table-column label="操作" width="150" align="center">
-          <template slot-scope="scope">
-            <el-button size="mini" type="danger" @click="deletePurchaseDetail(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
     <!-- 添加供应商货品对话框 -->
-    <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" width="50%">
-      <el-form ref="purchasePlanForm" :rules="puchasePlanRules" :model="purchasePlanForm" label-width="80px">
+    <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
+      <el-form ref="purchasePlanForm" :rules="puchasePlanRules" :model="purchasePlanForm" label-width="80px" class="editform">
         <el-form-item label="申请仓库" prop="warehouseId">
           <el-select size="mini" filterable v-model="purchasePlanForm.warehouseId">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -174,11 +134,63 @@
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
         <el-table-column prop="purchasePrice" label="单品进价" align="center"> </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination
+          @size-change="dialogSizeChange"
+          @current-change="dialogCurrentChange"
+          :total="table.total"
+          :page-sizes="[5, 10, 15, 20]"
+          :current-page="queryForm.page"
+          :page-size="queryForm.row"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        >
+        </el-pagination>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="applicationPlanDiolog.Visible = false">取 消</el-button>
         <el-button type="success" @click="addPurchasPlan()">申 请</el-button>
       </div>
     </el-dialog>
+    <el-drawer title="采购计划申请" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
+      <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
+      <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+        <el-table-column label="供应商进价" width="120" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.purchasePrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="count" label="采购数量" align="center">
+          <template slot-scope="scope">
+            <el-input-number type="number" size="mini" v-model.number="scope.row.count" @change="addGoodsCount(scope.$index, scope.row)"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPrice" label="总价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.totalPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remarks" label="备注" align="center">
+          <template slot-scope="scope">
+            <el-input type="textare" rows="2" size="mini" v-model="scope.row.remarks"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center"> </el-table-column>
+        <el-table-column label="操作" width="150" align="center">
+          <template slot-scope="scope">
+            <el-button size="mini" type="danger" @click="deletePurchaseDetail(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
   </div>
 </template>
 
@@ -207,11 +219,11 @@ export default {
         applicanSKUIds: [],
       },
       table: {
-        purchasPlanList: [],
+        purchasePlanList: [],
         total: 0,
         loading: true,
       },
-      editTable: {
+      planDetailDiolog: {
         editPurchaseId: '',
         show: false,
         detailPlanItems: [],
@@ -260,7 +272,7 @@ export default {
           console.log(message);
           return;
         }
-        this.table.purchasPlanList = data.purchase;
+        this.table.purchasePlanList = data.purchase;
         this.table.total = data.count;
         this.table.loading = false;
       });
@@ -287,7 +299,7 @@ export default {
           console.log(message);
           return;
         }
-        this.editTable.detailPlanItems = data;
+        this.planDetailDiolog.detailPlanItems = data;
       });
     },
     //构造供应商下拉数据
@@ -400,16 +412,17 @@ export default {
             this.$message.error('撤销失败，服务器未知错误');
           } else {
             this.$message({ message: '撤销成功！', type: 'success' });
+            this.planDetailDiolog.show = false;
             this.loadData();
           }
         });
       }
     },
     //显示采购单子项目
-    showEditTable(row) {
-      this.editTable.editPurchaseId = row.purchaseId;
+    showplanDetailDiolog(row) {
+      this.planDetailDiolog.editPurchaseId = row.purchaseId;
       this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.editTable.show = true;
+      this.planDetailDiolog.show = true;
     },
     //打开申请表模态框
     openApplicationPlanDiolog() {
@@ -436,6 +449,16 @@ export default {
           return true;
         }
       });
+      this.getSKUListBySupplierId();
+    },
+    //对话框表格条数改变
+    dialogSizeChange(row) {
+      this.applicationPlanDiolog.skuQueryForm.row = row;
+      this.getSKUListBySupplierId();
+    },
+    //对话框表格页数改变
+    dialogCurrentChange(page) {
+      this.applicationPlanDiolog.skuQueryForm = page;
       this.getSKUListBySupplierId();
     },
     //获取采购计划选中行的数据
@@ -477,49 +500,72 @@ export default {
     },
     //添加物品数量触发函数
     addGoodsCount(index, row) {
-      this.editTable.detailPlanItems[index]['totalPrice'] = row.count * row.purchasePrice;
+      this.planDetailDiolog.detailPlanItems[index]['totalPrice'] = row.count * row.purchasePrice;
     },
     //更新采购计划项目
     updatePurchaseDetails() {
-      this.$api.purchase.updatePurchaseDetails(this.editTable.editPurchaseId, this.editTable.detailPlanItems).then((res) => {
+      this.$api.purchase.updatePurchaseDetails(this.planDetailDiolog.editPurchaseId, this.planDetailDiolog.detailPlanItems).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);
         } else {
           this.$message({ message: '保存成功！', type: 'success' });
-          this.editTable.show = false;
+          this.planDetailDiolog.show = false;
           this.loadData();
         }
       });
     },
     //移除采购计划单的子项目
     deletePurchaseDetail(index, row) {
-      this.$api.purchase.deletePurchaseDetail(this.editTable.editPurchaseId, row.purchaseDetailId).then((res) => {
+      this.$api.purchase.deletePurchaseDetail(this.planDetailDiolog.editPurchaseId, row.purchaseDetailId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);
         } else {
           this.$message({ message: '移除成功！', type: 'success' });
-          this.editTable.show = false;
+          this.planDetailDiolog.show = false;
           this.loadData();
         }
       });
     },
     //提交采购申请
-    submitApplications() {
+    async submitApplications() {
+      let success = true;
       if (this.purchasePlanIds.length == 0) {
         this.$message({ message: '请选择提交的计划', type: 'warning' });
       } else {
-        this.$api.purchase.submitApplications(this.purchasePlanIds).then((res) => {
-          const { data, success, message } = res.data;
-          if (!success) {
-            this.$message.error(message);
-          } else {
-            this.$message({ message: '提交成功！', type: 'success' });
-            this.editTable.show = false;
-            this.loadData();
+        //判断采购计划是否含有采购数量为空的数据
+        for (let index = 0; index < this.purchasePlanIds.length; index++) {
+          const purchaseId = this.purchasePlanIds[index];
+          await this.getDetailPlanListByPurchasId(purchaseId);
+          for (let i = 0; i < this.planDetailDiolog.detailPlanItems.length; i++) {
+            const item = this.planDetailDiolog.detailPlanItems[i];
+            if (item.count == 0) {
+              this.$message({ message: '采购计划含有采购数量为空的数据', type: 'warning' });
+              success = false;
+              return; //终止所有for循环
+            }
           }
-        });
+        }
+        if (success) {
+          this.$api.purchase.submitApplications(this.purchasePlanIds).then((res) => {
+            const { data, success, message } = res.data;
+            if (!success) {
+              this.$message.error(message);
+            } else {
+              this.$message({ message: '提交成功！', type: 'success' });
+              this.planDetailDiolog.show = false;
+              this.loadData();
+            }
+          });
+        }
+      }
+    },
+    getElTagClass(row) {
+      if (row.stateStr == '驳回') {
+        return 'danger';
+      } else {
+        return '';
       }
     },
   },
@@ -561,14 +607,9 @@ export default {
       }
     }
   }
-  .editPlanItem {
-    // background-color: rgb(136, 115, 87);
-
-    position: relative;
-    z-index: 999;
-    bottom: -120px;
-    // border: 1px solid red;
-    // width: 100%;
+  .editform {
+    width: 40%;
+    overflow: hidden;
   }
   .selectInput {
     display: grid;

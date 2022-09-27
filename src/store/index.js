@@ -22,10 +22,8 @@ const store = new Vuex.Store({
   // 数据持久化
   plugins: [
     createPersistedState({
-      //key是存储数据的键名
-      key: 'routersData',
-      //paths是存储state中的那些数据，如果是模块下具体的数据需要加上模块名称，如user.token  
-      paths: ["routers.dynamicRouters"]
+      key: 'routersData', //key是存储数据的键名
+      paths: ["routers.dynamicRouters"] //paths是存储state中的那些数据，如果是模块下具体的数据需要加上模块名称，如user.token  
     })
   ]
 });
