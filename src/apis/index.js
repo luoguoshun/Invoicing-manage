@@ -11,6 +11,7 @@ import goodsType from './goodsType';
 import purchase from './purchase';
 import stock from './stock';
 import purchaseOrder from './purchaseOrder'
+import workFlow from './workFlow'
 
 export default {
   account,
@@ -26,4 +27,5 @@ export default {
   purchase,
   stock,//仓库管理
   purchaseOrder,
+  workFlow
 };

@@ -380,7 +380,7 @@ export default {
     getElTagClass(row) {
       if (row.orderStateStr=="已审核") {
         return 'success'
-      } else if(row.orderStateStr=="待审核") {
+      } else if(row.orderStateStr=="审核中") {
         return 'warning';
       }else {
         return '';

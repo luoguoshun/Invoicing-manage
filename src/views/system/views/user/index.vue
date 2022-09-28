@@ -54,6 +54,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="idNumber" label="身份证号码" width="200" align="center"> </el-table-column>
+      <el-table-column prop="departmentName" label="部门名称" width="200" align="center"> </el-table-column>
       <el-table-column prop="address" label="住址" align="center"> </el-table-column>
       <el-table-column prop="phone" label="联系方式" align="center"> </el-table-column>
       <el-table-column label="角色" align="center">
@@ -133,7 +134,6 @@
         <el-button type="success" @click="updateUserInfo()">修 改</el-button>
       </div>
     </el-dialog>
-
     <!-- 添加用户信息对话框 -->
     <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
       <el-form :model="userForm" :rules="rules" ref="userForm" label-width="80px">

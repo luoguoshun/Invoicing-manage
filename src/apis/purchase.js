@@ -26,6 +26,12 @@ export default {
     getDetailPlanListByPurchasId(purchaseId) {
         return ajax.get('/api/Background/Purchase/GetDetailPlanListByPurchasId?purchasId=' + purchaseId + '');
     },
+    //获取我需要审批的采购计划列表
+    getNeedRreviewPlanByUserId(queryForm) {
+        return ajax.post('/api/Background/Purchase/GetNeedRreviewPlanByUserId', {
+            ...queryForm
+        });
+    },
     //获取通过审核的采购计划列表
     getPassPurchasePlanList(queryForm) {
         return ajax.post('/api/Background/Purchase/GetPassPurchasePlanList', {
@@ -89,7 +95,7 @@ export default {
      * @return {bool} 
      */
      adoptPurchaseRequest(purchaseIds) {
-        return ajax.post('/api/Background/Purchase/ConfirmPurchaseRequest', purchaseIds);
+        return ajax.post('/api/Background/Purchase/AdoptPurchaseRequest', purchaseIds);
     },
     /**
      * @description:驳回采购申请单
