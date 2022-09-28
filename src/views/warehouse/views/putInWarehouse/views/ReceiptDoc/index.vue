@@ -38,57 +38,33 @@
       <el-table-column prop="sourceOrderId" label="来源单号" align="center"> </el-table-column>
       <el-table-column prop="operationPerson" label="提交人" align="center"> </el-table-column>
       <el-table-column prop="warehouseName" label="仓库名称" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="采购总价" align="center"> </el-table-column>
+      <el-table-column prop="orderTotalPrice" label="采购总价" align="center"> </el-table-column>
       <el-table-column prop="unit" label="物品总成本" align="center"> </el-table-column>
-      <el-table-column prop="totalPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="totalPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column prop="totalPrice" label="订单总价" align="center"> </el-table-column>
-      <el-table-column prop="putTotalNum" label="入库数量" align="center"> </el-table-column>
+      <el-table-column prop="otherCost" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="transportCost" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="orderTotalPrice" label="订单总价" align="center"> </el-table-column>
+      <el-table-column prop="putTotalNum" label="入库总量" align="center"> </el-table-column>
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showEditTable(scope.row)" plain>详情</el-button>
+          <el-button type="info" size="mini" @click="getPutinWarehouseOrderDetail(scope.row)" plain>详情</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 操作表格 -->
+    <!-- 入库单明细表格 -->
     <div class="editPlanItem">
       <el-divider></el-divider>
       <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="table.PutinWarehousDetailList">
         <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
-        <el-table-column prop="count" label="采购数量" align="center">
-          <template>
-            <el-input type="number" size="mini"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="count" label="入库数量" align="center">
-          <template>
-            <el-input type="number" size="mini"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPrice" label="物品采购价" align="center">
-          <template>
-            <el-tag type="success"></el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPrice" label="物品成本" align="center">
-          <template >
-            <el-tag type="success"></el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPrice" label="物品采购总价" align="center">
-          <template >
-            <el-tag type="success"></el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalPrice" label="物品总成本" align="center">
-          <template >
-            <el-tag type="success"></el-tag>
-          </template>
-        </el-table-column>
+        <el-table-column prop="count" label="采购数量" align="center"> </el-table-column>
+        <el-table-column prop="putinCount" label="入库数量" align="center"> </el-table-column>
+        <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
+        <el-table-column prop="goodsCost" label="物品成本" align="center"> </el-table-column>
+        <el-table-column prop="purchaseAmount" label="物品采购总价" align="center"> </el-table-column>
+        <el-table-column prop="goodsTotalcost" label="物品总成本" align="center"> </el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
         <el-table-column label="操作" width="150" align="center">
           <template>
@@ -124,8 +100,10 @@ export default {
   methods: {
     loadData() {
       this.getPutinWarehouseOrder();
+      this.getWarehouseList();
     },
 
+    //获取入库单信息
     async getPutinWarehouseOrder() {
       await this.$api.stock
         .getPutInWarehouseOrder(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.WarehouseType)
@@ -141,6 +119,7 @@ export default {
         });
     },
 
+    //获取入库单详情信息
     async getPutinWarehouseOrderDetail(row) {
       await this.$api.stock.GetPutinWarehousDetail(this.queryForm.page, this.queryForm.row, row.putinWarehousId).then((res) => {
         const { data, success, message } = res.data;
@@ -154,15 +133,16 @@ export default {
       });
     },
 
+    //提交入库单申请
     async submitPutinWarehousApply() {
-      for (let i =0;i<this.PutinWarehousState.length;i++) {
+      for (let i = 0; i < this.PutinWarehousState.length; i++) {
         debugger;
-        if (this.PutinWarehousState[i]=="已完成") {
+        if (this.PutinWarehousState[i] == '已完成') {
           this.$message({
             message: '只能提交编辑中的入库单！',
             type: 'warning',
           });
-          this.PutinWarehousState=[];
+          this.PutinWarehousState = [];
           return false;
         }
       }
@@ -184,7 +164,20 @@ export default {
         });
       }
     },
-
+    //获取仓库列表数据
+    async getWarehouseList() {
+      this.warehouseList = [];
+      await this.$api.warehouse.getWarehouseList(1, 100, '', 0).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        data.warehouses.forEach((item) => {
+          this.warehouseList.push({ warehouseId: item.warehouseId, warehouseName: item.warehouseName });
+        });
+      });
+    },
     selectRows(selection) {
       this.PutinWarehousIds = [];
       selection.forEach((element) => {
