@@ -3,8 +3,8 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSupplier()" round>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()">添加 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSupplier()">
           移除
         </el-button>
       </div>
@@ -254,7 +254,6 @@ export default {
     },
     //页数改变
     handleCurrentChange(page) {
-
       this.queryForm.page = page;
       this.loadData();
     },

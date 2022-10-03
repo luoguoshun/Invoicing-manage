@@ -50,8 +50,8 @@
           <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.stateStr }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="supplierName" label="供应商名称" align="center"> </el-table-column>
-      <el-table-column prop="applicantName" label="开单人" align="center"></el-table-column>
+      <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
+      <el-table-column prop="applicantName" label="申请人" align="center"></el-table-column>
       <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center">
         <template slot-scope="scope">
@@ -105,8 +105,8 @@
             <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="申请人" prop="applicantId">
-          <el-input size="mini" type="text" v-model="purchasePlanForm.applicantId"></el-input>
+        <el-form-item label="申请人" prop="applicanName">
+          <el-input size="mini" type="text" v-model="purchasePlanForm.applicanName" disabled></el-input>
         </el-form-item>
         <el-form-item label="备注"> <el-input type="textarea" v-model="purchasePlanForm.remarks"></el-input> </el-form-item>
       </el-form>
@@ -170,7 +170,12 @@
         </el-table-column>
         <el-table-column prop="count" label="采购数量" align="center">
           <template slot-scope="scope">
-            <el-input-number type="number" size="mini" v-model.number="scope.row.count" @change="addGoodsCount(scope.$index, scope.row)"></el-input-number>
+            <el-input-number
+              type="number"
+              size="mini"
+              v-model.number="scope.row.count"
+              @change="addGoodsCount(scope.$index, scope.row)"
+            ></el-input-number>
           </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="总价" align="center">
@@ -427,9 +432,9 @@ export default {
     //打开申请表模态框
     openApplicationPlanDiolog() {
       this.applicationPlanDiolog.Visible = true;
-      (this.purchasePlanForm.applicantId = ''),
-        (this.purchasePlanForm.applicanName = ''),
-        console.log('userInfo/getuserInfo' + store.getters['userInfo/getuserInfo']);
+      const userInfo = store.getters['userInfo/getUserInfo'];
+      this.purchasePlanForm.applicantId = userInfo.userId || '';
+      this.purchasePlanForm.applicanName = userInfo.name || '';
       // 加载数据
       this.getSupplierList();
       this.getGoodInfoType();

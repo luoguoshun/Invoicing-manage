@@ -53,7 +53,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="orderStateStr" label="采购单状态" align="center">
+      <el-table-column prop="orderStateStr" label="状态" align="center">
         <template slot-scope="scope">
           <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.orderStateStr }}</el-tag>
         </template>
@@ -64,7 +64,7 @@
       <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="orderTotalPrice" label="采购单总价" align="center"></el-table-column>
+      <el-table-column prop="orderTotalPrice" label="采购总价" align="center"></el-table-column>
       <el-table-column prop="warehouseName" label="接收仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
@@ -300,9 +300,9 @@ export default {
           this.purchaseOrderIds.forEach((purchaseOrderId) => {
             if (plan.purchaseOrderId == purchaseOrderId) {
               //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '待审核') {
+              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
                 this.$message({
-                  message: '请选择待审核的采购单',
+                  message: '请选择审核中的采购单',
                   type: 'warning',
                 });
                 adopt = false;
@@ -345,9 +345,9 @@ export default {
           this.purchaseOrderIds.forEach((purchaseOrderId) => {
             if (plan.purchaseOrderId == purchaseOrderId) {
               //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '待审核') {
+              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
                 this.$message({
-                  message: '请选择待审核的采购单',
+                  message: '请选择审核中的采购单',
                   type: 'warning',
                 });
                 adopt = false;

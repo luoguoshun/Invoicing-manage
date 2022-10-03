@@ -6,7 +6,7 @@
         <p>翻斗花园进销存管理系统</p>
       </div>
       <div class="user">
-        <el-avatar  :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>    
+        <el-avatar :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -191,9 +191,7 @@ export default {
       }
     },
   },
-  created() {
-    console.log(this.getUserInfo);
-  },
+  created() {},
 };
 </script>
 

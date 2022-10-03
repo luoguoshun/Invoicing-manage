@@ -63,8 +63,8 @@
           <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.stateStr }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="supplierName" label="供应商名称" align="center"> </el-table-column>
-      <el-table-column prop="applicantName" label="开单人" align="center"></el-table-column>
+      <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
+      <el-table-column prop="applicantName" label="申请人" align="center"></el-table-column>
       <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
@@ -99,7 +99,7 @@
       </el-pagination>
     </div>
     <!-- 采购计划详情对话框 -->
-    <el-dialog title="采购计划详情" :visible.sync="planDetailDiolog.show" center width="70%">
+    <el-drawer title="采购计划申请" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
       <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
@@ -126,7 +126,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
+    </el-drawer>
     <!-- 审核记录对话框 -->
     <el-dialog title="审批记录" center :visible.sync="dialogObject.approvalDetails" width="30%">
       <el-timeline>
@@ -255,7 +255,6 @@ export default {
     // //获取我需要审批的采购计划列表
     async getNeedRreviewPlanByUserId() {
       this.IsToBeList = true;
-      this.IsToBeList = false;
       var queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.state=queryForm.state == '' ? 0 : parseInt(queryForm.state);
       await this.$api.purchase.getNeedRreviewPlanByUserId(queryForm).then((res) => {

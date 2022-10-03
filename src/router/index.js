@@ -160,25 +160,25 @@ const routes = [{
       },
       //采购管理
       {
-        path: '/purchas',
-        name: 'purchas',
-        component: () => import(`@/views/purchas`),
+        path: '/purchase',
+        name: 'purchase',
+        component: () => import(`@/views/purchase`),
         meta: {
           title: '采购管理',
           isAuth: true
         },
         children: [{
-          path: 'purchasOrder',
-          name: 'purchasOrder',
-          component: () => import('@/views/purchas/views/purchasOrder'),
+          path: 'purchaseOrder',
+          name: 'purchaseOrder',
+          component: () => import('@/views/purchase/views/purchaseOrder'),
           meta: {
             title: '采购订单管理',
             isAuth: true
           },
           children: [{
-              path: 'purchasOrderList',
-              name: 'purchasOrderList',
-              component: () => import('@/views/purchas/views/purchasOrder/views/purchasOrderList'),
+              path: 'purchaseOrderList',
+              name: 'purchaseOrderList',
+              component: () => import('@/views/purchase/views/purchaseOrder/views/purchaseOrderList'),
               meta: {
                 title: '采购订单列表',
                 isAuth: true
@@ -187,7 +187,7 @@ const routes = [{
             {
               path: 'applyForBilling',
               name: 'applyForBilling',
-              component: () => import('@/views/purchas/views/purchasOrder/views/applyForBilling'),
+              component: () => import('@/views/purchase/views/purchaseOrder/views/applyForBilling'),
               meta: {
                 title: '申请采购开单',
                 isAuth: true
@@ -195,9 +195,9 @@ const routes = [{
             }
           ]
         }, {
-          path: 'purchasPlan',
-          name: 'purchasPlan',
-          component: () => import('@/views/purchas/views/purchasPlan'),
+          path: 'purchasePlan',
+          name: 'purchasePlan',
+          component: () => import('@/views/purchase/views/purchasePlan'),
           meta: {
             title: '采购计划管理',
             isAuth: true
@@ -205,12 +205,12 @@ const routes = [{
           children: [{
               path: 'applicationPlan',
               name: 'applicationPlan',
-              component: () => import('@/views/purchas/views/purchasPlan/views/applicationPlan'),
+              component: () => import('@/views/purchase/views/purchasePlan/views/applicationPlan'),
             },
             {
-              path: 'purchasPlanList',
-              name: 'purchasPlanList',
-              component: () => import('@/views/purchas/views/purchasPlan/views/purchasPlanList'),
+              path: 'purchasePlanList',
+              name: 'purchasePlanList',
+              component: () => import('@/views/purchase/views/purchasePlan/views/purchasePlanList'),
             }
           ]
         }]
@@ -233,8 +233,8 @@ const routes = [{
             isAuth: true
           },
           children: [{
-            path: 'PurchaseReceipt',
-            name: 'PurchaseReceipt',
+            path: 'purchaseReceipt',
+            name: 'purchaseReceipt',
             component: () => import('@/views/warehouse/views/putInWarehouse/views/PurchaseReceipt'),
           }, {
             path: 'ReturnReceipt',
@@ -255,6 +255,15 @@ const routes = [{
           title: '日志管理',
           isAuth: true
         },
+        children: [{
+          path: 'operateLog',
+          name: 'operateLog',
+          component: () => import('@/views/logs/views/operateLog'),
+        }, {
+          path: 'systemLog',
+          name: 'systemLog',
+          component: () => import('@/views/logs/views/systemLog'),
+        }, ],
       },
     ],
   },

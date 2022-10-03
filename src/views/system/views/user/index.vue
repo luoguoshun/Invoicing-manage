@@ -31,19 +31,19 @@
       @selection-change="selectRows"
       border=""
     >
-      <el-table-column type="selection" width="45" align="center"> </el-table-column>
-      <el-table-column fixed prop="userId" label="编号" width="90" align="center"> </el-table-column>
+      <el-table-column type="selection" width="40" align="center"> </el-table-column>
+      <el-table-column fixed prop="userId" label="编号" align="center"> </el-table-column>
       <el-table-column label="头像" width="100" align="center">
         <template slot-scope="scope">
           <el-image style="width: 60px; height: 50px" :src="scope.row.headerImgUrl" :preview-src-list="[scope.row.headerImgUrl]"></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="80" align="center">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="scope">
           <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" label="性别" width="80" align="center">
+      <el-table-column prop="sex" label="性别" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.sex == 1">
             男
@@ -53,8 +53,8 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="idNumber" label="身份证号码" width="200" align="center"> </el-table-column>
-      <el-table-column prop="departmentName" label="部门名称" width="200" align="center"> </el-table-column>
+      <!-- <el-table-column prop="idNumber" label="身份证号码"  align="center"> </el-table-column> -->
+      <el-table-column prop="departmentName" label="部门名称"  align="center"> </el-table-column>
       <el-table-column prop="address" label="住址" align="center"> </el-table-column>
       <el-table-column prop="phone" label="联系方式" align="center"> </el-table-column>
       <el-table-column label="角色" align="center">
@@ -62,12 +62,12 @@
           {{ scope.row.roleNames }}
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="150" align="center">
+      <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column prop="state" label="状态" width="80" align="center">
+      <el-table-column prop="state" label="状态"  align="center">
         <template slot-scope="scope">
           <el-switch
             class="switch"
@@ -80,7 +80,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100" align="center">
+      <el-table-column fixed="right" label="操作" align="center">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="updateDiolog(scope.row)">查看</el-button>
         </template>
@@ -496,13 +496,10 @@ export default {
     margin: 20px 0px 10px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 2fr 1.1fr;
+    grid-template-columns: 1.5fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
@@ -510,10 +507,6 @@ export default {
       // border: 1px solid red;
       grid-template-columns: 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
     }
   }
 }
