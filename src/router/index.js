@@ -247,6 +247,34 @@ const routes = [{
           }],
         }, ]
       },
+      //财务管理
+      {
+        path: '/financial',
+        name: 'financial',
+        component: () => import(`@/views/financial`),
+        meta: {
+          title: '财务管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'accountsPayable',
+          name: 'accountsPayable',
+          component: () => import('@/views/financial/views/accountsPayable'),
+          meta: {
+            title: '应收账',
+            isAuth: true
+          },
+        }, {
+          path: 'accountReceivable',
+          name: 'accountReceivable',
+          component: () => import('@/views/financial/views/accountReceivable'),
+          meta: {
+            title: '应收账',
+            isAuth: true
+          },
+        }, ],
+      },
+      //日志管理
       {
         path: '/logs',
         name: 'logs',

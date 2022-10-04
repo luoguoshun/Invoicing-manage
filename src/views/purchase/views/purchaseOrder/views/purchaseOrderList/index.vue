@@ -9,7 +9,7 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()">
           驳回
         </el-button>
-      </div>
+      </div> 
       <div class="edit_query">
         <div class="edit_query_1">
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -19,6 +19,8 @@
           <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
             <el-option label="待审核" value="2"></el-option>
             <el-option label="已审核" value="3"></el-option>
+            <el-option label="已完成" value="5"></el-option>
+            <el-option label="部分到货" value="6"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
@@ -399,10 +401,9 @@ export default {
 .purchasOrder {
   width: 100%;
   height: 100%;
-  position: relative;
   .editbar {
     width: 100%;
-    margin: 10px 0px;
+    margin: 5px 0px;
     display: grid;
     grid-template-columns: 0.5fr 1fr;
     .edit_btn {
@@ -415,11 +416,6 @@ export default {
       display: grid;
       grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        div {
-          width: 100%;
-        }
-      }
       .edit_query_1:last-child {
         display: grid;
         grid-template-columns: 1fr 1fr;

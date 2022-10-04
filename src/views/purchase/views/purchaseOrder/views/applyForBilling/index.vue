@@ -493,7 +493,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 10px 0px;
+    margin: 5px 0px;
     display: grid;
     grid-template-columns: 0.5fr 1fr;
     .edit_btn {
@@ -506,12 +506,6 @@ export default {
       display: grid;
       grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
-
-      .edit_query_1 {
-        div {
-          width: 100%;
-        }
-      }
       .edit_query_1:last-child {
         display: grid;
         grid-template-columns: 1fr 1fr;

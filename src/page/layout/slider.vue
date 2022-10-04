@@ -57,13 +57,13 @@
         <el-menu-item index="4-3">其他</el-menu-item>
       </el-submenu>
 
-      <el-submenu index="finance">
+      <el-submenu index="financial">
         <template slot="title">
           <i class="el-icon-s-order"></i>
           <span>财务管理</span>
         </template>
-        <el-menu-item index="4-2">基础设置</el-menu-item>
-        <el-menu-item index="4-3">其他</el-menu-item>
+        <el-menu-item index="/financial/accountsPayable">应付账管理</el-menu-item>
+        <el-menu-item index="/financial/accountReceivable">应收账管理</el-menu-item>
       </el-submenu>
 
       <el-submenu index="logs">

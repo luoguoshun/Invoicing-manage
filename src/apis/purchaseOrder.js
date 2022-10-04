@@ -13,6 +13,12 @@ export default {
             ...queryForm
         });
     },
+    //获取未被应付款模块引用的采购订单
+    getNoExecuteOrderList(queryForm) {
+        return ajax.post('/api/Background/purchaseOrder/GetNoExecuteOrderList', {
+            ...queryForm
+        });
+    },
     //引入采购单
     importPurhaseOrder(purchaseIds) {
         return ajax.post('/api/Background/purchaseOrder/ImportPurhaseOrder', purchaseIds);
@@ -36,7 +42,7 @@ export default {
      * @param {purchasIds}  采购单ids
      * @return {bool} 
      */
-     adoptOrderRequest(purchaseOrderIds) {
+    adoptOrderRequest(purchaseOrderIds) {
         return ajax.post('/api/Background/purchaseOrder/AdoptOrderRequest', purchaseOrderIds);
     },
     /**
@@ -44,7 +50,7 @@ export default {
      * @param {purchasIds}  采购单ids
      * @return {bool} 
      */
-     rejectOrderRequest(purchaseOrderIds) {
+    rejectOrderRequest(purchaseOrderIds) {
         return ajax.post('/api/Background/purchaseOrder/RejectOrderRequest', purchaseOrderIds);
     },
 }

@@ -12,6 +12,7 @@ import purchase from './purchase';
 import stock from './stock';
 import purchaseOrder from './purchaseOrder'
 import workFlow from './workFlow'
+import paymentOrder from './paymentOrder'
 
 export default {
   account,
@@ -24,8 +25,9 @@ export default {
   warehouse,
   vueRouter,
   goodsType,
-  purchase,
+  purchase,//采购
   stock,//仓库管理
   purchaseOrder,
-  workFlow
+  workFlow,//审核
+  paymentOrder,//应付款
 };

@@ -16,9 +16,7 @@ export default {
   },
   //删除系统日志
   deleteLogs(logIds) {
-    return ajax.post('/api/Background/Log/DeleteLogs', {
-      logIds
-    });
+    return ajax.post('/api/Background/Log/DeleteLogs', logIds);
   },
   //导出系统日志
   exportLogs(logIds) {
@@ -35,5 +33,13 @@ export default {
       Type: type,
       PublicationDates: publicationDates,
     });
+  },
+  //导出系统操作日志
+  exportOperateRecords(operateIds) {
+    return ajax.post('/api/Background/Log/ExportOperateRecords', operateIds);
+  },
+  //删除系统操作日志
+  deleteOperateRecords(operateIds) {
+    return ajax.post('/api/Background/Log/DeleteOperateRecords', operateIds);
   },
 };

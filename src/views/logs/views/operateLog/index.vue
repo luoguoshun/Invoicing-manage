@@ -3,10 +3,10 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <!-- <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteLogs()">
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteOperateRecords()">
           移除
-        </el-button> -->
-        <el-button type="primary" size="mini" @click="exportLog()">
+        </el-button>
+        <el-button type="primary" size="mini" @click="exportOperateRecords()">
           导出数据
         </el-button>
       </div>
@@ -51,9 +51,9 @@
       <el-table-column prop="operateName" label="操作人姓名"  align="center"> </el-table-column>
       <el-table-column prop="tableId" label="表名编号" align="center"> </el-table-column>
       <el-table-column prop="tableName" label="表名" align="center"> </el-table-column>
-      <el-table-column prop="remake" label="操作说明" align="center">
+      <el-table-column prop="remarks" label="操作说明" align="center">
         <template slot-scope="scope">
-          <el-tag effect="plain">{{ scope.row.remake }}</el-tag>
+          <el-tag effect="plain">{{ scope.row.remarks }}</el-tag>
         </template>
       </el-table-column>
       <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
@@ -122,7 +122,7 @@ export default {
         logData: [],
         total: 0,
       },
-      operateLogIds: [],
+      operateIds: [],
       //修改对话框
       updateDialog: {
         visible: false,
@@ -141,14 +141,14 @@ export default {
   },
   methods: {
     //导出操作日志数据
-    exportLog() {
-      if (this.operateLogIds.length == 0) {
+    exportOperateRecords() {
+      if (this.operateIds.length == 0) {
         this.$message({
           message: '请选择要导出的数据',
           type: 'warning',
         });
       } else {
-        this.$api.log.exportLogs(this.operateLogIds).then((res) => {
+        this.$api.log.exportOperateRecords(this.operateIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -223,24 +223,24 @@ export default {
     },
     //获取选中行的数据
     selectRows(selectRows) {
-      this.operateLogIds = [];
+      this.operateIds = [];
       selectRows.forEach((element) => {
-        this.operateLogIds.push(element.logId);
+        this.operateIds.push(element.operateId);
       });
     },
     //删除多条操作日志
-    deleteLogs() {
-      if (this.operateLogIds.length == 0) {
+    deleteOperateRecords() {
+      if (this.operateIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
           type: 'warning',
         });
       } else {
-        this.$api.log.deleteLogs(this.operateLogIds).then((res) => {
+        this.$api.log.deleteOperateRecords(this.operateIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
-            this.$message.error('删除失败！');
+            this.$message.error(message);
           } else {
             this.$message({ message: '删除成功！', type: 'success' });
             this.loadData();
