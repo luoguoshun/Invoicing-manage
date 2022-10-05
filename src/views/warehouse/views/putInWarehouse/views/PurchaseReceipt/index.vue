@@ -3,9 +3,8 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round> 引用采购单 </el-button>
         <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round >提交</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" round @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
@@ -17,18 +16,21 @@
       <el-table-column label="状态" align="center" prop="orderStateStr"> </el-table-column>
       <el-table-column label="物品采购总价" align="center" width="120px">
         <template slot-scope="scope">
-          {{scope.row.orderTotalPrice-scope.row.transportPrice}}
+          <!-- {{ scope.row.orderTotalPrice - scope.row.transportPrice }} -->
+          {{ scope.row.orderTotalPrice }}
         </template>
       </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column prop="orderTotalPrice" label="订单总价" align="center"> </el-table-column>
+      <el-table-column  label="订单总价" align="center">
+                <template slot-scope="scope">
+          {{ scope.row.orderTotalPrice+scope.row.otherPrice + scope.row.transportPrice }}
+        </template>
+      </el-table-column>
       <el-table-column prop="totalCount" label="采购总数" align="center"> </el-table-column>
-      <!-- <el-table-column prop="typeStr" label="入库总数" align="center">
-      </el-table-column> -->
       <el-table-column label="备注" align="center">
         <template slot-scope="scope">
-          {{scope.row.remarks||"无"}}
+          {{ scope.row.remarks || '无' }}
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -44,7 +46,7 @@
       <!-- 操作 -->
       <el-table-column fixed="right" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="getDetailPlanListByPurchasId(scope.row)" icon="el-icon-edit">详细信息</el-button>
+          <el-button type="text" size="small" @click="showplanDetailDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -64,87 +66,24 @@
     </div> -->
 
     <!-- 操作表格 -->
-    <div class="editPlanItem">
+    <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
       <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
-      <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="table.purchaseOrderListDetail">
+      <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="PurchaseDetDiolog.purchaseOrderListDetail">
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center"></el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品名称" align="center"> </el-table-column>
-        <el-table-column prop="count" label="采购数量" align="center">
-        </el-table-column>
-        <!-- <el-table-column  label="入库数量" align="center">
-          <el-input type="number" size="mini" ></el-input>
-        </el-table-column> -->
+        <el-table-column prop="count" label="采购数量" align="center"> </el-table-column>
         <el-table-column prop="totalPrice" label="物品采购价" align="center">
-        <template slot-scope="scope">
-          {{scope.row.totalPrice/scope.row.count}}
-        </template> 
+          <template slot-scope="scope">
+            {{ scope.row.totalPrice / scope.row.count }}
+          </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="物品总价" align="center"></el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
-        <!-- <el-table-column label="操作" width="150" align="center">
-          <template>
-            <el-button size="mini" type="danger">删除</el-button>
-          </template>
-        </el-table-column> -->
       </el-table>
-    </div>
-
-    <!-- 引用采购单 -->
-    <!-- <el-dialog title="退换单据信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%"> -->
-    <!-- 搜索条件 -->
-    <!-- <el-row :gutter="20">
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入采购单号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入供应商名称 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入物品编码 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请选择收货仓库 </span>
-            <div class="edit_query_1">
-              <el-select size="mini" placeholder="请选择类别">
-                <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-              </el-select>
-            </div></div
-        ></el-col>
-      </el-row>
-      <div class="edit_query_1">
-        <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
-        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-      </div>
-      <el-divider></el-divider> -->
-    <!-- 引入采购单模态框表格 -->
-    <!-- <el-table :header-cell-style="{ 'text-align': 'center' }" border="" :data="table.purchaseOrderList" @selection-change="selectRowByDialog">
-        <el-table-column type="selection" width="50" align="center"> </el-table-column>
-        <el-table-column label="采购单号" align="center" prop="purchaseOrderId"> </el-table-column>
-        <el-table-column label="供应商" align="center" prop="supplierName"> </el-table-column>
-        <el-table-column label="采购状态" align="center" prop="orderStateStr"> </el-table-column>
-        <el-table-column label="收货仓库" align="center" prop="warehouseName"> </el-table-column>
-        <el-table-column label="采购员" align="center" prop="operationPersonName"> </el-table-column>
-        <el-table-column label="其他费用" align="center" prop="otherPrice"> </el-table-column>
-        <el-table-column label="总价" align="center" prop="orderTotalPrice"> </el-table-column>
-        <el-table-column label="创建时间" align="center" prop="createTime"> </el-table-column>
-        <el-table-column label="审批时间(暂时修改时间)" align="center" prop="updataTime"> </el-table-column>
-      </el-table>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="ShowPurchaseReceiptAndDetailed()">确 定</el-button>
-      </div>
-    </el-dialog> -->
+    </el-drawer>
   </div>
 </template>
 
@@ -162,26 +101,34 @@ export default {
         drawerName: '',
         orderState: 3,
       },
-      dialogObject: {
-        addVisible: false,
-      },
       table: {
         purchaseOrderList: [],
-        purchaseOrderListDetail: [],
         total: 0,
-        loading: true,
       },
+      PurchaseDetailDiolog: {
+        editPurchaseId: '',
+        show: false,
+        detailPlanItems: [],
+      },
+      //新建采购计划对话框
+      PurchaseDetDiolog: {
+        Visible: false,
+        skuQueryForm: {
+          page: 1,
+          row: 10,
+          conditions: '',
+          goodsTypeId: '',
+        },
+        purchaseOrderListDetail: [],
+        tatol: 0,
+      },
+      SourceOrderIds: [],
     };
   },
   methods: {
     loadData() {
       this.getPurchaseOrder();
     },
-    //打开添加弹窗
-    // openAddDialog() {
-    //   this.dialogObject.addVisible = true;
-    //   this.getPurchaseOrder();
-    // },
     //获取引用采购单数据
     async getPurchaseOrder() {
       console.log('sad');
@@ -207,38 +154,53 @@ export default {
         this.table.loading = false;
       });
     },
-
     //获取采购订单详细项目列表
     async getDetailPlanListByPurchasId(row) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(row.purchaseId).then((res) => {
+      await this.$api.purchase.getDetailPlanListByPurchasId(row).then((res) => {
         const { data, success, message } = res.data;
-        console.log(data);
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.purchaseOrderListDetail = data;
+        this.PurchaseDetDiolog.purchaseOrderListDetail = data;
+        console.log(this.PurchaseDetDiolog.purchaseOrderListDetail);
       });
+    },
+
+    async CreatePutinWarehousId() {
+      if (this.SourceOrderIds.length == 0) {
+        this.$message({
+          message: '请选择提交的采购入库单',
+          type: 'warning',
+        });
+      } else {
+        await this.$api.Putinwarehous.CreatePutinWarehousId(this.SourceOrderIds).then((res) => {
+          const { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('提交失败！');
+          } else {
+            this.$message({ message: '提交成功！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
     },
 
     selectRows(selection) {
-      this.PutinWarehousIds = [];
+      this.SourceOrderIds = [];
       selection.forEach((element) => {
-        this.PutinWarehousIds.push(element.putinWarehousId);
-        this.PutinWarehousState.push(element.putStateStr);
+        this.SourceOrderIds.push(element.purchaseOrderId);
+        //this.purchaseIds.push(element.purchaseId);
       });
-      console.log(this.PutinWarehousState);
     },
-
-    // selectRowByDialog(selection) {
-    //   console.log(selection);
-    //   this.purchaseOrderListBySubmit=selection;
-    //   console.log(this.purchaseOrderListBySubmit);
-    // },
-    // ShowPurchaseReceiptAndDetailed() {
-    //   this.dialogObject.addVisible = false;
-    //   this.loadData();
-    // },
+    //显示采购单子项目
+    showplanDetailDiolog(row) {
+      console.log(row);
+      this.PurchaseDetailDiolog.editPurchaseId = row.purchaseId;
+      this.getDetailPlanListByPurchasId(row.purchaseId);
+      this.PurchaseDetailDiolog.show = true;
+    },
   },
   created() {
     this.loadData();

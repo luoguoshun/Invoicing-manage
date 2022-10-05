@@ -45,7 +45,7 @@
           <span>仓库管理</span>
         </template>
         <el-menu-item index="/warehouse/putInWarehouse/PurchaseReceipt">入库管理</el-menu-item>
-        <el-menu-item index="4-3">其他</el-menu-item>
+        <el-menu-item index="/warehouse/putOutWarehouse/ExwarehouseReceipt">出库管理</el-menu-item>
       </el-submenu>
 
       <el-submenu index="sales">
