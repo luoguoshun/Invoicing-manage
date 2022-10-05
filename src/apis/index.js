@@ -9,8 +9,9 @@ import warehouse from './warehouse';
 import vueRouter from './vueRouter'
 import goodsType from './goodsType';
 import purchase from './purchase';
-import stock from './stock';
-import purchaseOrder from './purchaseOrder'
+import Putinwarehous from './Putinwarehous';
+import purchaseOrder from './purchaseOrder';
+import exwarehouse from './exwarehouse';
 
 export default {
   account,
@@ -24,6 +25,7 @@ export default {
   vueRouter,
   goodsType,
   purchase,
-  stock,//仓库管理
+  Putinwarehous,
   purchaseOrder,
+  exwarehouse,
 };
