@@ -450,15 +450,10 @@ export default {
     margin: 20px 0px 10px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 3.2fr 1fr;
-
+    grid-template-columns: 2fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      // border: 1px solid black;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       // border: 1px solid red;
@@ -466,10 +461,8 @@ export default {
       display: grid;
       grid-template-columns: 2fr 1fr;
       overflow: hidden;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
+      grid-column-gap: 5px;
+      text-align: center;
     }
   }
 }

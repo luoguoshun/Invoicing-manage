@@ -9,7 +9,7 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()">
           驳回
         </el-button>
-      </div>
+      </div> 
       <div class="edit_query">
         <div class="edit_query_1">
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -19,6 +19,8 @@
           <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
             <el-option label="待审核" value="2"></el-option>
             <el-option label="已审核" value="3"></el-option>
+            <el-option label="已完成" value="5"></el-option>
+            <el-option label="部分到货" value="6"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
@@ -53,7 +55,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="orderStateStr" label="采购单状态" align="center">
+      <el-table-column prop="orderStateStr" label="状态" align="center">
         <template slot-scope="scope">
           <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.orderStateStr }}</el-tag>
         </template>
@@ -64,7 +66,7 @@
       <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="orderTotalPrice" label="采购单总价" align="center"></el-table-column>
+      <el-table-column prop="orderTotalPrice" label="采购总价" align="center"></el-table-column>
       <el-table-column prop="warehouseName" label="接收仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
@@ -300,9 +302,9 @@ export default {
           this.purchaseOrderIds.forEach((purchaseOrderId) => {
             if (plan.purchaseOrderId == purchaseOrderId) {
               //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '待审核') {
+              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
                 this.$message({
-                  message: '请选择待审核的采购单',
+                  message: '请选择审核中的采购单',
                   type: 'warning',
                 });
                 adopt = false;
@@ -345,9 +347,9 @@ export default {
           this.purchaseOrderIds.forEach((purchaseOrderId) => {
             if (plan.purchaseOrderId == purchaseOrderId) {
               //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '待审核') {
+              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
                 this.$message({
-                  message: '请选择待审核的采购单',
+                  message: '请选择审核中的采购单',
                   type: 'warning',
                 });
                 adopt = false;
@@ -380,7 +382,7 @@ export default {
     getElTagClass(row) {
       if (row.orderStateStr=="已审核") {
         return 'success'
-      } else if(row.orderStateStr=="待审核") {
+      } else if(row.orderStateStr=="审核中") {
         return 'warning';
       }else {
         return '';
@@ -399,10 +401,9 @@ export default {
 .purchasOrder {
   width: 100%;
   height: 100%;
-  position: relative;
   .editbar {
     width: 100%;
-    margin: 10px 0px;
+    margin: 5px 0px;
     display: grid;
     grid-template-columns: 0.5fr 1fr;
     .edit_btn {
@@ -415,11 +416,6 @@ export default {
       display: grid;
       grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        div {
-          width: 100%;
-        }
-      }
       .edit_query_1:last-child {
         display: grid;
         grid-template-columns: 1fr 1fr;

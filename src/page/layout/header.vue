@@ -6,7 +6,7 @@
         <p>翻斗花园进销存管理系统</p>
       </div>
       <div class="user">
-        <el-avatar  :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>    
+        <el-avatar :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -32,11 +32,12 @@
         </el-button>
       </div>
     </div>
+    <!-- 面包屑 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-      <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-      <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+      <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="item.path">
+        <span v-if="index !== 0"> {{ item.meta.title }}</span>
+        <!-- <router-link v-if="index!==0" :to="item.path">{{item.meta.title}}</router-link> -->
+      </el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 日志详细信息对话框 -->
     <el-dialog title="修改登入密码" :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="25%" center>
@@ -105,6 +106,7 @@ export default {
         newPwd: [{ validator: checknewPwd, trigger: 'blur' }],
         confirmPwd: [{ validator: checkconfirmPwd, trigger: 'blur' }],
       },
+      breadcrumbList: [],
     };
   },
   methods: {
@@ -192,7 +194,14 @@ export default {
     },
   },
   created() {
-    console.log(this.getUserInfo);
+    //获取路由内的全部信息
+    this.breadcrumbList = this.$route.matched;
+  },
+  watch: {
+    //监听，实时获取路由变动信息
+    $route(to, from) {
+      this.breadcrumbList = to.matched;
+    },
   },
 };
 </script>

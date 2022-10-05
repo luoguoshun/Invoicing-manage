@@ -12,6 +12,8 @@ import purchase from './purchase';
 import Putinwarehous from './Putinwarehous';
 import purchaseOrder from './purchaseOrder';
 import exwarehouse from './exwarehouse';
+import workFlow from './workFlow'
+import paymentOrder from './paymentOrder'
 
 export default {
   account,
@@ -24,8 +26,10 @@ export default {
   warehouse,
   vueRouter,
   goodsType,
-  purchase,
+  purchase,//采购
   Putinwarehous,
   purchaseOrder,
   exwarehouse,
+  workFlow,//审核
+  paymentOrder,//应付款
 };

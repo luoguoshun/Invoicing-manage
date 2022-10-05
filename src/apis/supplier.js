@@ -49,7 +49,6 @@ export default {
 
   //物品绑定供应商
   GoodsAddtoSupplier(supplier) {
-    console.log(supplier)
     return ajax.post('/api/Background/Supplier/GoodsAddtoSupplier', {
       ...supplier
     })

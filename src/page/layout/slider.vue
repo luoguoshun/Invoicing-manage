@@ -35,8 +35,8 @@
           <i class="el-icon-circle-plus"></i>
           <span>采购管理</span>
         </template>
-        <el-menu-item index="/purchas/purchasPlan/purchasPlanList">采购计划管理</el-menu-item>
-        <el-menu-item index="/purchas/purchasOrder/purchasOrderList">采购订单管理</el-menu-item>
+        <el-menu-item index="/purchase/purchasePlan/purchasePlanList">采购计划管理</el-menu-item>
+        <el-menu-item index="/purchase/purchaseOrder/purchaseOrderList">采购订单管理</el-menu-item>
       </el-submenu>
 
       <el-submenu index="warehouse">
@@ -57,18 +57,23 @@
         <el-menu-item index="4-3">其他</el-menu-item>
       </el-submenu>
 
-      <el-submenu index="finance">
+      <el-submenu index="financial">
         <template slot="title">
           <i class="el-icon-s-order"></i>
           <span>财务管理</span>
         </template>
-        <el-menu-item index="4-2">基础设置</el-menu-item>
-        <el-menu-item index="4-3">其他</el-menu-item>
+        <el-menu-item index="/financial/accountsPayable">应付账管理</el-menu-item>
+        <el-menu-item index="/financial/accountReceivable">应收账管理</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/logs" @click.native="createTab({ tabName: '日志管理', routeName: 'nLogList' })">
-        <i class="el-icon-chat-line-round"></i>
-        日志管理
-      </el-menu-item>
+
+      <el-submenu index="logs">
+        <template slot="title">
+          <i class="el-icon-chat-line-round"></i>
+          <span>日志管理</span>
+        </template>
+        <el-menu-item index="/logs/operateLog" @click.native="createTab({ tabName: '操作日志', routeName: 'nLogList' })">操作日志</el-menu-item>
+        <el-menu-item index="/logs/systemLog">系统日志</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>

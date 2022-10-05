@@ -1,6 +1,6 @@
 import ajax from '@/utils/ajax';
 export default {
-  //获取日志列表
+  //获取系统日志列表
   getLogList(page, row, conditions, level, publicationDates) {
     return ajax.post('/api/Background/Log/GetLogList', {
       Page: page,
@@ -10,16 +10,36 @@ export default {
       PublicationDates: publicationDates,
     });
   },
-  //获取日志类型列表
+  //获取系统日志类型列表
   getLogTypeList() {
     return ajax.post('/api/Background/Log/GetLogTypeList');
   },
-  //删除日志
+  //删除系统日志
   deleteLogs(logIds) {
-    return ajax.post('/api/Background/Log/DeleteLogs', { logIds });
+    return ajax.post('/api/Background/Log/DeleteLogs', logIds);
   },
-  //导出日志
+  //导出系统日志
   exportLogs(logIds) {
-    return ajax.post('/api/Background/Log/ExportLogs', { logIds });
+    return ajax.post('/api/Background/Log/ExportLogs', {
+      logIds
+    });
+  },
+  //获取操作日志列表
+  getOperateLogLogList(page, row, conditions, type, publicationDates) {
+    return ajax.post('/api/Background/Log/GetOperateLogLogList', {
+      Page: page,
+      Row: row,
+      Conditions: conditions,
+      Type: type,
+      PublicationDates: publicationDates,
+    });
+  },
+  //导出系统操作日志
+  exportOperateRecords(operateIds) {
+    return ajax.post('/api/Background/Log/ExportOperateRecords', operateIds);
+  },
+  //删除系统操作日志
+  deleteOperateRecords(operateIds) {
+    return ajax.post('/api/Background/Log/DeleteOperateRecords', operateIds);
   },
 };

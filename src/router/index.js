@@ -71,11 +71,17 @@ const routes = [{
             path: 'dataInitialization',
             name: 'dataInitialization',
             component: () => import(`@/views/system/views/dataInitialization`),
+            meta: {
+              title: '数据初始化',
+            },
           },
           {
             path: 'setting',
             name: 'setting',
             component: () => import(`@/views/system/views/setting`),
+            meta: {
+              title: '系统设置',
+            },
           },
         ]
       },
@@ -100,10 +106,16 @@ const routes = [{
               path: 'supplierList',
               name: 'supplierList',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
+              meta: {
+                title: '供应商列表',
+              },
             }, {
               path: 'supplierSku',
               name: 'supplierSku',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierSku'),
+              meta: {
+                title: '供应商物品',
+              },
             }, ]
           },
           {
@@ -118,10 +130,18 @@ const routes = [{
               path: 'spuList',
               name: 'spuList',
               component: () => import('@/views/baseInfo/views/goods/views/spuList'),
+              meta: {
+                title: '基础资料设置',
+                isAuth: true
+              },
             }, {
               path: 'skuList',
               name: 'skuList',
               component: () => import('@/views/baseInfo/views/goods/views/skuList'),
+              meta: {
+                title: '基础资料设置',
+                isAuth: true
+              },
             }]
           },
           {
@@ -136,10 +156,18 @@ const routes = [{
               path: 'warehouseList',
               name: 'warehouseList',
               component: () => import('@/views/baseInfo/views/warehouse/views/warehouseList'),
+              meta: {
+                title: '仓库列表',
+                isAuth: true
+              },
             }, {
               path: 'warehouseSkuList',
               name: 'warehouseSkuList',
               component: () => import('@/views/baseInfo/views/warehouse/views/warehouseSkuList'),
+              meta: {
+                title: '仓库物资',
+                isAuth: true
+              },
             }, ]
           },
           {
@@ -154,31 +182,35 @@ const routes = [{
               path: 'goodsTypeList',
               name: 'goodsTypeList',
               component: () => import('@/views/baseInfo/views/others/views/goodsTypeList'),
+              meta: {
+                title: '物品类型设置',
+                isAuth: true
+              },
             }]
           }
         ]
       },
       //采购管理
       {
-        path: '/purchas',
-        name: 'purchas',
-        component: () => import(`@/views/purchas`),
+        path: '/purchase',
+        name: 'purchase',
+        component: () => import(`@/views/purchase`),
         meta: {
           title: '采购管理',
           isAuth: true
         },
         children: [{
-          path: 'purchasOrder',
-          name: 'purchasOrder',
-          component: () => import('@/views/purchas/views/purchasOrder'),
+          path: 'purchaseOrder',
+          name: 'purchaseOrder',
+          component: () => import('@/views/purchase/views/purchaseOrder'),
           meta: {
             title: '采购订单管理',
             isAuth: true
           },
           children: [{
-              path: 'purchasOrderList',
-              name: 'purchasOrderList',
-              component: () => import('@/views/purchas/views/purchasOrder/views/purchasOrderList'),
+              path: 'purchaseOrderList',
+              name: 'purchaseOrderList',
+              component: () => import('@/views/purchase/views/purchaseOrder/views/purchaseOrderList'),
               meta: {
                 title: '采购订单列表',
                 isAuth: true
@@ -187,7 +219,7 @@ const routes = [{
             {
               path: 'applyForBilling',
               name: 'applyForBilling',
-              component: () => import('@/views/purchas/views/purchasOrder/views/applyForBilling'),
+              component: () => import('@/views/purchase/views/purchaseOrder/views/applyForBilling'),
               meta: {
                 title: '申请采购开单',
                 isAuth: true
@@ -195,9 +227,9 @@ const routes = [{
             }
           ]
         }, {
-          path: 'purchasPlan',
-          name: 'purchasPlan',
-          component: () => import('@/views/purchas/views/purchasPlan'),
+          path: 'purchasePlan',
+          name: 'purchasePlan',
+          component: () => import('@/views/purchase/views/purchasePlan'),
           meta: {
             title: '采购计划管理',
             isAuth: true
@@ -205,12 +237,20 @@ const routes = [{
           children: [{
               path: 'applicationPlan',
               name: 'applicationPlan',
-              component: () => import('@/views/purchas/views/purchasPlan/views/applicationPlan'),
+              component: () => import('@/views/purchase/views/purchasePlan/views/applicationPlan'),
+              meta: {
+                title: '采购计划申请',
+                isAuth: true
+              },
             },
             {
-              path: 'purchasPlanList',
-              name: 'purchasPlanList',
-              component: () => import('@/views/purchas/views/purchasPlan/views/purchasPlanList'),
+              path: 'purchasePlanList',
+              name: 'purchasePlanList',
+              component: () => import('@/views/purchase/views/purchasePlan/views/purchasePlanList'),
+              meta: {
+                title: '采购计划列表',
+                isAuth: true
+              },
             }
           ]
         }]
@@ -274,6 +314,34 @@ const routes = [{
 
         ]
       },
+      //财务管理
+      {
+        path: '/financial',
+        name: 'financial',
+        component: () => import(`@/views/financial`),
+        meta: {
+          title: '财务管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'accountsPayable',
+          name: 'accountsPayable',
+          component: () => import('@/views/financial/views/accountsPayable'),
+          meta: {
+            title: '应收账',
+            isAuth: true
+          },
+        }, {
+          path: 'accountReceivable',
+          name: 'accountReceivable',
+          component: () => import('@/views/financial/views/accountReceivable'),
+          meta: {
+            title: '应收账',
+            isAuth: true
+          },
+        }, ],
+      },
+      //日志管理
       {
         path: '/logs',
         name: 'logs',
@@ -282,6 +350,23 @@ const routes = [{
           title: '日志管理',
           isAuth: true
         },
+        children: [{
+          path: 'operateLog',
+          name: 'operateLog',
+          component: () => import('@/views/logs/views/operateLog'),
+          meta: {
+            title: '操作日志',
+            isAuth: true
+          },
+        }, {
+          path: 'systemLog',
+          name: 'systemLog',
+          component: () => import('@/views/logs/views/systemLog'),
+          meta: {
+            title: '系统日志',
+            isAuth: true
+          },
+        }, ],
       },
     ],
   },
