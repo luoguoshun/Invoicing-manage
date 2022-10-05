@@ -187,7 +187,7 @@
         <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column>
         <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
         <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-        <el-table-column prop="purchasTotalPrice" label="订单总价" align="center"></el-table-column>
+        <el-table-column prop="purchaseTotalPrice" label="订单总价" align="center"></el-table-column>
         <el-table-column prop="totalCount" label="货品总数" align="center"></el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
         <el-table-column prop="createTime" label="申请时间" width="140px" align="center">
@@ -327,6 +327,7 @@ export default {
           console.log(message);
           return;
         }
+        console.log(data.purchase);
         this.introducePlanDiolog.passPlanTabledata = data.purchase;
         this.introducePlanDiolog.total = data.count;
       });
