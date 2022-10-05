@@ -71,11 +71,17 @@ const routes = [{
             path: 'dataInitialization',
             name: 'dataInitialization',
             component: () => import(`@/views/system/views/dataInitialization`),
+            meta: {
+              title: '数据初始化',
+            },
           },
           {
             path: 'setting',
             name: 'setting',
             component: () => import(`@/views/system/views/setting`),
+            meta: {
+              title: '系统设置',
+            },
           },
         ]
       },
@@ -100,10 +106,16 @@ const routes = [{
               path: 'supplierList',
               name: 'supplierList',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierList'),
+              meta: {
+                title: '供应商列表',
+              },
             }, {
               path: 'supplierSku',
               name: 'supplierSku',
               component: () => import('@/views/baseInfo/views/supplier/views/supplierSku'),
+              meta: {
+                title: '供应商物品',
+              },
             }, ]
           },
           {
@@ -118,10 +130,18 @@ const routes = [{
               path: 'spuList',
               name: 'spuList',
               component: () => import('@/views/baseInfo/views/goods/views/spuList'),
+              meta: {
+                title: '基础资料设置',
+                isAuth: true
+              },
             }, {
               path: 'skuList',
               name: 'skuList',
               component: () => import('@/views/baseInfo/views/goods/views/skuList'),
+              meta: {
+                title: '基础资料设置',
+                isAuth: true
+              },
             }]
           },
           {
@@ -136,10 +156,18 @@ const routes = [{
               path: 'warehouseList',
               name: 'warehouseList',
               component: () => import('@/views/baseInfo/views/warehouse/views/warehouseList'),
+              meta: {
+                title: '仓库列表',
+                isAuth: true
+              },
             }, {
               path: 'warehouseSkuList',
               name: 'warehouseSkuList',
               component: () => import('@/views/baseInfo/views/warehouse/views/warehouseSkuList'),
+              meta: {
+                title: '仓库物资',
+                isAuth: true
+              },
             }, ]
           },
           {
@@ -154,6 +182,10 @@ const routes = [{
               path: 'goodsTypeList',
               name: 'goodsTypeList',
               component: () => import('@/views/baseInfo/views/others/views/goodsTypeList'),
+              meta: {
+                title: '物品类型设置',
+                isAuth: true
+              },
             }]
           }
         ]
@@ -206,11 +238,19 @@ const routes = [{
               path: 'applicationPlan',
               name: 'applicationPlan',
               component: () => import('@/views/purchase/views/purchasePlan/views/applicationPlan'),
+              meta: {
+                title: '采购计划申请',
+                isAuth: true
+              },
             },
             {
               path: 'purchasePlanList',
               name: 'purchasePlanList',
               component: () => import('@/views/purchase/views/purchasePlan/views/purchasePlanList'),
+              meta: {
+                title: '采购计划列表',
+                isAuth: true
+              },
             }
           ]
         }]
@@ -287,10 +327,18 @@ const routes = [{
           path: 'operateLog',
           name: 'operateLog',
           component: () => import('@/views/logs/views/operateLog'),
+          meta: {
+            title: '操作日志',
+            isAuth: true
+          },
         }, {
           path: 'systemLog',
           name: 'systemLog',
           component: () => import('@/views/logs/views/systemLog'),
+          meta: {
+            title: '系统日志',
+            isAuth: true
+          },
         }, ],
       },
     ],

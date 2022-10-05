@@ -3,13 +3,10 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-dropdown>
-          <el-button type="primary" size="mini">新 增<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="openPurchaseOrderDialog()"> 引入采购单 </el-dropdown-item>
-            <el-dropdown-item>自主开单</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-button type="primary" size="mini" @click="openPurchaseOrderDialog()" icon="el-icon-plus">
+          引入采购单
+        </el-button>
+        <el-button type="primary" size="mini">自主开单</el-button>
       </div>
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -17,14 +14,14 @@
         <el-select size="mini" filterable v-model="queryForm.supplierId" placeholder="收款方">
           <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
         </el-select>
-        <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
-          <el-option label="待审核" value="2"></el-option>
-          <el-option label="已审核" value="3"></el-option>
+        <el-select size="mini" v-model="queryForm.paymentState" placeholder="订单状态">
+          <el-option label="待付款" value="1"></el-option>
+          <el-option label="已付款" value="2"></el-option>
         </el-select>
-        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
+        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人编号"></el-input>
         <div class="edit_query_1">
           <el-button type="primary" @click="getPaymentOrderList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+          <el-button type="primary" @click="resetQueryForm(1)" size="mini">重置</el-button>
         </div>
       </div>
     </div>
@@ -33,9 +30,10 @@
       :data="table.paymentOrderList"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectOrderRows"
+      @row-dbclick="showOrderDetailDialog()"
       v-loading="table.loading"
     >
-      <el-table-column label="付款单编号" width="120" align="center">
+      <el-table-column label="付款单编号" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>采购单编号: {{ scope.row.projectId }}</p>
@@ -56,16 +54,19 @@
       <el-table-column prop="operationPersonId" label="开单人编号" align="center"></el-table-column>
       <el-table-column prop="paymentTotalPrice" label="应付款金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
+      <el-table-column prop="createTime" label="开单时间" width="140px" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="200" align="center">
+      <el-table-column label="编辑" width="300" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showorderDetailDialog(scope.row)" plain>付款详情</el-button>
-          <el-button size="mini" @click="showorderDetailDialog(scope.row)" plain v-if="scope.row.paymentStateStr == '待付款'">付款</el-button>
+          <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
+          <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>付款详情</el-button>
+          <el-button type="success" size="mini" @click="showOrderDetailDialog(scope.row)" plain v-if="scope.row.paymentStateStr == '待付款'">
+            付款
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,8 +85,7 @@
       </el-pagination>
     </div>
     <!-- 采购单详情 -->
-    <el-dialog title="采购单详情" :visible.sync="orderDetailDialog.show" center width="70%">
-      <el-divider></el-divider>
+    <el-drawer title="采购单详情" :visible.sync="orderDetailDialog.show" center size="70%" direction="rtl">
       <el-button size="mini" type="primary" @click="orderDetailDialog.show = false" plain>关闭</el-button>
       <el-table :data="orderDetailDialog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
@@ -112,14 +112,15 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
+    </el-drawer>
     <!-- 引入采购单对话框 -->
     <el-dialog title="引入采购单" :visible.sync="purchaseOrderDialog.visible" center width="70%" :fullscreen="true">
+      <el-divider></el-divider>
       <!-- 操作 -->
       <div class="editbar">
         <div class="edit_btn">
           <el-button type="primary" size="mini" class="el-icon-check" @click="importPurchaseOrder()">
-            引入采购单
+            引入
           </el-button>
         </div>
         <div class="edit_query">
@@ -131,12 +132,12 @@
             size="mini"
           >
           </el-date-picker>
-          <el-select size="mini" filterable v-model="purchaseOrderDialog.queryForm.supplierId" placeholder="收款方">
+          <el-select size="mini" filterable v-model="purchaseOrderDialog.queryForm.supplierId" placeholder="供应商">
             <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
           </el-select>
           <div class="edit_query_1">
             <el-button type="primary" @click="getNoExecuteOrderList()" size="mini">查找</el-button>
-            <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+            <el-button type="primary" @click="resetQueryForm(2)" size="mini">重置</el-button>
           </div>
         </div>
       </div>
@@ -179,7 +180,7 @@
         <!-- 操作 -->
         <el-table-column label="编辑" width="200" align="center">
           <template slot-scope="scope">
-            <el-button type="info" size="mini" @click="showorderDetailDiolog(scope.row)" plain>订单详情</el-button>
+            <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -211,7 +212,7 @@ export default {
         publicationDates: [],
         supplierId: '',
         conditions: '',
-        orderState: '',
+        paymentState: '',
       },
       //新建应付款订单表
       purchasPlanForm: {
@@ -257,12 +258,12 @@ export default {
   methods: {
     loadData() {
       this.getPaymentOrderList();
-      this.getSupplierList();
     },
     //获取提交应付款订单列表
     async getPaymentOrderList() {
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
+      queryForm.paymentState = queryForm.paymentState == '' ? 0 : parseInt(queryForm.paymentState);
       await this.$api.paymentOrder.getPaymentOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -319,7 +320,8 @@ export default {
       });
     },
     //构造供应商下拉数据
-    async getSupplierList() {
+    async getSupplierList(purchaseOrderId) {
+      this.supplierList = [];
       await this.$api.supplier.constructDropDownData().then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -342,16 +344,17 @@ export default {
       this.loadData();
     },
     //重置搜索条件
-    resetQueryForm() {
-      this.queryForm.orderState = '';
-      this.queryForm.approvalName = '';
-      this.queryForm.publicationDates = [];
-      this.loadData();
-    },
-    resetDialogQueryForm() {
-      this.introducePlanDiolog.planQueryForm.supplierId = '';
-      this.introducePlanDiolog.planQueryForm.approvalName = '';
-      this.getPassPurchasePlanList();
+    resetQueryForm(editName) {
+      if (editName == 1) {
+        this.queryForm.supplierId = '';
+        this.queryForm.conditions = '';
+        this.queryForm.publicationDates = [];
+        this.loadData();
+      } else {
+        this.introducePlanDiolog.planQueryForm.supplierId = '';
+        this.introducePlanDiolog.planQueryForm.approvalName = '';
+        this.getPassPurchasePlanList();
+      }
     },
     //获取应付款订单选中行的数据
     selectOrderRows(selection) {
@@ -361,9 +364,14 @@ export default {
       });
     },
     //显示采购单子项目
-    showorderDetailDialog(row) {
-      this.orderDetailDialog.editPurchaseId = row.purchaseId;
-      this.getDetailPlanListByPurchasId(row.purchaseId);
+    showOrderDetailDialog(row) {
+      //通过付款单获取采购单详情 再获取到采购计划详情进行展示
+      this.orderDetailDialog.editPurchaseId = row.projectId;
+      this.$api.purchaseOrder.getPurcahseOrderByOrderId(row.projectId).then((res) => {
+        const { data, success, message } = res.data;
+        console.log(data);
+        this.getDetailPlanListByPurchasId(data.purchaseId);
+      });
       this.orderDetailDialog.show = true;
     },
     getElTagClass(row) {
@@ -407,6 +415,7 @@ export default {
   },
   created() {
     this.loadData();
+    this.getSupplierList();
   },
 };
 </script>

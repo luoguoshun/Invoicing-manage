@@ -13,11 +13,15 @@ export default {
             ...queryForm
         });
     },
-    //获取未被应付款模块引用的采购订单
+    //通过采购单编号获取单个采购单数据
     getNoExecuteOrderList(queryForm) {
         return ajax.post('/api/Background/purchaseOrder/GetNoExecuteOrderList', {
             ...queryForm
         });
+    },
+    //获取未被应付款模块引用的采购订单
+    getPurcahseOrderByOrderId(purchaseOrderId) {
+        return ajax.get('/api/Background/purchaseOrder/GetPurcahseOrderByOrderId?purchaseOrderId=' + purchaseOrderId + '');
     },
     //引入采购单
     importPurhaseOrder(purchaseIds) {

@@ -2,7 +2,7 @@
   <div class="goods_container">
     <!-- 操作 -->
     <div class="editbar">
-      <el-button type="primary" round size="mini" @click="openDialog('add')">添加</el-button>
+      <el-button type="primary" size="mini" @click="openDialog('add')">添加</el-button>
       <el-button type="danger" size="mini" @click="deleteSpu()">删除</el-button>
     </div>
     <div class="edit_query">
@@ -26,7 +26,7 @@
       <el-table-column prop="typeStr" label="物品类型"></el-table-column>
       <el-table-column prop="unit" label="单位"> </el-table-column>
       <el-table-column prop="specs" label="规格"></el-table-column>
-            <el-table-column prop="price" label="单价"></el-table-column>
+      <el-table-column prop="price" label="单价"></el-table-column>
       <el-table-column prop="createTime" label="创建时间"> </el-table-column>
       <el-table-column prop="updateTime" label="修改时间"> </el-table-column>
       <!-- 操作 -->
@@ -108,15 +108,15 @@ export default {
         total: 0,
       },
       SkuForm: {
-        SpuId:'',
+        SpuId: '',
         SpuId: '',
         Name: '',
         Brand: '',
         GoodsTypeId: '',
-        Unit:'',
-        Price:0,
-        Specs:'',
-        LogoSrc:'',
+        Unit: '',
+        Price: 0,
+        Specs: '',
+        LogoSrc: '',
         goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择物品类型' }],
       },
       goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择物品类型' }],
@@ -206,7 +206,7 @@ export default {
         this.SkuForm.SkuId = row.skuId;
         this.SkuForm.Name = row.spuName;
         this.SkuForm.Unit = row.unit;
-        this.SkuForm.Specs=row.specs;
+        this.SkuForm.Specs = row.specs;
         this.SkuForm.GoodsTypeId = row.type;
         this.dianlogButton.label = '修改';
       }
@@ -229,9 +229,9 @@ export default {
             SpuId: this.SkuForm.SpuId,
             Name: this.SkuForm.Name,
             SkuId: this.SkuForm.SkuId,
-            Unit:this.SkuForm.Unit,
-            Price:this.SkuForm.Price,
-            Specs:this.SkuForm.Specs,
+            Unit: this.SkuForm.Unit,
+            Price: this.SkuForm.Price,
+            Specs: this.SkuForm.Specs,
           };
           this.$api.goods.addSpu(spu).then((res) => {
             const { data, success, message } = res.data;

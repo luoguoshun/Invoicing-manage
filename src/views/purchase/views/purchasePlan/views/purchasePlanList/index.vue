@@ -240,7 +240,7 @@ export default {
     async getPurchasePlanList() {
       this.IsToBeList = false;
       var queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.state=queryForm.state == '' ? 0 : parseInt(queryForm.state);
+      queryForm.state = queryForm.state == '' ? 0 : parseInt(queryForm.state);
       await this.$api.purchase.getPurchasePlanList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -256,7 +256,7 @@ export default {
     async getNeedRreviewPlanByUserId() {
       this.IsToBeList = true;
       var queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.state=queryForm.state == '' ? 0 : parseInt(queryForm.state);
+      queryForm.state = queryForm.state == '' ? 0 : parseInt(queryForm.state);
       await this.$api.purchase.getNeedRreviewPlanByUserId(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -499,8 +499,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 20px 0px 10px 0px;
-    padding: 2px 0px;
+    margin: 10px 0px;
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     .edit_btn {
