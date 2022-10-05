@@ -131,7 +131,7 @@ const routes = [{
               name: 'spuList',
               component: () => import('@/views/baseInfo/views/goods/views/spuList'),
               meta: {
-                title: '基础资料设置',
+                title: '标准化产品单元',
                 isAuth: true
               },
             }, {
@@ -139,7 +139,7 @@ const routes = [{
               name: 'skuList',
               component: () => import('@/views/baseInfo/views/goods/views/skuList'),
               meta: {
-                title: '基础资料设置',
+                title: '库存进出计量单位',
                 isAuth: true
               },
             }]

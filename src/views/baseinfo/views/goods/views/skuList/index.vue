@@ -74,7 +74,7 @@
         <el-form-item label="单位" prop="Unit">
           <el-input v-model="SkuForm.Unit"></el-input>
         </el-form-item>
-        <el-form-item label="单价" prop="Price">
+        <el-form-item label="单品售价" prop="Price">
           <el-input v-model="SkuForm.Price"></el-input>
         </el-form-item>
         <el-form-item label="规格" prop="Specs">

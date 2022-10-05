@@ -108,7 +108,7 @@
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="supplierForm.supplierName"></el-input>
         </el-form-item>
-        <el-form-item label="供应商分类" prop="leadCadre">
+        <el-form-item label="供应商分类" prop="supplierType">
           <el-select size="mini" v-model="supplierForm.supplierType" placeholder="请选择类别">
             <el-option v-for="item in supplierForm.supplierTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
           </el-select>
@@ -174,6 +174,7 @@ export default {
       supplierIds: [],
       supplierTypes: [{ typeId: 0, typeName: '请选择类型' }],
       rules: {
+        supplierType: { required: true, message: '请选择共应商分类', trigger: 'blur' },
         leadCadre: [
           { required: true, message: '负责人不能为空', trigger: 'blur' },
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' },

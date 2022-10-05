@@ -11,4 +11,10 @@ export default {
     addPaymentOrderByPurchaseOrder(purchaseOrderIds) {
         return ajax.post('/api/Background/PaymentOrder/AddPaymentOrderByPurchaseOrder', purchaseOrderIds);
     },
+    //支付订单
+    paymentOrder(payForm) {
+        return ajax.post('/api/Background/PaymentOrder/PaymentOrder', {
+            ...payForm
+        });
+    },
 };

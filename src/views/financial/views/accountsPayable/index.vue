@@ -60,11 +60,15 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="300" align="center">
+      <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
           <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>付款详情</el-button>
-          <el-button type="success" size="mini" @click="showOrderDetailDialog(scope.row)" plain v-if="scope.row.paymentStateStr == '待付款'">
+        </template>
+      </el-table-column>
+      <el-table-column label="编辑" width="100" align="center">
+        <template slot-scope="scope">
+          <el-button type="success" size="mini" @click="showPayDialog(scope.row)" plain v-if="scope.row.paymentStateStr == '待付款'">
             付款
           </el-button>
         </template>
@@ -199,10 +203,42 @@
         </el-pagination>
       </div>
     </el-dialog>
+    <!-- 付款对话框 -->
+    <el-dialog title="付款" :visible.sync="payDialog.visible" center width="40%">
+      <el-form ref="form" :model="payForm" label-width="90px" size="mini">
+        <el-form-item label="操作人">
+          <el-input v-model="payForm.payUserId" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收款方编号">
+          <el-input v-model="payForm.supplierId" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="收款方">
+          <el-input v-model="payForm.supplierName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="支付方式">
+          <el-radio-group v-model="payForm.payType" size="medium">
+            <el-radio border label="1">微信</el-radio>
+            <el-radio border label="2">支付宝</el-radio>
+            <el-radio border label="3">银行卡转账</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="￥应付金额">
+          <span style="color:red">
+            {{ payForm.paymentTotalPrice }}
+          </span>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="payDialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="paymentOrder()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import store from '@/store';
 export default {
   data() {
     return {
@@ -246,6 +282,20 @@ export default {
           publicationDates: [],
           supplierId: '',
         },
+      },
+      payDialog: {
+        visible: false,
+      },
+      payForm: {
+        paymentOrdertId: '', //要支付的订单
+        payType: '1',
+        supplierId: '',
+        supplierName: '',
+        payUserId: '', //支付人
+        payUserName: '', //支付人
+        payeeName: '', //收款人名称
+        paymentTotalPrice: '',
+        collectionAccountNo: '', //收款账号
       },
       purchaseOrderIds: [],
       //仓库列表
@@ -411,6 +461,45 @@ export default {
           this.loadData();
         }
       });
+    },
+    //付款
+    showPayDialog(row) {
+      //获取当前登入人信息
+      let userInfo = store.getters['userInfo/getUserInfo'];
+      this.payDialog.visible = true;
+      this.payForm.payUserId = userInfo.userId;
+      this.payForm.payUserName = userInfo.name;
+      this.payForm.paymentOrdertId = row.paymentOrdertId;
+      this.payForm.supplierId = row.supplierId;
+      this.payForm.supplierName = row.supplierName;
+      this.payForm.paymentTotalPrice = row.paymentTotalPrice;
+    },
+    paymentOrder() {
+      console.log(this.payForm);
+      if (this.payForm.payType == '') {
+        this.$message({
+          message: '请选择支付方式',
+          type: 'warning',
+        });
+      } else {
+        let payForm = JSON.parse(JSON.stringify(this.payForm));
+        payForm.payType = parseInt(payForm.payType);
+        this.$api.paymentOrder.paymentOrder(payForm).then((res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            this.$message.error(message);
+          } else {
+            setTimeout(() => {
+              this.$message({
+                message: message,
+                type: 'success',
+              });
+              this.payDialog.visible = false;
+              this.loadData();
+            }, 2000);
+          }
+        });
+      }
     },
   },
   created() {

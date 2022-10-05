@@ -65,7 +65,7 @@
       </el-pagination>
     </div>
     <!-- 添加供应商货品对话框 -->
-    <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%">
+    <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%" :fullscreen="true">
       <el-divider></el-divider>
       <div class="selectInput">
         <el-input size="mini" v-model="skuForm.spuId" placeholder="请输入SPU编号"></el-input>
@@ -116,7 +116,7 @@ export default {
         page: 1,
         row: 5,
         goodsName: '',
-        goodsTypeId: 0,
+        goodsTypeId: '',
         SupplierId: '',
         conditions: '',
       },
@@ -126,7 +126,7 @@ export default {
         spuId: '',
         skuId: '',
         goodsName: '',
-        goodsTypeId: 0,
+        goodsTypeId: '',
         supplierId: 0,
         conditions: '',
       },
@@ -149,7 +149,7 @@ export default {
       },
       supplierGoods: [],
       skuIds: [],
-      goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择类型' }],
+      goodsTypes: [],
     };
   },
   methods: {
@@ -215,9 +215,11 @@ export default {
     },
     //获取货品数据选择绑定供应商
     async GetSKUList() {
-      console.log(this.skuForm.goodsType);
+      let skuForm = JSON.parse(JSON.stringify(this.skuForm));
+      skuForm.goodsTypeId = skuForm.goodsTypeId == '' ? 0 : parseInt(skuForm.goodsTypeId);
+      console.log(skuForm);
       await this.$api.goods
-        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.skuId, this.skuForm.spuId, this.skuForm.goodsName, this.skuForm.goodsType)
+        .getSKUList(skuForm.page, skuForm.row, skuForm.skuId, skuForm.spuId, skuForm.goodsName, skuForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -245,14 +247,9 @@ export default {
     },
     //根据供应商id获取供应商货品数据
     async GetSKUListBySupplierId() {
+      let goodsTypeId = this.queryForm.goodsTypeId == '' ? 0 : parseInt(this.queryForm.goodsTypeId);
       await this.$api.goods
-        .GetSKUListBySupplierId(
-          this.queryForm.page,
-          this.queryForm.row,
-          this.queryForm.goodsTypeId,
-          this.$route.query.supplierId,
-          this.queryForm.conditions,
-        )
+        .GetSKUListBySupplierId(this.queryForm.page, this.queryForm.row, goodsTypeId, this.$route.query.supplierId, this.queryForm.conditions)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -270,14 +267,14 @@ export default {
     },
     //重置搜索条件
     resetQueryForm() {
-      this.queryForm.goodsTypeId = 0;
+      this.queryForm.goodsTypeId = '';
       this.queryForm.conditions = '';
       this.loadData();
     },
     //重置供应商添加货品界面搜索条件
     resetSkuForm() {
       this.skuForm.goodsName = '';
-      this.skuForm.goodsTypeId = 0;
+      this.skuForm.goodsTypeId = '';
       this.skuForm.spuId = '';
       this.skuForm.skuId = '';
     },
