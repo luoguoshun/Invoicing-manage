@@ -289,7 +289,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 20px 0px 10px 0px;
+    margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
     grid-template-columns: 2fr 1.1fr;

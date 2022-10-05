@@ -9,18 +9,14 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.goodsTypeName" placeholder="请输入物品名称" size="mini"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getgoodsTypeList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-input v-model="queryForm.goodsTypeName" placeholder="请输入物品名称" size="mini"></el-input>
+        <el-button type="primary" @click="getgoodsTypeList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
 
     <!-- 表格 -->
-    <el-table :data="table.goodsTypeList"  @selection-change="selectRows">
+    <el-table :data="table.goodsTypeList" @selection-change="selectRows">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column prop="goodsTypeId" fixed label="物品类型编号" width="120" align="center"> </el-table-column>
       <el-table-column label="物品类型名称" width="150" align="center">
@@ -162,25 +158,18 @@ export default {
   width: 100%;
   height: 100%;
   .editbar {
-    width: 100%;
-    margin: 20px 0px 10px 0px;
-    padding: 2px 0px;
+    width: 40%;
+    margin: 5px 0px;
     display: grid;
     grid-template-columns: 1fr 8fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      // border: 1px solid black;
-
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
-      // border: 1px solid red;
-      grid-template-columns: 0.1fr 1fr;
+      grid-template-columns: 1fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }
   }

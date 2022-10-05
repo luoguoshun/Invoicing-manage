@@ -499,7 +499,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 10px 0px;
+    margin: 5px 0px;
     display: grid;
     grid-template-columns: 1fr 2.5fr;
     .edit_btn {

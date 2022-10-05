@@ -2,8 +2,8 @@
   <div class="goods_container">
     <!-- 操作 -->
     <div class="editbar">
-      <el-button type="primary" round size="mini" @click="openDialog('add')">添加</el-button>
-      <el-button type="danger" size="mini" @click="deleteSpu()">删除</el-button>
+      <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openDialog('add')">添加</el-button>
+      <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSpu()">删除</el-button>
     </div>
     <div class="edit_query">
       <div class="edit_queryinfo">
@@ -318,9 +318,11 @@ export default {
   height: auto;
   .editbar {
     float: left;
+    margin: 5px 0px;
   }
   .edit_query {
     .edit_queryinfo {
+      margin: 5px 0px;
       float: right;
     }
   }
