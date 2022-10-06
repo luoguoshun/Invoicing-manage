@@ -15,6 +15,7 @@
           >用户管理</el-menu-item
         >
         <el-menu-item index="/system/role">角色管理</el-menu-item>
+        <el-menu-item index="/system/department">部门管理</el-menu-item>
         <el-menu-item index="/system/setting">系统设置</el-menu-item>
         <el-menu-item index="/system/dataInitialization">数据初始化</el-menu-item>
       </el-submenu>
