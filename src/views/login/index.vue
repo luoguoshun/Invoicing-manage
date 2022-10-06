@@ -46,9 +46,8 @@ export default {
               this.setTokenInfo(data);
               this.setRouters(data.routers);
               this.setUserInfo(data.userInfo);
-              // this.$signalR.connection.start();
-              let redirectUrl = this.$route.query.redirectUrl;
-              
+              this.$signalR.connection.start();
+              let redirectUrl = this.$route.query.redirectUrl;  
               if (redirectUrl) {
                 //跳转至进入登录页前的路由（重定向）
                 this.$router.replace(redirectUrl);

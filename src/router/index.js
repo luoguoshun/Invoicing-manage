@@ -276,14 +276,26 @@ const routes = [{
               path: 'PurchaseReceipt',
               name: 'PurchaseReceipt',
               component: () => import('@/views/warehouse/views/putInWarehouse/views/PurchaseReceipt'),
+              meta: {
+                title: '采购入库开单',
+                isAuth: true
+              },
             }, {
               path: 'ReturnReceipt',
               name: 'ReturnReceipt',
               component: () => import('@/views/warehouse/views/putInWarehouse/views/ReturnReceipt'),
+              meta: {
+                title: '退货入库开单',
+                isAuth: true
+              },
             }, {
               path: 'ReceiptDoc',
               name: 'ReceiptDoc',
               component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
+              meta: {
+                title: '入库单管理',
+                isAuth: true
+              },
             }],
           },
           {
@@ -328,7 +340,7 @@ const routes = [{
           name: 'accountsPayable',
           component: () => import('@/views/financial/views/accountsPayable'),
           meta: {
-            title: '应收账',
+            title: '应付账',
             isAuth: true
           },
         }, {
