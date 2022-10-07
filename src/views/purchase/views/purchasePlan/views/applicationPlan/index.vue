@@ -509,7 +509,9 @@ export default {
     },
     //更新采购计划项目
     updatePurchaseDetails() {
-      this.$api.purchase.updatePurchaseDetails(this.planDetailDiolog.editPurchaseId, this.planDetailDiolog.detailPlanItems).then((res) => {
+      this.$api.purchase.updatePurchaseDetails(
+        this.planDetailDiolog.editPurchaseId, 
+        this.planDetailDiolog.detailPlanItems).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);

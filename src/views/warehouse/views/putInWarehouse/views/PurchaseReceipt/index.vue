@@ -11,20 +11,32 @@
     <!-- 表格 -->
     <el-table :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="" ref="test" :data="table.purchaseOrderList">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column label="采购单号" align="center" prop="purchaseOrderId"> </el-table-column>
+      <el-table-column label="采购单号" align="center" prop="purchaseOrderId">
+        <template slot-scope="scope">
+          <el-popover trigger="hover" placement="top">
+            <p>采购计划编号: {{ scope.row.purchaseId }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag disable-transitions>{{ scope.row.purchaseOrderId }}</el-tag>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
       <el-table-column label="采购单号" align="center" prop="purchaseId" v-if="false"> </el-table-column>
-      <el-table-column label="状态" align="center" prop="orderStateStr"> </el-table-column>
+      <el-table-column label="状态" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.orderStateStr }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="物品采购总价" align="center" width="120px">
         <template slot-scope="scope">
-          <!-- {{ scope.row.orderTotalPrice - scope.row.transportPrice }} -->
           {{ scope.row.orderTotalPrice }}
         </template>
       </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column  label="订单总价" align="center">
-                <template slot-scope="scope">
-          {{ scope.row.orderTotalPrice+scope.row.otherPrice + scope.row.transportPrice }}
+      <el-table-column label="订单总价" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.orderTotalPrice + scope.row.otherPrice + scope.row.transportPrice }}
         </template>
       </el-table-column>
       <el-table-column prop="totalCount" label="采购总数" align="center"> </el-table-column>
@@ -50,34 +62,29 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页
-    <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :total="table.total"
-        :page-sizes="[5, 10, 15, 20]"
-        :current-page="queryForm.page"
-        :page-size="queryForm.row"
-        layout="total, sizes, prev, pager, next, jumper"
-        background
-      >
-      </el-pagination>
-    </div> -->
 
     <!-- 操作表格 -->
     <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
+      <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
       <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="PurchaseDetDiolog.purchaseOrderListDetail">
-        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center"></el-table-column>
+        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <p>采购计划编号: {{ scope.row.purchaseId }}</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="count" label="采购数量" align="center"> </el-table-column>
         <el-table-column prop="totalPrice" label="物品采购价" align="center">
           <template slot-scope="scope">
-            {{ scope.row.totalPrice / scope.row.count }}
+            <el-tag type="success">{{ scope.row.totalPrice / scope.row.count }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="totalPrice" label="物品总价" align="center"></el-table-column>
@@ -129,9 +136,20 @@ export default {
     loadData() {
       this.getPurchaseOrder();
     },
+
+    getElTagClass(row) {
+      console.log(row);
+      if (row.orderStateStr == '已审核') {
+        return 'success';
+      } else if (row.orderStateStr == '审核中') {
+        return 'warning';
+      } else {
+        return '';
+      }
+    },
+
     //获取引用采购单数据
     async getPurchaseOrder() {
-      console.log('sad');
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       if (queryForm.orderState == '') {
         queryForm.orderState = '0';
@@ -141,7 +159,7 @@ export default {
       }
       queryForm.orderState = parseInt(queryForm.orderState);
       queryForm.supplierId = parseInt(queryForm.supplierId);
-      console.log(queryForm);
+      //console.log(queryForm);
       await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
