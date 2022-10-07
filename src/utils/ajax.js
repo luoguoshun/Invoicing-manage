@@ -2,12 +2,8 @@ import axios from 'axios';
 import store from '../store';
 import funs from './funs';
 import encrypt from './encrypt';
-import {
-  Message
-} from 'element-ui';
-import {
-  createThrottle
-} from './throttle';
+import { Message } from 'element-ui';
+import { createThrottle } from './throttle';
 import router from '@/router';
 
 const baseurl = 'http://127.0.0.1:36559';

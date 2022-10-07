@@ -52,7 +52,9 @@
       <el-table-column prop="supplierId" label="收款方编号" align="center"> </el-table-column>
       <el-table-column prop="supplierName" label="收款方名称" align="center"> </el-table-column>
       <el-table-column prop="operationPersonId" label="开单人编号" align="center"></el-table-column>
-      <el-table-column prop="paymentTotalPrice" label="应付款金额" align="center"></el-table-column>
+      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="paymentTotalPrice" label="总付款金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label="开单时间" width="140px" align="center">
         <template slot-scope="scope">

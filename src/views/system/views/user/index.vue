@@ -32,18 +32,18 @@
       border=""
     >
       <el-table-column type="selection" width="40" align="center"> </el-table-column>
-      <el-table-column fixed prop="userId" label="编号" align="center"> </el-table-column>
+      <el-table-column fixed prop="userId" label="编号" width="120px" align="center"> </el-table-column>
       <el-table-column label="头像" width="100" align="center">
         <template slot-scope="scope">
           <el-image style="width: 60px; height: 50px" :src="scope.row.headerImgUrl" :preview-src-list="[scope.row.headerImgUrl]"></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" align="center">
+      <el-table-column label="用户名" width="100px" align="center">
         <template slot-scope="scope">
           <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="sex" label="性别" align="center">
+      <el-table-column prop="sex" label="性别" width="60px" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.sex == 1">
             男
@@ -54,7 +54,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column prop="idNumber" label="身份证号码"  align="center"> </el-table-column> -->
-      <el-table-column prop="departmentName" label="部门名称"  align="center"> </el-table-column>
+      <el-table-column prop="departmentName" label="部门名称" align="center"> </el-table-column>
       <el-table-column prop="address" label="住址" align="center"> </el-table-column>
       <el-table-column prop="phone" label="联系方式" align="center"> </el-table-column>
       <el-table-column label="角色" align="center">
@@ -67,7 +67,7 @@
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column prop="state" label="状态"  align="center">
+      <el-table-column prop="state" label="状态" align="center">
         <template slot-scope="scope">
           <el-switch
             class="switch"

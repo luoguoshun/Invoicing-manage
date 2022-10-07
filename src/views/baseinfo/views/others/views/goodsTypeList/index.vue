@@ -20,7 +20,7 @@
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column prop="goodsTypeId" fixed label="物品类型编号" width="120" align="center"> </el-table-column>
       <el-table-column label="物品类型名称" width="150" align="center">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-input type="text" size="mini" v-model="scope.row.goodsTypeName"></el-input>
         </template>
       </el-table-column>
