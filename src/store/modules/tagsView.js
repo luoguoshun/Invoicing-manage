@@ -3,7 +3,7 @@ export default {
   state: {
     dynamicTag: {
       tabs: [],
-      activeRoute: '',
+      activeRoute: 'home',
     },
   },
   getters: {
@@ -14,7 +14,11 @@ export default {
   mutations: {
     createTab(state, tab) {
       state.dynamicTag.activeRoute = tab.routeName; //保存当前激活的路由
+      //标签组不存在当前点击的菜单则添加到标签组
       if (JSON.stringify(state.dynamicTag.tabs).indexOf(JSON.stringify(tab)) == -1) {
+        if (state.dynamicTag.tabs.length>=10) {
+          state.dynamicTag.tabs.shift();
+        }
         state.dynamicTag.tabs.push(tab);
       }
     },

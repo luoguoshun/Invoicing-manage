@@ -82,7 +82,7 @@
       </el-pagination>
     </div>
     <!-- 添加路由信息对话框 -->
-    <el-dialog title="路由信息" center :visible.sync="dialogObject.EditVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog title="路由信息" center :visible.sync="dialogObject.EditVisible" :close-on-click-modal="false" width="60%">
       <el-form :model="routerForm" :rules="rules" ref="routerForm" label-width="120px">
         <el-form-item label="父级路由" prop="parentId">
           <el-cascader
@@ -447,7 +447,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 20px 0px 10px 0px;
+    margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
     grid-template-columns: 2fr 1fr;

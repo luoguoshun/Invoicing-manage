@@ -52,7 +52,9 @@
       <el-table-column prop="supplierId" label="收款方编号" align="center"> </el-table-column>
       <el-table-column prop="supplierName" label="收款方名称" align="center"> </el-table-column>
       <el-table-column prop="operationPersonId" label="开单人编号" align="center"></el-table-column>
-      <el-table-column prop="paymentTotalPrice" label="应付款金额" align="center"></el-table-column>
+      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="paymentTotalPrice" label="总付款金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label="开单时间" width="140px" align="center">
         <template slot-scope="scope">
@@ -62,8 +64,8 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
-          <el-button type="info" size="mini" @click="showOrderDetailDialog(scope.row)" plain>付款详情</el-button>
+          <el-button type="primary" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
+          <el-button type="primary" size="mini" @click="showPayDetailDialog(scope.row)" plain>付款详情</el-button>
         </template>
       </el-table-column>
       <el-table-column label="编辑" width="100" align="center">
@@ -234,6 +236,26 @@
         <el-button type="primary" @click="paymentOrder()">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 付款详情对话框 -->
+    <el-dialog title="付款信息" :visible.sync="payDetailDialog.visible" center width="40%">
+      <el-descriptions class="margin-top" title="详细信息" :column="1">
+        <el-descriptions-item label="详情编号">{{ payDetailDialog.paymentOrderDetail.paymentOrderDetailId }}</el-descriptions-item>
+        <el-descriptions-item label="付款编号">{{ payDetailDialog.paymentOrderDetail.paymentOrdertId }}</el-descriptions-item>
+        <el-descriptions-item label="付款方式" label-class-name="my-label">
+          <el-tag size="small">
+            {{ payDetailDialog.paymentOrderDetail.payTypeStr }}
+          </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="付款人">
+          <el-tag size="small">{{ payDetailDialog.paymentOrderDetail.payUserName }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="收款人">
+          <el-tag size="small">{{ payDetailDialog.paymentOrderDetail.payeeName }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item label="收款账号">{{ payDetailDialog.paymentOrderDetail.collectionAccountNo }}</el-descriptions-item>
+        <el-descriptions-item label="付款时间">{{  $timeFormat.leaveTime(payDetailDialog.paymentOrderDetail.payTime) }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -285,6 +307,10 @@ export default {
       },
       payDialog: {
         visible: false,
+      },
+      payDetailDialog: {
+        visible: false,
+        paymentOrderDetail: {},
       },
       payForm: {
         paymentOrdertId: '', //要支付的订单
@@ -415,6 +441,7 @@ export default {
     },
     //显示采购单子项目
     showOrderDetailDialog(row) {
+      console.log(row);
       //通过付款单获取采购单详情 再获取到采购计划详情进行展示
       this.orderDetailDialog.editPurchaseId = row.projectId;
       this.$api.purchaseOrder.getPurcahseOrderByOrderId(row.projectId).then((res) => {
@@ -501,6 +528,11 @@ export default {
         });
       }
     },
+    //付款详情
+    showPayDetailDialog(row) {
+      this.payDetailDialog.paymentOrderDetail = row.paymentDetail;
+      this.payDetailDialog.visible = true;
+    },
   },
   created() {
     this.loadData();
@@ -539,5 +571,9 @@ export default {
     grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
+  .my-label {
+    background: #e0aab8;
+  }
+
 }
 </style>

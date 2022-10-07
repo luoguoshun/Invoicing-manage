@@ -186,7 +186,7 @@ export default {
           console.log(message);
           return;
         }
-        this.$message({ message: '删除成功！', type: 'success' });
+        this.$message({ message: '修改成功！', type: 'success' });
         this.dialogObject.addVisible = false;
         this.loadData();
       });

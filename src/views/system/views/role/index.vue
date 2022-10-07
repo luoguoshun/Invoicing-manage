@@ -7,12 +7,17 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteRoleIdById()">
           移除
         </el-button>
+        <el-upload class="upload" action="" :http-request="importRolesByExcel" :auto-upload="true" :limit="1" :show-file-list="false">
+          <el-button slot="trigger" size="mini" type="warning">
+            导入数据
+          </el-button>
+        </el-upload>
       </div>
     </div>
     <!-- 表格 -->
     <el-table :data="table.roleList" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column prop="roleId" fixed label="角色编号" width="100" align="center"> </el-table-column>
+      <el-table-column prop="roleId" fixed label="角色编号" width="180" align="center"> </el-table-column>
       <el-table-column prop="name" label="角色名" width="150" align="center"></el-table-column>
       <el-table-column prop="descripcion" label="角色描述" align="center"></el-table-column>
 
@@ -124,6 +129,29 @@ export default {
     },
   },
   methods: {
+    //导入数据
+    importRolesByExcel(param) {
+      if (param.file.type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        this.$notify.warning({
+          title: '警告',
+          message: '请上传格式为.xlsx 的文件',
+        });
+      } else {
+        const formdata = new FormData();
+        formdata.append('file', param.file);
+        formdata.append('tableId', 'Role');
+        this.$api.role.importRolesByExcel(formdata).then((res) => {
+          const { data, success, message } = res.data;
+          console.log(data);
+          if (!success) {
+            this.$message({ message: message, type: 'error' });
+          } else {
+            this.$message({ message: message, type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
     loadData() {
       this.getRoleList();
     },
@@ -289,7 +317,7 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 20px 0px 10px 0px;
+    margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
     grid-template-columns: 2fr 1.1fr;
