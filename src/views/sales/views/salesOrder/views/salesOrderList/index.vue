@@ -1,0 +1,524 @@
+<template>
+  <div class="purchasOrder">
+    <!-- 操作 -->
+    <div class="editbar">
+      <div class="edit_btn">
+        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()">
+          审核
+        </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()">
+          驳回
+        </el-button>
+      </div>
+      <div class="edit_query">
+        <div class="edit_query_1">
+          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+          </el-date-picker>
+        </div>
+        <div class="edit_query_1">
+          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
+            <el-option label="待出库" value="2"></el-option>
+            <el-option label="已出库" value="3"></el-option>
+            <el-option label="待发货" value="4"></el-option>
+            <el-option label="已发货" value="5"></el-option>
+            <el-option label="已完成" value="6"></el-option>
+          </el-select>
+        </div>
+        <div class="edit_query_1">
+          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+          </el-select>
+        </div>
+        <div class="edit_query_1">
+          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        </div>
+        <div class="edit_query_1">
+          <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
+          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+        </div>
+      </div>
+    </div>
+    <!-- 表格 -->
+    <el-table
+      :data="table.salesOrderList"
+      :header-cell-style="{ 'text-align': 'center' }"
+      @selection-change="selectOrderRows"
+      v-loading="table.loading"
+      show-summary
+    >
+      <el-table-column type="selection" width="80" align="center"> </el-table-column>
+      <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
+        <template slot-scope="scope">
+          <el-popover trigger="hover" placement="top">
+            <p>销售计划编号: {{ scope.row.salesId }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag disable-transitions>{{ scope.row.salesId }}</el-tag>
+            </div>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column prop="salesStateStr" label="状态" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesStateStr }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="salesTypeStr" label="销售类型" align="center"> </el-table-column>
+      <el-table-column prop="payTypeStr" label="支付方式" align="center"> </el-table-column>
+      <el-table-column prop="logisticsCompanyStr" label="物流公司" align="center"></el-table-column>
+      <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
+      <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
+      <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
+      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="salesTotalPrice" label="销售单总价" align="center"></el-table-column>
+      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column>
+      <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
+      <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
+      <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
+        <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" label=" 顾客信息" width="138px" align="center">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createTime" label=" 发票" width="138px" align="center">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+        </template>
+      </el-table-column>
+      <!-- 操作 -->
+      <el-table-column label="编辑" width="200" align="center">
+        <template slot-scope="scope">
+          <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
+          <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页 -->
+    <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="table.total"
+        :page-sizes="[5, 10, 15, 20]"
+        :current-page="queryForm.page"
+        :page-size="queryForm.row"
+        layout="total, sizes, prev, pager, next, jumper"
+        background
+      >
+      </el-pagination>
+    </div>
+    <!-- 销售单详情 -->
+    <el-drawer title="销售单详情" :visible.sync="salesDetailDiolog.show" direction="rtl" size="70%">
+      <el-divider></el-divider>
+      <el-button size="mini" type="primary" @click="salesDetailDiolog.show = false" plain>关闭</el-button>
+      <el-table :data="salesDetailDiolog.salesDetails" :header-cell-style="{ 'text-align': 'center' }" border>
+        <el-table-column prop="salesDetailId" label="销售明细编号" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.salesDetailId }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skuId" label="物品编号" width="200px" align="center"> </el-table-column>
+        <el-table-column label="销售单价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="成本价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.costPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsCount" label="销售数量" align="center"> </el-table-column>
+        <el-table-column prop="totalPrice" label="单品总价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.totalPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center">
+          <template slot-scope="scope">
+            {{ $timeFormat.leaveTime(scope.row.createTime) }}
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
+    <!-- 收货人信息对话框 -->
+    <el-dialog title="客户详情" :visible.sync="clientDialog.visible" center width="60%">
+      <el-descriptions class="margin-top" title="带边框列表" :column="3" border>
+        <template slot="extra">
+          <el-button type="primary" size="small">操作</el-button>
+        </template>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-user"></i>
+            编号
+          </template>
+          <el-tag size="small">{{ clientDialog.clientId }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-user"></i>
+            用户名
+          </template>
+          <el-tag size="small">{{ clientDialog.clientName }}</el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-mobile-phone"></i>
+            手机号
+          </template>
+          {{ clientDialog.clientPhone }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-location-outline"></i>
+            邮编
+          </template>
+          {{ clientDialog.postalCode }}
+        </el-descriptions-item>
+
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-location-outline"></i>
+            收获地址
+          </template>
+          {{ clientDialog.clientAddress }}
+        </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-tickets"></i>
+            顾客备注
+          </template>
+          {{ clientDialog.clientRemarks }}
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
+    <!-- 审核记录对话框 -->
+    <el-dialog title="审批记录" center :visible.sync="approvalDetaildialog.visible" width="30%">
+      <el-timeline>
+        <el-timeline-item :timestamp="approvalDetaildialog.approvalDetails.createTime" type="primary" icon="el-icon-more">
+          <p>提交人</p>
+          {{ approvalDetaildialog.approvalDetails.applicantName }}
+        </el-timeline-item>
+        <el-timeline-item
+          v-for="(Step, index) in approvalDetaildialog.approvalDetails.workFlowSteps"
+          :key="index"
+          :timestamp="Step.completeTime"
+          :type="Step.approvalStateStr == '已通过' ? 'success ' : 'danger '"
+        >
+          <p>审核人:{{ Step.reviewerName }}</p>
+          <p>审核结果:{{ Step.approvalStateStr }}</p>
+          <p>审核备注:{{ Step.RejectReason }}</p>
+        </el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="approvalDetaildialog.visible = false"> 关 闭</el-button>
+      </span>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      queryForm: {
+        page: 1,
+        row: 10,
+        publicationDates: [],
+        warehouseId: '', //出货仓库
+        conditions: '', //综合条件
+        salesType: '', //销售类型
+        logisticsCompany: '', // 物流公司
+        salesState: '', //销售单状态
+      },
+      //新建销售订单表
+      purchasPlanForm: {
+        warehouseId: '',
+        supplierId: '',
+        supplierName: '',
+        applicantId: '', //申请人
+        applicanName: '',
+        remarks: '',
+        applicanSKUIds: [],
+      },
+      table: {
+        salesOrderList: [],
+        total: 0,
+        loading: true,
+      },
+      salesDetailDiolog: {
+        editSalesId: '',
+        show: false,
+        salesDetails: [],
+      },
+      clientDialog: {
+        visible: false,
+        clientId: '',
+        clientName: '',
+        clientAddress: '',
+        clientPhone: '',
+        postalCode: '',
+        clientRemarks: '',
+      },//客服信息对话框
+      approvalDetaildialog: {
+        visible: false,
+        approvalDetails: {}, 
+      },//审核详情对话框
+      salesId: [],
+      warehouseList: [], //仓库列表
+      
+    };
+  },
+  computed: {},
+  methods: {
+    loadData() {
+      this.getSalesList();
+    },
+    //获取提交销售订单列表
+    async getSalesList() {
+      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
+      queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
+      await this.$api.sales.getSalesList(queryForm).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.table.salesOrderList = data.sales;
+        this.table.total = data.count;
+        this.table.loading = false;
+      });
+    },
+    //获取销售订单详细项目列表
+    getSalesDatailBySalesId(salesId) {
+      this.$api.sales.getSalesDatailBySalesId(salesId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.salesDetailDiolog.salesDetails = data;
+      });
+    },
+    //展示客户信息
+    showClientInfo(row) {
+      this.clientDialog.visible = true;
+      this.clientDialog.clientId = row.clientId;
+      this.clientDialog.clientName = row.clientName;
+      this.clientDialog.clientAddress = row.clientAddress;
+      this.clientDialog.clientPhone = row.clientPhone;
+      this.clientDialog.postalCode = row.postalCode;
+      this.clientDialog.clientRemarks = row.clientRemarks;
+    },
+    //显示销售单子项目
+    showsalesDetailDiolog(row) {
+      this.salesDetailDiolog.editSalesId = row.salesId;
+      this.getSalesDatailBySalesId(row.salesId);
+      this.salesDetailDiolog.show = true;
+    },
+    getElTagClass(row) {
+      if (row.salesStateStr == '已审核') {
+        return 'success';
+      } else if (row.salesStateStr == '审核中') {
+        return 'warning';
+      } else {
+        return '';
+      }
+    },
+    //获取仓库列表数据
+    async getWarehouseList() {
+      this.warehouseList = [];
+      await this.$api.warehouse.getWarehouseList(1, 100, '', 0).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        data.warehouses.forEach((item) => {
+          this.warehouseList.push({ warehouseId: item.warehouseId, warehouseName: item.warehouseName });
+        });
+      });
+    },
+    //查找数据
+    selectSalesList() {
+      this.queryForm.page = 1;
+      this.queryForm.row = 10;
+      this.getSalesList();
+    },
+    //条数改变
+    handleSizeChange(row) {
+      this.queryForm.row = row;
+      this.loadData();
+    },
+    //页数改变
+    handleCurrentChange(page) {
+      this.queryForm.page = page;
+      this.loadData();
+    },
+    //重置搜索条件
+    resetQueryForm() {
+      this.queryForm.conditions = '';
+      this.queryForm.salesState = '';
+      this.queryForm.warehouseId = '';
+      this.queryForm.publicationDates = [];
+      this.loadData();
+    },
+    //获取销售订单选中行的数据
+    selectOrderRows(selection) {
+      this.salesId = [];
+      selection.forEach((element) => {
+        this.salesId.push(element.salesId);
+      });
+    },
+    //审核
+    adoptSalesOrderRequest() {
+      let adopt = true;
+      if (this.salesId.length == 0) {
+        this.$message({
+          message: '请选择要审核的销售单',
+          type: 'warning',
+        });
+        return false;
+      } else {
+        //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
+        this.table.salesOrderList.forEach((plan, index) => {
+          //adopt = false 说明找到符合的数据 函数返回
+          if (adopt == false) {
+            return false;
+          }
+          this.salesId.forEach((purchaseOrderId) => {
+            if (plan.purchaseOrderId == purchaseOrderId) {
+              //找到不符合的数据 返回 并设置adopt = false
+              if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
+                this.$message({
+                  message: '请选择审核中的销售单',
+                  type: 'warning',
+                });
+                adopt = false;
+                return false;
+              }
+            }
+          });
+        });
+      }
+      //找不到符合的数据才允许审核
+      if (adopt) {
+        this.$api.sales.adoptSalesOrderRequest(this.salesId).then((res) => {
+          let { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('审核失败，服务器未知错误');
+          } else {
+            this.$message({ message: '已审核！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
+    //驳回
+    rejectOrderRequest() {
+      let adopt = true;
+      if (this.salesId.length == 0) {
+        this.$message({
+          message: '请选择要审核的销售单',
+          type: 'warning',
+        });
+        return false;
+      } else {
+        //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
+        this.table.salesOrderList.forEach((plan, index) => {
+          //adopt = false 说明找到符合的数据 函数返回
+          if (adopt == false) {
+            return false;
+          }
+          this.salesId.forEach((purchaseOrderId) => {
+            if (plan.purchaseOrderId == purchaseOrderId) {
+              //找到不符合的数据 返回 并设置adopt = false
+              if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
+                this.$message({
+                  message: '请选择审核中的销售单',
+                  type: 'warning',
+                });
+                adopt = false;
+                return false;
+              }
+            }
+          });
+        });
+      }
+      //找不到符合的数据才允许审核
+      if (adopt) {
+        this.$api.sales.rejectSalesOrderRequest(this.salesId).then((res) => {
+          let { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('驳回失败，服务器未知错误');
+          } else {
+            this.$message({ message: '已驳回！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
+    //获取审批详情
+    async getApprovalDetails(projectId) {
+      await this.$api.workFlow.getApprovalDetails(projectId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+        this.approvalDetaildialog.approvalDetails = data;
+      });
+    },
+    //查看审批详情
+    openApprovalDetails(salesId) {
+      this.approvalDetaildialog.visible = true;
+      this.getApprovalDetails(salesId);
+    },
+  },
+  created() {
+    this.loadData();
+    this.getWarehouseList();
+  },
+};
+</script>
+
+<style lang="less" scoped>
+.purchasOrder {
+  width: 100%;
+  height: 100%;
+  .editbar {
+    width: 100%;
+    margin: 5px 0px;
+    display: grid;
+    grid-template-columns: 0.5fr 1fr;
+    .edit_btn {
+      display: flex;
+      flex-direction: row;
+      grid-gap: 5px;
+      justify-content: flex-start; //左对齐lex-end：右对齐 space-between：两端对齐，项目之间的间隔都相等
+    }
+    .edit_query {
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-column-gap: 5px;
+      .edit_query_1:last-child {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  }
+  .dialogSelectInput {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-column-gap: 3px;
+  }
+}
+</style>

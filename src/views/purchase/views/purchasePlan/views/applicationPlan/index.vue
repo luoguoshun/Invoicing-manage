@@ -77,7 +77,7 @@
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> 
     <!-- 分页 -->
     <div class="block">
       <el-pagination
@@ -105,8 +105,8 @@
             <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="申请人" prop="applicanName">
-          <el-input size="mini" type="text" v-model="purchasePlanForm.applicanName" disabled></el-input>
+        <el-form-item label="申请人" prop="applicantName">
+          <el-input size="mini" type="text" v-model="purchasePlanForm.applicantName" disabled></el-input>
         </el-form-item>
         <el-form-item label="备注"> <el-input type="textarea" v-model="purchasePlanForm.remarks"></el-input> </el-form-item>
       </el-form>
@@ -219,7 +219,7 @@ export default {
         supplierId: '',
         supplierName: '',
         applicantId: '', //申请人
-        applicanName: '',
+        applicantName: '',
         remarks: '',
         applicanSKUIds: [],
       },
@@ -434,7 +434,7 @@ export default {
       this.applicationPlanDiolog.Visible = true;
       const userInfo = store.getters['userInfo/getUserInfo'];
       this.purchasePlanForm.applicantId = userInfo.userId || '';
-      this.purchasePlanForm.applicanName = userInfo.name || '';
+      this.purchasePlanForm.applicantName = userInfo.name || '';
       // 加载数据
       this.getSupplierList();
       this.getGoodInfoType();
@@ -542,6 +542,7 @@ export default {
         //判断采购计划是否含有采购数量为空的数据
         for (let index = 0; index < this.purchasePlanIds.length; index++) {
           const purchaseId = this.purchasePlanIds[index];
+          //获取当前采购计划单详情
           await this.getDetailPlanListByPurchasId(purchaseId);
           for (let i = 0; i < this.planDetailDiolog.detailPlanItems.length; i++) {
             const item = this.planDetailDiolog.detailPlanItems[i];

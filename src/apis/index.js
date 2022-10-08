@@ -14,6 +14,7 @@ import purchaseOrder from './purchaseOrder';
 import exwarehouse from './exwarehouse';
 import workFlow from './workFlow'
 import paymentOrder from './paymentOrder'
+import sales  from './sales';
 
 export default {
   account,
@@ -32,4 +33,5 @@ export default {
   exwarehouse,
   workFlow,//审核
   paymentOrder,//应付款
+  sales,//销售
 };

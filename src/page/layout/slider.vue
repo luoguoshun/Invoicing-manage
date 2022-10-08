@@ -77,8 +77,8 @@
           <i class="el-icon-s-data"></i>
           <span>销售管理</span>
         </template>
-        <el-menu-item index="4-2">基础设置</el-menu-item>
-        <el-menu-item index="4-3">其他</el-menu-item>
+        <el-menu-item index="/sales/salesOrder/salesOrderList">销售管理</el-menu-item>
+        <el-menu-item index="/sales/salesReturn">销售退货</el-menu-item>
       </el-submenu>
 
       <el-submenu index="financial">

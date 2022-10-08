@@ -307,24 +307,71 @@ const routes = [{
               isAuth: true
             },
             children: [{
-              path: 'ExwarehouseDoc',
-              name: 'ExwarehouseDoc',
-              component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseDoc'),
-            }, 
-             {
-               path: 'ExwarehouseReceipt',
-               name: 'ExwarehouseReceipt',
-               component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseReceipt'),
-             }, 
-             //{
-            //   path: 'ReceiptDoc',
-            //   name: 'ReceiptDoc',
-            //   component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
-            // }
-          ],
+                path: 'ExwarehouseDoc',
+                name: 'ExwarehouseDoc',
+                component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseDoc'),
+              },
+              {
+                path: 'ExwarehouseReceipt',
+                name: 'ExwarehouseReceipt',
+                component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseReceipt'),
+              },
+              //{
+              //   path: 'ReceiptDoc',
+              //   name: 'ReceiptDoc',
+              //   component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
+              // }
+            ],
           }
 
         ]
+      },
+      //销售管理
+      {
+        path: '/sales',
+        name: 'sales',
+        component: () => import(`@/views/sales`),
+        meta: {
+          title: '销售管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'salesOrder',
+          name: 'salesOrder',
+          component: () => import('@/views/sales/views/salesOrder'),
+          meta: {
+            title: '销售订单管理',
+            isAuth: true
+          },
+          children: [{
+              path: 'salesOrderList',
+              name: 'salesOrderList',
+              component: () => import('@/views/sales/views/salesOrder/views/salesOrderList'),
+              meta: {
+                title: '销售订单列表',
+                isAuth: true
+              },
+            },
+            {
+              path: 'salesInvoicing',
+              name: 'salesInvoicing',
+              component: () => import('@/views/sales/views/salesOrder/views/salesInvoicing'),
+              meta: {
+                title: '申请销售开单',
+                isAuth: true
+              },
+            }
+          ]
+        }, {
+          path: 'salesReturn',
+          name: 'salesReturn',
+          component: () => import('@/views/sales/views/salesReturn'),
+          meta: {
+            title: '销售退货管理',
+            isAuth: true
+          },
+          children: []
+        }]
       },
       //财务管理
       {
