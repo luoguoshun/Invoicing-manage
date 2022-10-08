@@ -68,6 +68,14 @@ const routes = [{
             },
           },
           {
+            path: 'department',
+            name: 'department',
+            component: () => import(`@/views/system/views/department`),
+            meta: {
+              title: '部门管理',
+            },
+          },
+          {
             path: 'dataInitialization',
             name: 'dataInitialization',
             component: () => import(`@/views/system/views/dataInitialization`),

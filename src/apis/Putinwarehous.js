@@ -37,14 +37,10 @@ export default {
         return ajax.post('/api/Background/Putinwarehous/DdeletePutinWarehousApply', putinWarehousIds)
     },
 
-    EditPutinWarhouseOrder(putinWarehousId,putTotalNum, goodsTotalcost) {
-        console.log(putTotalNum);
-        console.log(goodsTotalcost);
-        console.log(putinWarehousId);
+    EditPutinWarhouseOrder(PutinWarehousId,PutinWarehousDetails) {
         return ajax.post('/api/Background/Putinwarehous/EditPutinWarehous', {
-            putinWarehousId,
-            putTotalNum,
-            goodsTotalcost,
+            PutinWarehousId,
+            PutinWarehousDetails
         })
     },
 }

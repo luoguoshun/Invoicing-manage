@@ -15,6 +15,7 @@
           >用户管理</el-menu-item
         >
         <el-menu-item index="/system/role" @click.native="createTab({ tabName: '角色管理', routeName: 'role' })">角色管理</el-menu-item>
+        <el-menu-item index="/system/department">部门管理</el-menu-item>
         <el-menu-item index="/system/setting" @click.native="createTab({ tabName: '系统设置', routeName: 'setting' })">系统设置</el-menu-item>
         <el-menu-item index="/system/dataInitialization" @click.native="createTab({ tabName: '数据初始化', routeName: 'dataInitialization' })"
           >数据初始化</el-menu-item
