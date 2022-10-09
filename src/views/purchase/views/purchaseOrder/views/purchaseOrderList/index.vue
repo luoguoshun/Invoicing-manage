@@ -184,7 +184,6 @@ export default {
       }
       queryForm.orderState = parseInt(queryForm.orderState);
       queryForm.supplierId = parseInt(queryForm.supplierId);
-      console.log(queryForm);
       await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {

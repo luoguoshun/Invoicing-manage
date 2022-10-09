@@ -17,11 +17,12 @@
         </div>
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
-            <el-option label="待出库" value="2"></el-option>
-            <el-option label="已出库" value="3"></el-option>
-            <el-option label="待发货" value="4"></el-option>
-            <el-option label="已发货" value="5"></el-option>
-            <el-option label="已完成" value="6"></el-option>
+            <el-option label="审核中" value="2"></el-option>
+            <el-option label="待出库" value="4"></el-option>
+            <el-option label="已出库" value="5"></el-option>
+            <el-option label="待发货" value="6"></el-option>
+            <el-option label="已发货" value="7"></el-option>
+            <el-option label="已完成" value="8"></el-option>
           </el-select>
         </div>
         <div class="edit_query_1">
@@ -79,14 +80,15 @@
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label=" 顾客信息" width="138px" align="center">
+      <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label=" 发票" width="138px" align="center">
+      <el-table-column prop="createTime" label="销售单据" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+          <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成</el-button>
+          <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
       <!-- 操作 -->
@@ -264,14 +266,13 @@ export default {
         clientPhone: '',
         postalCode: '',
         clientRemarks: '',
-      },//客服信息对话框
+      }, //客服信息对话框
       approvalDetaildialog: {
         visible: false,
-        approvalDetails: {}, 
-      },//审核详情对话框
+        approvalDetails: {},
+      }, //审核详情对话框
       salesId: [],
       warehouseList: [], //仓库列表
-      
     };
   },
   computed: {},
@@ -481,6 +482,24 @@ export default {
     openApprovalDetails(salesId) {
       this.approvalDetaildialog.visible = true;
       this.getApprovalDetails(salesId);
+    },
+    //
+    createSalesNoteBysalesId(row) {
+      this.$api.sales.createSalesNoteBysalesId(row.salesId).then((res) => {
+        let { success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          this.$message.error(message);
+        } else {
+          this.$message({ message: message, type: 'success' });
+          this.loadData();
+        }
+      });
+    },
+    lookCreateSalesNote(row) {
+      console.log(row.salesNoteUrl);
+      window.location.href = row.salesNoteUrl;
+      window.open(row.salesNoteUrl, '_self');
     },
   },
   created() {

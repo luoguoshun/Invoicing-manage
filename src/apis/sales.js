@@ -32,4 +32,8 @@ export default {
     rejectSalesOrderRequest(salesIds) {
         return ajax.post('/api/Background/Sales/RejectSalesOrderRequest', salesIds);
     },
+    //驳回销售单
+    createSalesNoteBysalesId(salesId) {
+        return ajax.get('/api/Background/Sales/CreateSalesNoteBysalesId?salesId=' + salesId + '');
+    },
 }

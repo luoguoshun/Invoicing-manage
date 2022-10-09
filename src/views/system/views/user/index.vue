@@ -254,7 +254,7 @@ export default {
         name: [
           //^[\u4e00-\u9fa5]{0,}$ 纯汉字
           { required: true, message: '姓名', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' },
+          { min: 2, max: 5, message: '长度在 2到 5 个字符', trigger: 'blur' },
         ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
