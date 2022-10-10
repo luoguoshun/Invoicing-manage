@@ -92,9 +92,10 @@ export default {
     /**
      * @description: 审核采购申请单
      * @param {purchasIds}  采购计划Ids
+     * @param {reason}  驳回原因
      * @return {bool} 
      */
-     adoptPurchaseRequest(purchaseIds) {
+    adoptPurchaseRequest(purchaseIds) {
         return ajax.post('/api/Background/Purchase/AdoptPurchaseRequest', purchaseIds);
     },
     /**
@@ -102,8 +103,12 @@ export default {
      * @param {purchasIds}  采购计划Ids
      * @return {bool} 
      */
-    rejectPurchaseRequest(purchaseIds) {
-        return ajax.post('/api/Background/Purchase/RejectPurchaseRequest', purchaseIds);
+    rejectPurchaseRequest(purchaseIds, reason) {
+        debugger;
+        return ajax.post('/api/Background/Purchase/RejectPurchaseRequest', {
+            ProjectIds: purchaseIds,
+            Reason: reason
+        });
     },
-    
+
 }
