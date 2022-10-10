@@ -80,7 +80,7 @@
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>审批详情</el-button>
-          <el-button type="info" size="mini" @click="showPlanDetail(scope.row)" plain>申请详情</el-button>
+          <el-button type="info" size="mini" @click="showPlanDetail(scope.row)" plain>计划详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -131,8 +131,7 @@
     <el-dialog title="审批记录" center :visible.sync="dialogObject.approvalDetails" width="30%">
       <el-timeline>
         <el-timeline-item :timestamp="approvalDetails.createTime" type="primary" icon="el-icon-more">
-          <p>提交人</p>
-          {{ approvalDetails.applicantName }}
+          <p>提交人: {{ approvalDetails.applicantName }}</p>
         </el-timeline-item>
         <el-timeline-item
           v-for="(Step, index) in approvalDetails.workFlowSteps"
@@ -142,7 +141,7 @@
         >
           <p>审核人:{{ Step.reviewerName }}</p>
           <p>审核结果:{{ Step.approvalStateStr }}</p>
-          <p>审核备注:{{ Step.RejectReason }}</p>
+          <p>审核备注:{{ Step.rejectReason }}</p>
         </el-timeline-item>
       </el-timeline>
       <span slot="footer" class="dialog-footer">
@@ -215,7 +214,7 @@ export default {
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
       IsToBeList: false,
-      approvalDetails: {},
+      approvalDetails: {}, //审批详情
     };
   },
   computed: {},
@@ -417,48 +416,55 @@ export default {
     },
     //驳回采购申请
     rejectPurchaseRequest() {
-      let adopt = true;
-      if (this.purchasePlanIds.length == 0) {
-        this.$message({
-          message: '请选择要审核的采购单',
-          type: 'warning',
-        });
-        return false;
-      } else {
-        //找出在 采购数据列表ID包含在 purchasePlanIds 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.purchasePlanList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
-            return false;
-          }
-          this.purchasePlanIds.forEach((purchaseId) => {
-            if (plan.purchaseId == purchaseId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchasePlanList[index]['stateStr'] !== '待审核') {
-                this.$message({
-                  message: '请选择待审核的采购单',
-                  type: 'warning',
-                });
-                adopt = false;
-                return false;
+      this.$prompt('驳回原因', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: '',
+        inputErrorMessage: '请输入驳回原因',
+      }).then(({ value }) => {
+        let adopt = true;
+        if (this.purchasePlanIds.length == 0) {
+          this.$message({
+            message: '请选择要审核的采购单',
+            type: 'warning',
+          });
+          return false;
+        } else {
+          //找出在 采购数据列表ID包含在 purchasePlanIds 里的数据 判断stateStr的值 是否全部是待审核
+          this.table.purchasePlanList.forEach((plan, index) => {
+            //adopt = false 说明找到符合的数据 函数返回
+            if (adopt == false) {
+              return false;
+            }
+            this.purchasePlanIds.forEach((purchaseId) => {
+              if (plan.purchaseId == purchaseId) {
+                //找到不符合的数据 返回 并设置adopt = false
+                if (this.table.purchasePlanList[index]['stateStr'] !== '审核中') {
+                  this.$message({
+                    message: '请选择待审核的采购单',
+                    type: 'warning',
+                  });
+                  adopt = false;
+                  return false;
+                }
               }
+            });
+          });
+        }
+        //找不到符合的数据才允许审核
+        if (adopt) {
+          this.$api.purchase.rejectPurchaseRequest(this.purchasePlanIds, value).then((res) => {
+            let { success, message } = res.data;
+            if (!success) {
+              console.log(message);
+              this.$message.error('驳回失败，服务器未知错误');
+            } else {
+              this.$message({ message: '已驳回！', type: 'success' });
+              this.loadData();
             }
           });
-        });
-      }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.purchase.rejectPurchaseRequest(this.purchasePlanIds).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('驳回失败，服务器未知错误');
-          } else {
-            this.$message({ message: '已驳回！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
+        }
+      });
     },
     //显示采购单子项目
     showPlanDetail(row) {

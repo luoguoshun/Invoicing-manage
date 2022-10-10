@@ -70,6 +70,13 @@
           <el-input type="textare" rows="2" size="mini" v-model="scope.row.remarks"></el-input>
         </template>
       </el-table-column>
+      <el-table-column label="审批详情" align="center">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.stateStr === '驳回'" type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>
+            审批详情
+          </el-button>
+        </template>
+      </el-table-column>
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
@@ -77,7 +84,7 @@
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
         </template>
       </el-table-column>
-    </el-table> 
+    </el-table>
     <!-- 分页 -->
     <div class="block">
       <el-pagination
@@ -153,7 +160,8 @@
         <el-button type="success" @click="addPurchasPlan()">申 请</el-button>
       </div>
     </el-dialog>
-    <el-drawer title="采购计划申请" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
+    <!-- 采购计划详情对话框 -->
+    <el-drawer title="采购计划详情" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
       <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
@@ -196,6 +204,27 @@
         </el-table-column>
       </el-table>
     </el-drawer>
+    <!-- 审核记录对话框 -->
+    <el-dialog title="审批记录" center :visible.sync="dialogObject.approvalDetails" width="30%">
+      <el-timeline>
+        <el-timeline-item :timestamp="approvalDetails.createTime" type="primary" icon="el-icon-more">
+          <p>提交人: {{ approvalDetails.applicantName }}</p>
+        </el-timeline-item>
+        <el-timeline-item
+          v-for="(Step, index) in approvalDetails.workFlowSteps"
+          :key="index"
+          :timestamp="Step.completeTime"
+          :type="Step.approvalStateStr == '已通过' ? 'success ' : 'danger '"
+        >
+          <p>审核人:{{ Step.reviewerName }}</p>
+          <p>审核结果:{{ Step.approvalStateStr }}</p>
+          <p>审核备注:{{ Step.rejectReason }}</p>
+        </el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogObject.approvalDetails = false"> 关 闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -248,6 +277,7 @@ export default {
       dialogObject: {
         updateVisible: false,
         allocationDiolog: false,
+        approvalDetails: false,
       },
       purchasePlanIds: [],
       //仓库列表
@@ -261,6 +291,7 @@ export default {
         supplierId: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
+      approvalDetails: {}, //审批详情
     };
   },
   computed: {},
@@ -355,6 +386,17 @@ export default {
         data.forEach((element) => {
           this.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
         });
+      });
+    },
+    //获取审批详情
+    async getApprovalDetails(projectId) {
+      await this.$api.workFlow.getApprovalDetails(projectId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.approvalDetails = data;
       });
     },
     //条数改变
@@ -509,9 +551,7 @@ export default {
     },
     //更新采购计划项目
     updatePurchaseDetails() {
-      this.$api.purchase.updatePurchaseDetails(
-        this.planDetailDiolog.editPurchaseId, 
-        this.planDetailDiolog.detailPlanItems).then((res) => {
+      this.$api.purchase.updatePurchaseDetails(this.planDetailDiolog.editPurchaseId, this.planDetailDiolog.detailPlanItems).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);
@@ -568,6 +608,11 @@ export default {
           });
         }
       }
+    },
+    //查看审批详情
+    openApprovalDetails(purchaseId) {
+      this.dialogObject.approvalDetails = true;
+      this.getApprovalDetails(purchaseId);
     },
     getElTagClass(row) {
       if (row.stateStr == '驳回') {

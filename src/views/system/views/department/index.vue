@@ -7,13 +7,13 @@
       </div>
     </div>
     <!-- 表格 -->
-    <el-table :data="table.departmentList" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="">
-      <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column prop="departmentId" fixed label="部门编号" width="100" align="center"> </el-table-column>
-      <el-table-column prop="departmentName" label="部门名称" width="150" align="center"></el-table-column>
-      <el-table-column prop="leaderName" label="部门主管" width="150" align="center"></el-table-column>
-      <el-table-column prop="description" label="部门简介" width="500" align="center"></el-table-column>
-      <el-table-column label="上级部门" width="200" align="center"
+    <el-table :data="table.departmentList" :header-cell-style="{ 'text-align': 'center' }" border="">
+      <!-- <el-table-column type="selection" width="50" align="center"> </el-table-column> -->
+      <el-table-column prop="departmentId" fixed label="部门编号" align="center"> </el-table-column>
+      <el-table-column prop="departmentName" label="部门名称" align="center"></el-table-column>
+      <el-table-column prop="leaderName" label="部门主管" align="center"></el-table-column>
+      <el-table-column prop="description" label="部门简介" align="center"></el-table-column>
+      <el-table-column label="上级部门" align="center"
         ><!---prop="parentId" -->
         <template slot-scope="scope">
           {{ scope.row.parentId == 'D1001' ? '董事部' : '已是最高部门' }}
@@ -52,7 +52,7 @@
       </div>
     </el-dialog>
 
-     <!-- 添加部门信息信息对话框 -->
+    <!-- 添加部门信息信息对话框 -->
     <el-dialog title="部门信息" center :visible.sync="dialogObject.createVisible" :close-on-click-modal="false" width="55%">
       <el-form ref="departmentForm" :model="departmentForm" label-width="80px">
         <el-form-item label="部门Id">
@@ -193,7 +193,6 @@ export default {
         }
       });
     },
-
   },
 
   created() {

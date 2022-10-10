@@ -13,6 +13,12 @@ export default {
             ...queryForm
         });
     },
+    //获取登入人需要的审批的采购订单
+    getNeedRreviewOrderByUserId(queryForm) {
+        return ajax.post('/api/Background/purchaseOrder/GetNeedRreviewOrderByUserId', {
+            ...queryForm
+        });
+    },
     //通过采购单编号获取单个采购单数据
     getNoExecuteOrderList(queryForm) {
         return ajax.post('/api/Background/purchaseOrder/GetNoExecuteOrderList', {
@@ -28,12 +34,12 @@ export default {
         return ajax.post('/api/Background/purchaseOrder/ImportPurhaseOrder', purchaseIds);
     },
     //提交采购单
-    submitPurchaseOrder(purchaseIds) {
-        return ajax.post('/api/Background/purchaseOrder/SubmitPurchaseOrder', purchaseIds);
+    submitPurchaseOrder(purchaseOrderIds) {
+        return ajax.post('/api/Background/purchaseOrder/SubmitPurchaseOrder', purchaseOrderIds);
     },
     //撤销采购单申请
-    cancelOrderRequest(purchaseIds) {
-        return ajax.post('/api/Background/purchaseOrder/CancelOrderRequest', purchaseIds);
+    cancelOrderRequest(purchaseOrderIds) {
+        return ajax.post('/api/Background/purchaseOrder/CancelOrderRequest', purchaseOrderIds);
     },
     //修改采购单数据
     updatePurchaseOrder(purchasOrder) {
@@ -52,9 +58,13 @@ export default {
     /**
      * @description:驳回采购单
      * @param {purchasIds}  采购单ids
+     * @param {reason}  驳回原因
      * @return {bool} 
      */
-    rejectOrderRequest(purchaseOrderIds) {
-        return ajax.post('/api/Background/purchaseOrder/RejectOrderRequest', purchaseOrderIds);
+    rejectOrderRequest(purchaseOrderIds, reason) {
+        return ajax.post('/api/Background/purchaseOrder/RejectOrderRequest', {
+            ProjectIds: purchaseOrderIds,
+            Reason: reason
+        });
     },
 }

@@ -33,7 +33,7 @@
         <el-menu-item index="/baseInfo/goods/spuList" @click.native="createTab({ tabName: '货品档案', routeName: 'spuList' })">货品档案</el-menu-item>
         <el-menu-item index="/baseInfo/warehouse/warehouseList" @click.native="createTab({ tabName: '仓库信息', routeName: 'warehouseList' })">
           仓库信息
-          </el-menu-item>
+        </el-menu-item>
         <el-menu-item index="/baseInfo/others/goodsTypeList" @click.native="createTab({ tabName: '其他信息', routeName: 'goodsTypeList' })"
           >其他信息</el-menu-item
         >
@@ -78,8 +78,12 @@
           <i class="el-icon-s-data"></i>
           <span>销售管理</span>
         </template>
-        <el-menu-item index="/sales/salesOrder/salesOrderList">销售管理</el-menu-item>
-        <el-menu-item index="/sales/salesReturn">销售退货</el-menu-item>
+        <el-menu-item index="/sales/salesOrder/salesOrderList" @click.native="createTab({ tabName: '销售管理', routeName: 'salesOrderList' })">
+          销售管理
+        </el-menu-item>
+        <el-menu-item index="/sales/salesReturn" @click.native="createTab({ tabName: '销售管理', routeName: 'salesReturn' })">
+          销售退货
+        </el-menu-item>
       </el-submenu>
 
       <el-submenu index="financial">

@@ -36,4 +36,8 @@ export default {
     createSalesNoteBysalesId(salesId) {
         return ajax.get('/api/Background/Sales/CreateSalesNoteBysalesId?salesId=' + salesId + '');
     },
+    //根据销售Id生成销售出库单PDF
+    getSalesNoteFileBysalesId(salesId) {
+        return ajax.get('/api/Background/Sales/GetSalesNoteFileBysalesId?salesId=' + salesId + '');
+    },
 }

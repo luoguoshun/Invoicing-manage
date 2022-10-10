@@ -26,7 +26,7 @@
     <!-- 表格 -->
     <el-table
       :data="table.userList"
-      @row-dblclick="updateDiolog"
+      @row-dblclick="openUpdateDiolog"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
       border=""
@@ -82,7 +82,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="updateDiolog(scope.row)">查看</el-button>
+          <el-button type="text" size="small" @click="openUpdateDiolog(scope.row)">查看</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -101,7 +101,7 @@
       </el-pagination>
     </div>
     <!-- 修改用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog title="用户信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="50%">
       <el-form ref="updateform" :model="userForm" label-width="80px">
         <el-form-item label="头像">
           <img :src="userForm.headerImgUrl" width="100" height="100" />
@@ -113,7 +113,18 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="用户名称">
-          <el-input v-model="userForm.name"></el-input>
+          <el-input v-model="userForm.name"></el-input> </el-form-item
+        >
+        <el-form-item label="性别">
+          <el-radio-group v-model="userForm.sex" size="mini">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="2">女</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="部门">
+          <el-select v-model="userForm.departmentId" filterable  placeholder="请选择部门">
+            <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName" :value="item.departmentId"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="角色">
           <el-checkbox-group v-model="roleIds">
@@ -135,7 +146,7 @@
       </div>
     </el-dialog>
     <!-- 添加用户信息对话框 -->
-    <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog title="用户信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="50%">
       <el-form :model="userForm" :rules="rules" ref="userForm" label-width="80px">
         <el-form-item label="用户Id" prop="userId">
           <el-input v-model="userForm.userId"></el-input>
@@ -144,17 +155,15 @@
           <el-input v-model="userForm.name"></el-input>
         </el-form-item>
         <el-form-item label="性别">
-          <el-select v-model="userForm.sex" placeholder="请选择性别">
-            <el-option label="男" value="1"></el-option>
-            <el-option label="女" value="2"></el-option>
-          </el-select>
+          <el-radio-group v-model="userForm.sex" size="mini">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="2">女</el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="角色">
-          <el-checkbox-group v-model="roleIds">
-            <el-checkbox v-for="role in roleTypes" :label="role.roleId" :key="role.roleId">
-              {{ role.name }}
-            </el-checkbox>
-          </el-checkbox-group>
+        <el-form-item label="部门">
+          <el-select v-model="userForm.departmentId" filterable  placeholder="请选择部门">
+            <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName" :value="item.departmentId"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
           <el-input type="text" v-model="userForm.phone"></el-input>
@@ -246,6 +255,7 @@ export default {
         phone: '',
         roleIdStr: '',
         state: 0,
+        departmentId:'',
       },
       roleIds: [],
       userIds: [],
@@ -254,7 +264,7 @@ export default {
         name: [
           //^[\u4e00-\u9fa5]{0,}$ 纯汉字
           { required: true, message: '姓名', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 2到 5 个字符', trigger: 'blur' },
+          { min: 2, max: 8, message: '长度在 2到 8 个字符', trigger: 'blur' },
         ],
         phone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
@@ -266,10 +276,11 @@ export default {
         ],
         userId: [
           { required: true, message: '用户Id不能为空', trigger: 'change' },
-          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' },
           { validator: cheackUserId, trigger: 'blur' },
         ],
       },
+      departmentList: [],
     };
   },
   methods: {
@@ -321,6 +332,18 @@ export default {
         this.roleTypes = data;
       });
     },
+    //获取部门列表
+    async getDepartmentList() {
+      await this.$api.department.GetDepartmentList().then((res) => {
+        const { data, success, message } = res.data;
+        console.log(data);
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.departmentList = data;
+      });
+    },
     //重置搜索条件
     resetQueryForm() {
       this.queryForm.conditions = '';
@@ -370,21 +393,24 @@ export default {
       this.dialogObject.addVisible = true;
       this.userForm.userId = '';
       this.userForm.name = '';
-      this.userForm.sex = '男';
+      this.userForm.sex = 1;
       this.userForm.address = '';
       this.userForm.phone = '';
       this.roleIds = [];
+      this.userForm.departmentId='';
     },
+    //添加新用户
     addUser() {
       this.$refs['userForm'].validate((valid) => {
         if (valid) {
           const user = {
             userId: this.userForm.userId,
             name: this.userForm.name,
-            sex: this.userForm.sex == '男' ? 1 : 2,
+            sex: this.userForm.sex,
             address: this.userForm.address,
             phone: this.userForm.phone,
             roleIds: this.roleIds,
+            departmentId:this.userForm.departmentId,
           };
           this.$api.user.addUser(user).then((res) => {
             const { data, success, message } = res.data;
@@ -433,7 +459,7 @@ export default {
       }
     },
     //打开修改弹窗
-    updateDiolog(row) {
+    openUpdateDiolog(row) {
       this.userForm = { ...row };
       if (this.userForm.roleIdStr !== null) {
         this.roleIds = this.userForm.roleIdStr.split('、');
@@ -451,6 +477,7 @@ export default {
         address: this.userForm.address,
         sex: this.userForm.sex,
         name: this.userForm.name,
+        departmentId:this.userForm.departmentId,
       };
       this.$api.user.updateUser(user).then((res) => {
         const { data, success, message } = res.data;
@@ -483,6 +510,7 @@ export default {
   created() {
     this.loadData();
     this.getRoleList();
+    this.getDepartmentList();
   },
 };
 </script>

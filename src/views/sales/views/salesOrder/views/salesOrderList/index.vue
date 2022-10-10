@@ -221,10 +221,21 @@
         <el-button @click="approvalDetaildialog.visible = false"> 关 闭</el-button>
       </span>
     </el-dialog>
+    <!-- 销售出库单据对话框 -->
+    <el-dialog title="销售出库单据" center :visible.sync="salesNotedialog.visible" fullscreen>
+      <el-button type="primary" size="mini" class="el-icon-download" @click="downloadsalesNote()">
+        点击下载
+      </el-button>
+      <div ref="file"></div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+let docx = require('docx-preview');
+import axios from 'axios';
+import { baseUrl } from '@/config/defaultString.js';
+import store from '@/store';
 export default {
   data() {
     return {
@@ -271,8 +282,12 @@ export default {
         visible: false,
         approvalDetails: {},
       }, //审核详情对话框
+      salesNotedialog: {
+        visible: false,
+      },
       salesId: [],
       warehouseList: [], //仓库列表
+      salesNoteSrc: '',
     };
   },
   computed: {},
@@ -497,9 +512,61 @@ export default {
       });
     },
     lookCreateSalesNote(row) {
-      console.log(row.salesNoteUrl);
-      window.location.href = row.salesNoteUrl;
-      window.open(row.salesNoteUrl, '_self');
+      // this.$api.sales.getSalesNoteFileBysalesId(row.salesId).then((res) => {
+      //   console.log(res.data);
+      //   docx.renderAsync(res.data.fileContents, this.$refs.file); // 获取到biob文件流，进行渲染到页面预览
+      //   // if (!success) {
+      //   //   console.log(message);
+      //   //   this.$message.error(message);
+      //   // } else {
+      //   //   this.$message({ message: message, type: 'success' });
+      //   //   this.loadData();
+      //   // }
+      // });
+      this.salesNoteSrc = row.salesNoteSrc;
+      const accessToken = store.getters['token/accessToken'];
+      if (accessToken !== null) {
+        axios({
+          method: 'get',
+          responseType: 'blob', // 因为是流文件，所以要指定blob类型
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+          },
+          url: baseUrl + '/api/Background/Sales/GetSalesNoteFileBysalesId?salesId=' + row.salesId + '',
+        }).then((res) => {
+          if (res.data.size == 0) {
+            this.$message({
+              message: '警告哦，这是一条警告消息',
+              type: 'warning',
+            });
+          } else {
+            this.salesNotedialog.visible = true;
+            docx.renderAsync(res.data, this.$refs.file); //渲染到页面
+          }
+        });
+      }
+    },
+    init(file) {
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        let arr = e.target.result.split(',');
+        let data = window.atob(arr[1]);
+        let mime = arr[0].match(/:(.*?);/)[1];
+        let ia = new Uint8Array(data.length);
+        for (var i = 0; i < data.length; i++) {
+          ia[i] = data.charCodeAt(i);
+        }
+        const blob = new Blob([ia], { type: mime });
+        docx.renderAsync(blob, this.$refs.file).then((x) => {
+          this.salesNotedialog.visible = true;
+        }); // 渲染到页面
+      };
+      // 传入一个参数对象即可得到基于该参数对象的文本内容
+      reader.readAsDataURL(file);
+    },
+    //下载文件
+    downloadsalesNote() {
+      window.open(baseUrl + this.salesNoteSrc, '_self');
     },
   },
   created() {
