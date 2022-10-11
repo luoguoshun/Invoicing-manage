@@ -50,6 +50,27 @@
       show-summary
     >
       <el-table-column type="selection" width="80" align="center"> </el-table-column>
+      <el-table-column type="expand" label="展开查看">
+        <template slot-scope="props">
+          <el-form label-position="left" class="demo-table-expand">
+            <el-form-item label="运输费用">
+              <span>{{ props.row.transportPrice }}</span>
+            </el-form-item>
+            <el-form-item label="其他费用">
+              <span>{{ props.row.otherPrice }}</span>
+            </el-form-item>
+            <el-form-item label="销售单总价">
+              <span>{{ props.row.salesTotalPrice }}</span>
+            </el-form-item>
+            <el-form-item label="订单利润">
+              <span>{{ props.row.salesProfit }}</span>
+            </el-form-item>
+            <el-form-item label="开单时间">
+              <span>{{ $timeFormat.leaveTime(props.row.createTime) }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
@@ -71,17 +92,12 @@
       <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
       <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
       <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
-      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <!-- <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="salesTotalPrice" label="销售单总价" align="center"></el-table-column>
-      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column>
+      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column> -->
       <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
-        <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
-      </el-table-column>
       <el-table-column prop="createTime" label=" 顾客信息" width="138px" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
@@ -109,13 +125,7 @@
       </el-pagination>
     </div>
     <!-- 销售单详情 -->
-    <el-drawer
-      id="salesDetailDiolog"
-      title="销售单详情"
-      :visible.sync="salesDetailDiolog.show"
-      direction="rtl"
-      size="70%"
-    >
+    <el-drawer id="salesDetailDiolog" title="销售单详情" :visible.sync="salesDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
       <el-button size="mini" type="primary" @click="salesDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="salesDetailDiolog.salesDetails" :header-cell-style="{ 'text-align': 'center' }" border>
@@ -209,9 +219,8 @@
       :close-on-click-modal="false"
       :fullscreen="true"
     >
-      <!-- 添加销售信息表单 -->
       <!-- 销售单基本信息 -->
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:80%" :border="true">
+      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
         <el-descriptions-item label="出货仓库"
           ><el-select size="mini" v-model="salesOrderForm.warehouseId" @change="warehouseOnChange" filterable>
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"> </el-option>
@@ -243,7 +252,7 @@
       </el-descriptions>
       <!-- 客户信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:80%" :border="true">
+      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
         <el-descriptions-item label="客户编号">
           <el-input size="mini" type="text" v-model="salesOrderForm.clientId" clearable></el-input>
         </el-descriptions-item>
@@ -266,7 +275,7 @@
       </el-descriptions>
       <!-- 费用信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:80%" :border="true">
+      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
         <el-descriptions-item label="支付方式">
           <el-select size="mini" v-model="salesOrderForm.payType" filterable>
             <el-option value="微信" label="微信"></el-option>
@@ -657,7 +666,13 @@ export default {
           message: '出库数量不应大于库存',
           type: 'warning',
         });
-        row['exWarehouseCount'] = row['count']-1;
+        row['exWarehouseCount'] = 1;
+      }
+      if (row['salesPrice'] < 0 || row['salesPrice'] == null || row['salesPrice'] == '') {
+        row['salesPrice'] = 0;
+      }
+      if (row['exWarehouseCount'] < 0 || row['exWarehouseCount'] == null || row['exWarehouseCount'] == '') {
+        row['exWarehouseCount'] = 0;
       }
       let salesDetailTotalPrice = 0; //销售单总价
       let salesDetailProfit = 0; //销售单利润
@@ -684,6 +699,12 @@ export default {
     },
     //运输费用或其他费用改变
     ransportOrotherPriceChange() {
+      if (this.salesOrderForm.transportPrice == NaN || this.salesOrderForm.transportPrice < 0 || this.salesOrderForm.transportPrice == null) {
+        this.salesOrderForm.transportPrice = 0;
+      }
+      if (this.salesOrderForm.otherPrice == NaN || this.salesOrderForm.otherPrice < 0 || this.salesOrderForm.otherPrice == null) {
+        this.salesOrderForm.otherPrice = 0;
+      }
       //1.先获取原本的（运输费用+其他费用）
       let ransportOrotherPrice = 0;
       let salesDetailTotalPrice = 0; //销售详情单总价
@@ -811,6 +832,19 @@ export default {
         display: grid;
         grid-template-columns: 1fr 1fr;
       }
+    }
+  }
+  .demo-table-expand {
+    font-size: 10px;
+    .label {
+      width: 90px;
+      color: #012558;
+      margin-left: 20px;
+    }
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 20%;
     }
   }
   #applicationSalesDiolog {

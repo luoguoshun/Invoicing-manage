@@ -46,8 +46,31 @@
       @selection-change="selectOrderRows"
       v-loading="table.loading"
       show-summary
+      highlight-current-row
+      style="width: 100%"
     >
-      <el-table-column type="selection" width="80" align="center"> </el-table-column>
+      <el-table-column type="selection" width="50" align="center"> </el-table-column>
+      <el-table-column type="expand" label="展开查看">
+        <template slot-scope="props">
+          <el-form label-position="left" class="demo-table-expand">
+            <el-form-item label="运输费用">
+              <span>{{ props.row.transportPrice }}</span>
+            </el-form-item>
+            <el-form-item label="其他费用">
+              <span>{{ props.row.otherPrice }}</span>
+            </el-form-item>
+            <el-form-item label="销售单总价">
+              <span>{{ props.row.salesTotalPrice }}</span>
+            </el-form-item>
+            <el-form-item label="订单利润">
+              <span>{{ props.row.salesProfit }}</span>
+            </el-form-item>
+            <el-form-item label="开单时间">
+              <span>{{$timeFormat.leaveTime(props.row.createTime)}}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
@@ -69,17 +92,12 @@
       <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
       <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
       <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
-      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <!-- <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="salesTotalPrice" label="销售单总价" align="center"></el-table-column>
-      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column>
+      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column> -->
       <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="开单时间" width="138px" align="center">
-        <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
-      </el-table-column>
       <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
@@ -599,6 +617,19 @@ export default {
         display: grid;
         grid-template-columns: 1fr 1fr;
       }
+    }
+  }
+  .demo-table-expand {
+    font-size: 10px;
+    .label {
+      width: 90px;
+      color: #012558;
+      margin-left: 20px;
+    }
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 20%;
     }
   }
   .dialogSelectInput {

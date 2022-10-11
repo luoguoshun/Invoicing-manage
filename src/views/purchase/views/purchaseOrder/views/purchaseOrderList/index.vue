@@ -107,10 +107,10 @@
     <el-dialog title="采购单详情" :visible.sync="orderDetailDialog.show" center width="70%">
       <el-divider></el-divider>
       <el-button size="mini" type="primary" @click="orderDetailDialog.show = false" plain>关闭</el-button>
-      <el-table :data="orderDetailDialog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-table :data="orderDetailDialog.orderDetailItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.purchaseOrderDetailId }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
@@ -187,9 +187,9 @@ export default {
         loading: true,
       },
       orderDetailDialog: {
-        editPurchaseId: '',
+        eidtPurchaseOrderId: '',
         show: false,
-        detailPlanItems: [],
+        orderDetailItems: [],
       },
       approvalDetailsDialog: {
         visible: false,
@@ -239,15 +239,15 @@ export default {
         });
       });
     },
-    //获取采购订单详细项目列表
-    async getDetailPlanListByPurchasId(purchaseId) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(purchaseId).then((res) => {
+     //获取采购订单详细项目列表
+     async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+      await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.orderDetailDialog.detailPlanItems = data;
+        this.orderDetailDialog.orderDetailItems = data;
       });
     },
     //获取登入人需要的审批的采购订单
@@ -421,8 +421,8 @@ export default {
     },
     //显示采购单子项目
     showorderDetailDialog(row) {
-      this.orderDetailDialog.editPurchaseId = row.purchaseId;
-      this.getDetailPlanListByPurchasId(row.purchaseId);
+      this.orderDetailDialog.eidtPurchaseOrderId = row.purchaseOrderId;
+      this.getOrderDetailByPurchaseOrderId(row.purchaseOrderId);
       this.orderDetailDialog.show = true;
     },
     //查看审批详情

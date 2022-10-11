@@ -99,7 +99,7 @@
       >
       </el-pagination>
     </div>
-    <!-- 添加供应商货品对话框 -->
+    <!-- 采购计划申请对话框 -->
     <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
       <el-form ref="purchasePlanForm" :rules="puchasePlanRules" :model="purchasePlanForm" label-width="80px" class="editform">
         <el-form-item label="申请仓库" prop="warehouseId">
@@ -108,7 +108,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
-          <el-select size="mini" filterable v-model="purchasePlanForm.supplierId" @change="supplierIdOnChange">
+          <el-select size="mini" filterable v-model="purchasePlanForm.supplierId" @change="supplierOnChange">
             <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
           </el-select>
         </el-form-item>
@@ -157,7 +157,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="applicationPlanDiolog.Visible = false">取 消</el-button>
-        <el-button type="success" @click="addPurchasPlan()">申 请</el-button>
+        <el-button type="success" @click="addPurchasePlan()">申 请</el-button>
       </div>
     </el-dialog>
     <!-- 采购计划详情对话框 -->
@@ -488,7 +488,7 @@ export default {
       this.getSKUListBySupplierId();
     },
     //供应商改变 刷新数据
-    supplierIdOnChange(supplierId) {
+    supplierOnChange(supplierId) {
       //根据供应商Id值修改供应商名称的值
       this.supplierList.forEach((item, index) => {
         if (item.supplierId == supplierId) {
@@ -517,7 +517,7 @@ export default {
       console.log(this.purchasePlanForm.applicanSKUIds);
     },
     //添加采购数据
-    addPurchasPlan() {
+    addPurchasePlan() {
       this.$refs['purchasePlanForm'].validate((valid) => {
         if (valid) {
           if (this.purchasePlanForm.applicanSKUIds.length == 0) {

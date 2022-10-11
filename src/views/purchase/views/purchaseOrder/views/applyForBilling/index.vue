@@ -7,7 +7,7 @@
           <el-button type="primary" size="mini"> 开单申请<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="openIntroducePlanDiolog()"> 引入开单 </el-dropdown-item>
-            <el-dropdown-item>自主开单</el-dropdown-item>
+            <el-dropdown-item @click.native="openAppOrderDialog()">自主开单</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <el-button type="primary" size="mini" class="el-icon-check" @click="submitPurchaseOrder()">
@@ -95,7 +95,7 @@
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updatePurchaseOrder(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>订单详情</el-button>
+          <el-button type="info" size="mini" @click="showorderDetailDialog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,13 +114,13 @@
       </el-pagination>
     </div>
     <!-- 采购单详情 -->
-    <el-dialog title="采购单详情" :visible.sync="planDetailDiolog.show" center width="70%">
+    <el-dialog title="采购单详情" :visible.sync="orderDetailDialog.show" center width="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
-      <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-button size="mini" type="primary" @click="orderDetailDialog.show = false" plain>关闭</el-button>
+      <el-table :data="orderDetailDialog.orderDetailItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.purchaseOrderDetailId }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
@@ -138,8 +138,8 @@
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
         <el-table-column prop="createTime" label="添加时间" align="center">
           <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
+            {{ $timeFormat.leaveTime(scope.row.createTime) }}
+          </template>
         </el-table-column>
       </el-table>
     </el-dialog>
@@ -200,6 +200,87 @@
         <el-button @click="introducePlanDiolog.Visible = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 采购开单申请对话框 -->
+    <el-dialog title="采购开单" center :visible.sync="appOrderDialog.visible" :close-on-click-modal="false" :fullscreen="true">
+      <el-form ref="orderForm" :rules="puchaseOrderRules" :model="appOrderDialog.orderForm" label-width="80px" class="editform">
+        <el-form-item label="申请仓库" prop="warehouseId">
+          <el-select size="mini" filterable v-model="appOrderDialog.orderForm.warehouseId">
+            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="供应商" prop="supplierId">
+          <el-select size="mini" filterable v-model="appOrderDialog.orderForm.supplierId" @change="supplierOnChange">
+            <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="申请人" prop="applicantName">
+          <el-input size="mini" type="text" v-model="appOrderDialog.orderForm.operationPersonName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="备注"> <el-input type="textarea" v-model="appOrderDialog.orderForm.remarks"></el-input> </el-form-item>
+      </el-form>
+      <!-- 费用信息 -->
+      <el-descriptions class="margin-top" :column="4" size="mini" style="width:90%" :border="true">
+        <el-descriptions-item label="运输费用">
+          <el-input size="mini" type="number" v-model="appOrderDialog.orderForm.transportPrice" @change="transportOrotherPriceChange"></el-input>
+        </el-descriptions-item>
+        <el-descriptions-item label="其他费用">
+          <el-input size="mini" type="number" v-model="appOrderDialog.orderForm.otherPrice" @change="transportOrotherPriceChange"></el-input>
+        </el-descriptions-item>
+        <el-descriptions-item label="物品总数">
+          <el-input size="mini" type="number" v-model="appOrderDialog.orderForm.totalCount" disabled></el-input>
+        </el-descriptions-item>
+        <el-descriptions-item label="订单总价">
+          <el-input size="mini" type="number" v-model="appOrderDialog.orderForm.orderTotalPrice" disabled></el-input>
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-divider></el-divider>
+      <div class="appOrderSelectInput">
+        <div></div>
+        <el-input size="mini" v-model="appOrderDialog.skuQueryForm.conditions" placeholder="请输入物品名称"></el-input>
+        <el-select size="mini" v-model="appOrderDialog.skuQueryForm.goodsTypeId" placeholder="物品类型">
+          <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+        </el-select>
+        <el-button type="primary" @click="getSKUListBySupplierId()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetDialogQueryForm()" size="mini">重置</el-button>
+      </div>
+      <el-table :data="appOrderDialog.skuTabledata" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectSKURows" border="">
+        <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
+        <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
+        <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
+        <el-table-column prop="needCount" label="采购数量" align="center">
+          <template slot-scope="scope">
+            <el-input-number
+              type="number"
+              size="mini"
+              v-model.number="scope.row.needCount"
+              @change="goodsCountChange(scope.$index, scope.row)"
+            ></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column prop="purchasePrice" label="单品进价" align="center"> </el-table-column>
+        <el-table-column prop="totalPrice" label="总价" align="center"> </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination
+          @size-change="dialogSizeChange"
+          @current-change="dialogCurrentChange"
+          :total="table.total"
+          :page-sizes="[5, 10, 15, 20]"
+          :current-page="queryForm.page"
+          :page-size="queryForm.row"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        >
+        </el-pagination>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="appOrderDialog.Visible = false">取 消</el-button>
+        <el-button type="success" @click="addPurchaseOrder()">申 请</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -217,25 +298,41 @@ export default {
         drawerName: '',
         orderState: '',
       },
-      //新建采购订单表
-      purchasPlanForm: {
-        warehouseId: '',
-        supplierId: '',
-        supplierName: '',
-        applicantId: '', //申请人
-        applicanName: '',
-        remarks: '',
-        applicanSKUIds: [],
+      //添加采购单
+      appOrderDialog: {
+        visible: false,
+        skuQueryForm: {
+          page: 1,
+          row: 10,
+          conditions: '',
+          goodsTypeId: '',
+        },
+        //新建采购订单表
+        orderForm: {
+          warehouseId: '',
+          supplierId: '',
+          supplierName: '',
+          operationPersonId: '', //申请人
+          operationPersonName: '',
+          otherPrice: 0,
+          transportPrice: 0,
+          orderTotalPrice: 0,
+          totalCount: 0,
+          remarks: '',
+          purchaseOrderDetails: [],
+        },
+        skuTabledata: [],
+        tatol: 0,
       },
       table: {
         purchaseOrderList: [],
         total: 0,
         loading: true,
       },
-      planDetailDiolog: {
-        editPurchaseId: '',
+      orderDetailDialog: {
+        eidtPurchaseOrderId: '',
         show: false,
-        detailPlanItems: [],
+        orderDetailItems: [],
       },
       //新建采购计划对话框
       introducePlanDiolog: {
@@ -257,6 +354,12 @@ export default {
       warehouseList: [],
       //供应商列表
       supplierList: [],
+      puchaseOrderRules: {
+        warehouseId: [{ required: true, message: '请选择开单仓库', trigger: 'blur' }],
+        supplierId: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
+        applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
+      },
+      goodsTypes: [], // 物品类型列表
     };
   },
   computed: {},
@@ -302,14 +405,14 @@ export default {
       });
     },
     //获取采购订单详细项目列表
-    async getDetailPlanListByPurchasId(purchaseId) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(purchaseId).then((res) => {
+    async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+      await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.planDetailDiolog.detailPlanItems = data;
+        this.orderDetailDialog.orderDetailItems = data;
       });
     },
     //获取通过
@@ -342,6 +445,40 @@ export default {
         }
         data.forEach((item) => {
           this.supplierList.push({ supplierId: item.supplierId, supplierName: item.supplierName });
+        });
+      });
+    },
+    //获取指定供应商指定货品数据
+    async getSKUListBySupplierId() {
+      let supplierId = 0;
+      let goodsTypeId = 0;
+      if (this.appOrderDialog.orderForm.supplierId != '') {
+        supplierId = parseInt(this.appOrderDialog.orderForm.supplierId);
+      }
+      if (this.appOrderDialog.skuQueryForm.goodsTypeId != '') {
+        goodsTypeId = parseInt(this.appOrderDialog.skuQueryForm.goodsTypeId);
+      }
+      await this.$api.goods.GetSKUListBySupplierId(1, 100, goodsTypeId, supplierId, this.appOrderDialog.skuQueryForm.conditions).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+        this.appOrderDialog.skuTabledata = data.goods;
+        this.appOrderDialog.tatol = data.count;
+      });
+    },
+    //获取物品类型列表
+    async getGoodInfoType() {
+      await this.$api.goods.getGoodInfoType().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        data.forEach((element) => {
+          this.goodsTypes.push({ goodsTypeId: element.goodsTypeId, goodsTypeName: element.goodsTypeName });
         });
       });
     },
@@ -383,8 +520,150 @@ export default {
         this.purchaseIds.push(element.purchaseId);
       });
     },
+    //start-----------------申请开单-----------------------
+    openAppOrderDialog() {
+      let orderForm = this.appOrderDialog.orderForm;
+      orderForm.operationPersonId = '';
+      orderForm.operationPersonName = '';
+      orderForm.warehouseId = '';
+      orderForm.supplierId = '';
+      orderForm.supplierName = '';
+      orderForm.operationPersonId = ''; //申请人
+      orderForm.operationPersonName = '';
+      orderForm.otherPrice = 0;
+      orderForm.transportPrice = 0;
+      orderForm.orderTotalPrice = 0;
+      orderForm.totalCount = 0;
+      orderForm.remarks = '';
+      (orderForm.purchaseOrderDetails = []), (this.appOrderDialog.visible = true);
+      const userInfo = store.getters['userInfo/getUserInfo'];
+      this.appOrderDialog.orderForm.operationPersonId = userInfo.userId || '';
+      this.appOrderDialog.orderForm.operationPersonName = userInfo.name || '';
+    },
+    //重置申请采购计划模态框搜索条件
+    resetDialogQueryForm() {
+      this.appOrderDialog.skuQueryForm.conditions = '';
+      this.appOrderDialog.skuQueryForm.goodsTypeId = 0;
+      this.getSKUListBySupplierId();
+    },
+    //对话框表格条数改变
+    dialogSizeChange(row) {
+      this.appOrderDialog.skuQueryForm.row = row;
+      this.getSKUListBySupplierId();
+    },
+    //对话框表格页数改变
+    dialogCurrentChange(page) {
+      this.appOrderDialog.skuQueryForm = page;
+      this.getSKUListBySupplierId();
+    },
+    //供应商改变 刷新数据
+    supplierOnChange(supplierId) {
+      //根据供应商Id值修改供应商名称的值
+      this.supplierList.forEach((item, index) => {
+        if (item.supplierId == supplierId) {
+          this.appOrderDialog.orderForm.supplierName = this.supplierList[index]['supplierName'];
+          return true;
+        }
+      });
+      this.getSKUListBySupplierId();
+    },
+    //获取采购计划选中行的数据
+    selectSKURows(selection) {
+      this.appOrderDialog.orderForm.purchaseOrderDetails = [];
+      let orderTotalPrice = 0; //销售详情单总价之和
+      let goodsCount = 0;
+      selection.forEach((element) => {
+        const orderDetail = {
+          skuId: element.skuId,
+          purchasePrice: element.purchasePrice, //进价
+          count: element['needCount'],
+          totalPrice: element['needCount'] * element['purchasePrice'],
+          remarks: '',
+        };
+        element['totalPrice'] = orderDetail['totalPrice'];
+        orderTotalPrice += orderDetail['totalPrice'];
+        goodsCount += orderDetail['count'];
+        this.appOrderDialog.orderForm.purchaseOrderDetails.push(orderDetail);
+      });
+      //销售单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
+      this.appOrderDialog.orderForm.orderTotalPrice =
+        orderTotalPrice + parseInt(this.appOrderDialog.orderForm.transportPrice) + parseInt(this.appOrderDialog.orderForm.otherPrice);
+      this.appOrderDialog.orderForm.totalCount = goodsCount;
+    },
+    //数量改变 index 当前操作行的下标 row 当前行
+    goodsCountChange(index, row) {
+      if (row['needCount'] < 0 || row['needCount'] == null || row['needCount'] == '') {
+        this.$message({ message: '数量不应小于等于0', type: 'warning' });
+        row['needCount'] = 1;
+      }
+      let detailTotalPrice = 0; //销售单总价
+      let goodsCount = 0;
+      //1.获取当前行的数据进行赋值
+      this.appOrderDialog.orderForm.purchaseOrderDetails.forEach((item, i) => {
+        if (index == i) {
+          item['count'] = row['needCount'];
+          item['totalPrice'] = row['totalPrice'] = row['needCount'] * row['purchasePrice'];
+        }
+        //2.计算每个订单的总价 数量
+        detailTotalPrice += item['totalPrice'];
+        goodsCount += item['count'];
+      });
+      //计算总数 总利润 总价格
+      //销售单总价=每个销售详情单单的总价之和+运输费用+其他费用
+      this.appOrderDialog.orderForm.orderTotalPrice =
+        parseInt(detailTotalPrice) + parseInt(this.appOrderDialog.orderForm.transportPrice) + parseInt(this.appOrderDialog.orderForm.otherPrice);
+      this.appOrderDialog.orderForm.totalCount = goodsCount;
+    },
+    //运输费用或其他费用改变
+    transportOrotherPriceChange() {
+      if (this.appOrderDialog.orderForm.transportPrice == '') {
+        this.appOrderDialog.orderForm.transportPrice = 0;
+      }
+      if (this.appOrderDialog.orderForm.otherPrice == '') {
+        this.appOrderDialog.orderForm.otherPrice = 0;
+      }
+      //1.先获取原本的（运输费用+其他费用）
+      let transportOrotherPrice = 0;
+      let detailTotalPrice = 0; //销售详情单总价
+      //2. 计算销售详情单单的总价之和
+      this.appOrderDialog.orderForm.purchaseOrderDetails.forEach((item, i) => {
+        detailTotalPrice += item['totalPrice'];
+      });
+      transportOrotherPrice = this.appOrderDialog.orderForm.orderTotalPrice - detailTotalPrice;
+      //3.减掉原本的(运输费用+其他费用） 再加上新的(运输费用+其他费用）
+      //销售单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
+      this.appOrderDialog.orderForm.orderTotalPrice =
+        this.appOrderDialog.orderForm.orderTotalPrice -
+        parseInt(transportOrotherPrice) +
+        parseInt(this.appOrderDialog.orderForm.transportPrice) +
+        parseInt(this.appOrderDialog.orderForm.otherPrice);
+    },
+    //添加采购数据
+    addPurchaseOrder() {
+      this.$refs['orderForm'].validate((valid) => {
+        if (valid) {
+          const orderForm = this.appOrderDialog.orderForm;
+          if (this.appOrderDialog.orderForm.purchaseOrderDetails.length == 0) {
+            this.$message({ message: '请选择商品', type: 'warning' });
+          } else {
+            this.$api.purchaseOrder.addPurchaseOrder(orderForm).then((res) => {
+              const { data, success, message } = res.data;
+              if (!success) {
+                this.$error(message);
+              } else {
+                this.$message({ message: '添加成功！', type: 'success' });
+                this.appOrderDialog.visible = false;
+                this.loadData();
+              }
+            });
+          }
+        }
+      });
+    },
+    //end------------------申请开单----------------------------
     //打开引入采购计划单模态框
     openIntroducePlanDiolog() {
+      let orderForm = this.introducePlanDiolog.orderForm;
       this.introducePlanDiolog.Visible = true;
       this.getPassPurchasePlanList();
     },
@@ -474,16 +753,18 @@ export default {
       });
     },
     //显示采购单子项目
-    showplanDetailDiolog(row) {
-      this.planDetailDiolog.editPurchaseId = row.purchaseId;
-      this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.planDetailDiolog.show = true;
+    showorderDetailDialog(row) {
+      console.log(row);
+      this.orderDetailDialog.eidtPurchaseOrderId = row.purchaseOrderId;
+      this.getOrderDetailByPurchaseOrderId(row.purchaseOrderId);
+      this.orderDetailDialog.show = true;
     },
   },
   created() {
     this.loadData();
     this.getWarehouseList();
     this.getSupplierList();
+    this.getGoodInfoType();
   },
 };
 </script>
@@ -521,6 +802,16 @@ export default {
   .dialogSelectInput {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-column-gap: 3px;
+  }
+  .editform {
+    width: 40%;
+    overflow: hidden;
+  }
+  .appOrderSelectInput {
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
 }

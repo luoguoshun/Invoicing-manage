@@ -29,9 +29,19 @@ export default {
     getPurcahseOrderByOrderId(purchaseOrderId) {
         return ajax.get('/api/Background/purchaseOrder/GetPurcahseOrderByOrderId?purchaseOrderId=' + purchaseOrderId + '');
     },
+    //通过采购单Id获取采购项
+    getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+        return ajax.get('/api/Background/purchaseOrder/GetOrderDetailByPurchaseOrderId?purchaseOrderId=' + purchaseOrderId + '');
+    },
     //引入采购单
     importPurhaseOrder(purchaseIds) {
         return ajax.post('/api/Background/purchaseOrder/ImportPurhaseOrder', purchaseIds);
+    },
+    //手动添加采购单
+    addPurchaseOrder(purchaseOrder) {
+        return ajax.post('/api/Background/purchaseOrder/AddPurchaseOrder', {
+            ...purchaseOrder
+        });
     },
     //提交采购单
     submitPurchaseOrder(purchaseOrderIds) {
