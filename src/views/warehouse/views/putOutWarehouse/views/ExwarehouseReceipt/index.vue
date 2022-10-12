@@ -5,13 +5,8 @@
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-edit" @click="openApplicationPlanDiolog()"> 新建申请 </el-button>
         <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelPurchaseRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
-        <!-- <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div> -->
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.warehouseId">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -42,7 +37,6 @@
       <el-table-column prop="exwarehouseStateStr" label="状态" align="center"> </el-table-column>
       <el-table-column prop="warehouseName" label="出库仓" align="center"> </el-table-column>
       <el-table-column prop="operationPersonId" label="申请人" align="center"></el-table-column>
-      <!-- <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column> -->
       <el-table-column prop="exwarehouseMoney" label="订单总价" align="center"></el-table-column>
       <el-table-column prop="exwarehouseCout" label="货品总数" align="center"></el-table-column>
       <el-table-column prop="remakes" label="备注" align="center">
@@ -86,11 +80,7 @@
               <el-option v-for="item in exwarehouseTypeList" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="选择部门" prop="supplierId" v-model="showDep" v-if="this.showDep">
-            <el-select size="mini" filterable v-model="purchasePlanForm.departmentId">
-              <el-option v-for="item in depList" :key="item.depId" :label="item.depName" :value="item.depId"></el-option>
-            </el-select>
-          </el-form-item>
+
           <el-form-item label="申请人" prop="applicanName">
             <el-input size="mini" type="text" v-model="purchasePlanForm.applicanName" disabled></el-input>
           </el-form-item>
@@ -100,16 +90,14 @@
           <el-form-item label="邮费" prop="postage">
             <el-input v-model="purchasePlanForm.postage" placeholder=""></el-input>
           </el-form-item>
-
-          <el-form-item label="物流单位" prop="supplierId">
-            <el-select size="mini" filterable v-model="purchasePlanForm.warehouseId" @change="getSKUListByWarehouseId">
-              <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+          <el-form-item label="选择部门" prop="supplierId" v-model="showDep" v-if="this.showDep">
+            <el-select size="mini" filterable v-model="purchasePlanForm.departmentId">
+              <el-option v-for="item in depList" :key="item.depId" :label="item.depName" :value="item.depId"></el-option>
             </el-select>
           </el-form-item>
-
           <el-form-item label="原始单" prop="supplierId" v-if="this.SourceDocNo">
             <el-badge is-dot class="item">
-              <el-button type="info" size="mini">引入</el-button>
+              <el-button type="info" size="mini" @click="OpenSalesDiolog()">引入</el-button>
             </el-badge>
           </el-form-item>
         </div>
@@ -129,6 +117,68 @@
         :data="applicationPlanDiolog.skuTabledata"
         :header-cell-style="{ 'text-align': 'center' }"
         @selection-change="selectSKURows"
+        border=""
+      >
+        <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
+        <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="brand" label="品牌" align="center"> </el-table-column>
+        <el-table-column prop="typeStr" label="类别" align="center"> </el-table-column>
+        <el-table-column prop="count" label="库存" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.count }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="warnCount" label="警告库存" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions type="danger">{{ scope.row.warnCount }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
+        <el-table-column prop="price" label="单品进价" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.price }}</el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <div class="block">
+        <el-pagination
+          @size-change="dialogSizeChange"
+          @current-change="dialogCurrentChange"
+          :total="this.applicationPlanDiolog.tatol"
+          :page-sizes="[5, 10, 15, 20]"
+          :current-page="queryForm.page"
+          :page-size="queryForm.row"
+          layout="total, sizes, prev, pager, next, jumper"
+          background
+        >
+        </el-pagination>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="applicationPlanDiolog.Visible = false">取 消</el-button>
+        <el-button type="success" @click="addExwareHousePlan()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 引入销售单模态框 -->
+    <el-dialog title="引入销售单出库" center :visible.sync="importSalesDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
+      <el-form ref="importSalesDiolog" :model="purchasePlanForm" label-width="80px" class="editform"> </el-form>
+      <el-divider></el-divider>
+      <div class="selectInput">
+        <div></div>
+        <el-input size="mini" v-model="applicationPlanDiolog.skuQueryForm.conditions" placeholder="请输入物品名称"></el-input>
+        <el-select size="mini" v-model="applicationPlanDiolog.skuQueryForm.goodsTypeId" placeholder="物品类型">
+          <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+        </el-select>
+        <el-button type="primary" @click="getSKUListBySupplierId()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetDialogQueryForm()" size="mini">重置</el-button>
+      </div>
+      <el-divider></el-divider>
+      <el-table
+        :data="applicationPlanDiolog.skuTabledata"
+        :header-cell-style="{ 'text-align': 'center' }"
+        @selection-change="selectSalesRows"
         border=""
       >
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
@@ -236,6 +286,7 @@ export default {
         exwarehouseTypeId: '',
         applicanSKUIds: [],
         skuPrices: [],
+        logisticsCompany: '',
       },
       table: {
         purchasePlanList: [],
@@ -257,6 +308,17 @@ export default {
           goodsTypeId: '',
         },
         skuTabledata: [],
+        tatol: 0,
+      },
+      importSalesDiolog: {
+        Visible: false,
+        SaleQueryForm: {
+          page: 1,
+          row: 10,
+          conditions: '',
+          goodsTypeId: '',
+        },
+        SalesTabledata: [],
         tatol: 0,
       },
       dialogObject: {
@@ -349,11 +411,8 @@ export default {
         });
       });
     },
-
     //出库类型下拉框修改
     ExwarehouseTypeIdOnChange() {
-      console.log(this.purchasePlanForm.exwarehouseTypeId);
-
       if (this.purchasePlanForm.exwarehouseTypeId == 2) {
         this.showDep = false;
       } else {
@@ -367,10 +426,6 @@ export default {
     },
     //获取指定仓库指定货品数据
     async getSKUListByWarehouseId() {
-      let warehouseId = 0;
-      // if (this.purchasePlanForm.warehouseId != '') {
-      //   warehouseId = parseInt(this.purchasePlanForm.warehouseId);
-      // }
       await this.$api.goods.getSKUListByWhId(1, 100, this.purchasePlanForm.warehouseId, 'asd', 0).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -412,26 +467,6 @@ export default {
       this.queryForm.warehouseId = '';
       this.queryForm.publicationDates = [];
       this.loadData();
-    },
-    //修改采购数据
-    updatePurchasePlan(row) {
-      console.log(row);
-      const purchasPlan = {
-        purchaseId: row.purchaseId,
-        otherPrice: row.otherPrice,
-        transportPrice: row.transportPrice,
-        remarks: row.remarks,
-      };
-      this.$api.purchase.updatePurchasePlan(purchasPlan).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          this.$message.error(success);
-        } else {
-          this.$message({ message: '修改成功！', type: 'success' });
-          this.dialogObject.updateVisible = false;
-          this.loadData();
-        }
-      });
     },
     //获取采购计划选中行的数据
     selectPlanRows(selection) {
@@ -501,6 +536,11 @@ export default {
       this.getSupplierList();
       this.getGoodInfoType();
     },
+    //
+    OpenSalesDiolog() {
+      this.importSalesDiolog.Visible = true;
+      const userInfo = store.getters['userInfo/getUserInfo'];
+    },
     //重置申请采购计划模态框搜索条件
     resetDialogQueryForm() {
       this.applicationPlanDiolog.skuQueryForm.conditions = '';
@@ -528,8 +568,18 @@ export default {
       this.applicationPlanDiolog.skuQueryForm = page;
       this.getSKUListBySupplierId();
     },
-    //获取采购计划选中行的数据
+    //获取入库计划选中行的数据
     selectSKURows(selection) {
+      this.purchasePlanForm.applicanSKUIds = [];
+      (this.purchasePlanForm.skuPrices = []),
+        selection.forEach((element) => {
+          this.purchasePlanForm.applicanSKUIds.push(element.skuId);
+          this.purchasePlanForm.skuPrices.push(element.price);
+        });
+      console.log(this.purchasePlanForm.applicanSKUIds);
+    },
+    //获取采购计划选中行的数据
+    selectSalesRows(selection) {
       this.purchasePlanForm.applicanSKUIds = [];
       (this.purchasePlanForm.skuPrices = []),
         selection.forEach((element) => {
@@ -553,6 +603,7 @@ export default {
               exwarehouseType: this.purchasePlanForm.exwarehouseTypeId,
               applicanSKUIds: this.purchasePlanForm.applicanSKUIds,
               skuPrices: this.purchasePlanForm.skuPrices,
+              postage: this.purchasePlanForm.postage,
             };
             this.$api.exwarehouse.createExWarhousePlan(ExPlan).then((res) => {
               const { data, success, message } = res.data;
@@ -605,7 +656,7 @@ export default {
     },
     //提交出库开单
     async submitApplications() {
-      this.$api.exwarehouse.submitExWarehouseOrder(this.purchaseIds).then((res) => {
+      this.$api.exwarehouse.CreateExWarehousePlanOrder(this.purchaseIds).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);

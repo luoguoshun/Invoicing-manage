@@ -19,10 +19,12 @@ export default{
     //获取出库详情
     getExWareHouseDet(from)
     {
+        console.log(from);
         return ajax.post('/api/Background/ExWarehouse/GetExWareHouseDet',from)
     },
     //生成出库计划
     createExWarhousePlan(ExFrom){
+        console.log(ExFrom);
         return ajax.post('/api/Background/ExWarehouse/CreateExWarhousePlan',ExFrom)
     },
     //修改出库详情
@@ -32,8 +34,13 @@ export default{
         return ajax.post('/api/Background/ExWarehouse/UpdateExWareHouseDet',from)
     },
     //出库开单
+    CreateExWarehousePlanOrder(exwarehouseIds)
+    {
+        return ajax.post('/api/Background/ExWarehouse/CreateExWarehouseOrder',exwarehouseIds)
+    },
+    //提交出库单
     submitExWarehouseOrder(exwarehouseIds)
     {
         return ajax.post('/api/Background/ExWarehouse/SubmitExWarehouseOrder',exwarehouseIds)
-    }
+    },
 };

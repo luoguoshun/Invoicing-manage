@@ -80,7 +80,7 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" @click="showplanDetailDiolog(scope.row)" plain>审批流程</el-button>
+          <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>审批详情</el-button>
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
@@ -178,6 +178,7 @@ export default {
         detailPlanItems: [],
       },
       purchaseOrderIds: [],
+      OrderState: [],
       //仓库列表
       warehouseList: [],
       //供应商列表
@@ -296,20 +297,23 @@ export default {
     //获取采购订单选中行的数据
     selectOrderRows(selection) {
       this.purchaseOrderIds = [];
+      this.OrderState = [];
       selection.forEach((element) => {
-        this.purchaseOrderIds.push(element.purchaseOrderId);
+        this.purchaseOrderIds.push(element.exwarehouseId);
+        this.OrderState.push(element.exwarehouseStateStr);
       });
     },
     showplanDetailDiolog(row) {
       console.log(row);
-      this.planDetailDiolog.editPurchaseId = row.exwarehousePlanId;
-      this.getExWareHouseDet(row.exwarehousePlanId);
+      this.planDetailDiolog.editPurchaseId = row.exwarehouseId;
+      this.getExWareHouseDet(row.exwarehouseId);
       this.planDetailDiolog.show = true;
     },
     //获取出库详情信息
     getExWareHouseDet(row) {
+      console.log(row);
       const from = {
-        ExwarehousePlanId: row,
+        ExwarehouseId: row,
         Page: this.queryForm.page,
         row: this.queryForm.row,
       };
@@ -324,50 +328,35 @@ export default {
         }
       });
     },
-    //审核
+    //出库单提交
     adoptOrderRequest() {
-      let adopt = true;
+      for (let i = 0; i < this.OrderState.length; i++) {
+        if (this.OrderState[i] != '编辑中') {
+          this.$message({
+            message: '只能提交编辑中的出库单！',
+            type: 'warning',
+          });
+          this.OrderState = [];
+          return false;
+        }
+      }
       if (this.purchaseOrderIds.length == 0) {
         this.$message({
-          message: '请选择要审核的采购单',
+          message: '请选择要提交的出库单',
           type: 'warning',
         });
         return false;
-      } else {
-        //找出在 采购数据列表ID包含在 purchaseOrderList 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.purchaseOrderList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
-            return false;
-          }
-          this.purchaseOrderIds.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
-                this.$message({
-                  message: '请选择审核中的采购单',
-                  type: 'warning',
-                });
-                adopt = false;
-                return false;
-              }
-            }
-          });
-        });
       }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.purchaseOrder.adoptOrderRequest(this.purchaseOrderIds).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('审核失败，服务器未知错误');
-          } else {
-            this.$message({ message: '已审核！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
+      this.$api.exwarehouse.submitExWarehouseOrder(this.purchaseOrderIds).then((res) => {
+        let { success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          this.$message.error(message);
+        } else {
+          this.$message({ message: '已提交！', type: 'success' });
+          this.loadData();
+        }
+      });
     },
     //驳回
     rejectOrderRequest() {
