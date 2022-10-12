@@ -36,18 +36,18 @@ export default {
   },
   methods: {
     //将 this.setToken(token) 映射为 this.$store.commit('setToken'，token)
-    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setUserInfo: 'userInfo/setUserInfo',setRouters:'routers/setRouters' }),
+    ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setUserInfo: 'userInfo/setUserInfo', setRouters: 'routers/setRouters' }),
     login() {
       if (this.validateLoginInfo()) {
         this.$api.account.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
-          const { data, success } = res.data;
+          const { data, success, message } = res.data;
           if (success) {
             try {
               this.setTokenInfo(data);
               this.setRouters(data.routers);
               this.setUserInfo(data.userInfo);
               this.$signalR.connection.start();
-              let redirectUrl = this.$route.query.redirectUrl;  
+              let redirectUrl = this.$route.query.redirectUrl;
               if (redirectUrl) {
                 //跳转至进入登录页前的路由（重定向）
                 this.$router.replace(redirectUrl);
@@ -60,7 +60,7 @@ export default {
             }
           } else {
             this.$message({
-              message: '账号或者密码错误',
+              message: message,
               type: 'error',
               center: true,
             });
@@ -88,11 +88,11 @@ export default {
       return true;
     },
   },
-  created(){
-    localStorage.removeItem("tokenInfo");
-    localStorage.removeItem("routersData");
-    localStorage.removeItem("userInfo");
-  }
+  created() {
+    localStorage.removeItem('tokenInfo');
+    localStorage.removeItem('routersData');
+    localStorage.removeItem('userInfo');
+  },
 };
 </script>
 <style lang="less" scoped>

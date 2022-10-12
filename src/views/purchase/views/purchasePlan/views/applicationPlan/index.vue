@@ -70,6 +70,13 @@
           <el-input type="textare" rows="2" size="mini" v-model="scope.row.remarks"></el-input>
         </template>
       </el-table-column>
+      <el-table-column label="审批详情" align="center">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.stateStr === '驳回'" type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>
+            审批详情
+          </el-button>
+        </template>
+      </el-table-column>
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
@@ -92,7 +99,7 @@
       >
       </el-pagination>
     </div>
-    <!-- 添加供应商货品对话框 -->
+    <!-- 采购计划申请对话框 -->
     <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
       <el-form ref="purchasePlanForm" :rules="puchasePlanRules" :model="purchasePlanForm" label-width="80px" class="editform">
         <el-form-item label="申请仓库" prop="warehouseId">
@@ -101,12 +108,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
-          <el-select size="mini" filterable v-model="purchasePlanForm.supplierId" @change="supplierIdOnChange">
+          <el-select size="mini" filterable v-model="purchasePlanForm.supplierId" @change="supplierOnChange">
             <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="申请人" prop="applicanName">
-          <el-input size="mini" type="text" v-model="purchasePlanForm.applicanName" disabled></el-input>
+        <el-form-item label="申请人" prop="applicantName">
+          <el-input size="mini" type="text" v-model="purchasePlanForm.applicantName" disabled></el-input>
         </el-form-item>
         <el-form-item label="备注"> <el-input type="textarea" v-model="purchasePlanForm.remarks"></el-input> </el-form-item>
       </el-form>
@@ -150,10 +157,11 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="applicationPlanDiolog.Visible = false">取 消</el-button>
-        <el-button type="success" @click="addPurchasPlan()">申 请</el-button>
+        <el-button type="success" @click="addPurchasePlan()">申 请</el-button>
       </div>
     </el-dialog>
-    <el-drawer title="采购计划申请" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
+    <!-- 采购计划详情对话框 -->
+    <el-drawer title="采购计划详情" :visible.sync="planDetailDiolog.show" direction="rtl" size="70%">
       <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
@@ -196,6 +204,27 @@
         </el-table-column>
       </el-table>
     </el-drawer>
+    <!-- 审核记录对话框 -->
+    <el-dialog title="审批记录" center :visible.sync="dialogObject.approvalDetails" width="30%">
+      <el-timeline>
+        <el-timeline-item :timestamp="approvalDetails.createTime" type="primary" icon="el-icon-more">
+          <p>提交人: {{ approvalDetails.applicantName }}</p>
+        </el-timeline-item>
+        <el-timeline-item
+          v-for="(Step, index) in approvalDetails.workFlowSteps"
+          :key="index"
+          :timestamp="Step.completeTime"
+          :type="Step.approvalStateStr == '已通过' ? 'success ' : 'danger '"
+        >
+          <p>审核人:{{ Step.reviewerName }}</p>
+          <p>审核结果:{{ Step.approvalStateStr }}</p>
+          <p>审核备注:{{ Step.rejectReason }}</p>
+        </el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogObject.approvalDetails = false"> 关 闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -219,7 +248,7 @@ export default {
         supplierId: '',
         supplierName: '',
         applicantId: '', //申请人
-        applicanName: '',
+        applicantName: '',
         remarks: '',
         applicanSKUIds: [],
       },
@@ -248,6 +277,7 @@ export default {
       dialogObject: {
         updateVisible: false,
         allocationDiolog: false,
+        approvalDetails: false,
       },
       purchasePlanIds: [],
       //仓库列表
@@ -261,6 +291,7 @@ export default {
         supplierId: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
+      approvalDetails: {}, //审批详情
     };
   },
   computed: {},
@@ -357,6 +388,17 @@ export default {
         });
       });
     },
+    //获取审批详情
+    async getApprovalDetails(projectId) {
+      await this.$api.workFlow.getApprovalDetails(projectId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.approvalDetails = data;
+      });
+    },
     //条数改变
     handleSizeChange(row) {
       this.queryForm.row = row;
@@ -434,7 +476,7 @@ export default {
       this.applicationPlanDiolog.Visible = true;
       const userInfo = store.getters['userInfo/getUserInfo'];
       this.purchasePlanForm.applicantId = userInfo.userId || '';
-      this.purchasePlanForm.applicanName = userInfo.name || '';
+      this.purchasePlanForm.applicantName = userInfo.name || '';
       // 加载数据
       this.getSupplierList();
       this.getGoodInfoType();
@@ -446,7 +488,7 @@ export default {
       this.getSKUListBySupplierId();
     },
     //供应商改变 刷新数据
-    supplierIdOnChange(supplierId) {
+    supplierOnChange(supplierId) {
       //根据供应商Id值修改供应商名称的值
       this.supplierList.forEach((item, index) => {
         if (item.supplierId == supplierId) {
@@ -475,7 +517,7 @@ export default {
       console.log(this.purchasePlanForm.applicanSKUIds);
     },
     //添加采购数据
-    addPurchasPlan() {
+    addPurchasePlan() {
       this.$refs['purchasePlanForm'].validate((valid) => {
         if (valid) {
           if (this.purchasePlanForm.applicanSKUIds.length == 0) {
@@ -509,9 +551,7 @@ export default {
     },
     //更新采购计划项目
     updatePurchaseDetails() {
-      this.$api.purchase.updatePurchaseDetails(
-        this.planDetailDiolog.editPurchaseId, 
-        this.planDetailDiolog.detailPlanItems).then((res) => {
+      this.$api.purchase.updatePurchaseDetails(this.planDetailDiolog.editPurchaseId, this.planDetailDiolog.detailPlanItems).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);
@@ -544,6 +584,7 @@ export default {
         //判断采购计划是否含有采购数量为空的数据
         for (let index = 0; index < this.purchasePlanIds.length; index++) {
           const purchaseId = this.purchasePlanIds[index];
+          //获取当前采购计划单详情
           await this.getDetailPlanListByPurchasId(purchaseId);
           for (let i = 0; i < this.planDetailDiolog.detailPlanItems.length; i++) {
             const item = this.planDetailDiolog.detailPlanItems[i];
@@ -567,6 +608,11 @@ export default {
           });
         }
       }
+    },
+    //查看审批详情
+    openApprovalDetails(purchaseId) {
+      this.dialogObject.approvalDetails = true;
+      this.getApprovalDetails(purchaseId);
     },
     getElTagClass(row) {
       if (row.stateStr == '驳回') {

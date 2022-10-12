@@ -3,7 +3,7 @@
     <!-- 操作 -->
     <div class="editbar">
       <el-button type="primary" size="mini" @click="openDialog('add')">添加</el-button>
-      <el-button type="danger" size="mini" @click="deleteSpu()">删除</el-button>
+      <el-button type="danger" size="mini" @click="deleteSKUListById()">删除</el-button>
     </div>
     <div class="edit_query">
       <div class="edit_queryinfo">
@@ -21,6 +21,11 @@
     <!-- 当el-table元素中注入data对象数组后，在el-table-column中用prop属性来对应对象中的键名即可填入数据 -->
     <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
       <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column label="图片" width="100" align="center">
+        <template slot-scope="scope">
+          <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+        </template>
+      </el-table-column>
       <el-table-column prop="skuId" label="单品编码"></el-table-column>
       <el-table-column prop="skuName" label="物品名称"> </el-table-column>
       <el-table-column prop="typeStr" label="物品类型"></el-table-column>
@@ -38,7 +43,6 @@
     </el-table>
 
     <!-- 分页 -->
-
     <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
@@ -52,16 +56,24 @@
       >
       </el-pagination>
     </div>
-
-    <!--SPu模态框-->
+    <!--Sku模态框-->
     <el-dialog
       :title="this.dialogType == 'add' ? '新增SKU' : '修改SKU'"
       center
       :visible.sync="dialogObject.dialogVisible"
       :close-on-click-modal="false"
-      width="40%"
+      width="50%"
     >
       <el-form :model="SkuForm" ref="SkuFormModel" label-width="80px">
+        <el-form-item label="头像" v-if="dialogType == 'edit'">
+          <img :src="SkuForm.LogoSrc" width="100" height="100" />
+          <el-upload ref="upload" action="" :http-request="uploadSKULogoImg" :auto-upload="false" :limit="1">
+            <el-button slot="trigger" size="small" type="primary">
+              选取文件
+            </el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="货品编码" prop="SpuId">
           <el-input v-model="SkuForm.SpuId" disabled></el-input>
         </el-form-item>
@@ -75,7 +87,7 @@
           <el-input v-model="SkuForm.Unit"></el-input>
         </el-form-item>
         <el-form-item label="单品售价" prop="Price">
-          <el-input v-model="SkuForm.Price"></el-input>
+          <el-input type="number" v-model="SkuForm.Price"></el-input>
         </el-form-item>
         <el-form-item label="规格" prop="Specs">
           <el-input v-model="SkuForm.Specs"></el-input>
@@ -83,7 +95,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogObject.dialogVisible = false">取 消</el-button>
-        <el-button type="success" @click="dianlogButton.label == '新增' ? addSku() : updateSku()">{{ dianlogButton.label }}</el-button>
+        <el-button type="success" @click="dianlogButton.label == '新增' ? addSku() : updateSKUById()">{{ dianlogButton.label }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -109,7 +121,7 @@ export default {
       },
       SkuForm: {
         SpuId: '',
-        SpuId: '',
+        SkuId: '',
         Name: '',
         Brand: '',
         GoodsTypeId: '',
@@ -121,7 +133,7 @@ export default {
       },
       goodsTypes: [{ goodsTypeId: 0, goodsTypeName: '请选择物品类型' }],
       brandTypes: [{ label: '', value: '' }],
-      SpuIds: [],
+      skuIds: [],
       dialogType: 'add',
       dialogObject: {
         dialogVisible: false,
@@ -160,7 +172,6 @@ export default {
             element.createTime = this.$timeFormat.timeUTCToTime(element.createTime, 'second');
             element.updateTime = this.$timeFormat.timeUTCToTime(element.updateTime, 'second');
           });
-          console.log(data.goods);
           this.tableData.goodsList = data.goods;
           this.tableData.total = data.count;
         });
@@ -198,32 +209,31 @@ export default {
         this.SkuForm.Name = '';
         this.SkuForm.Brand = '';
         this.SkuForm.GoodsTypeId = '';
-        this.dialogObject.dialogVisible = true;
       } else {
         this.dialogType = 'edit';
-        this.dialogObject.dialogVisible = true;
         this.SkuForm.SpuId = row.spuId;
         this.SkuForm.SkuId = row.skuId;
-        this.SkuForm.Name = row.spuName;
+        this.SkuForm.Name = row.skuName;
         this.SkuForm.Unit = row.unit;
         this.SkuForm.Specs = row.specs;
         this.SkuForm.GoodsTypeId = row.type;
+        this.SkuForm.Price=row.price;
+        this.SkuForm.LogoSrc=row.skuLogoUrl;
         this.dianlogButton.label = '修改';
       }
+      this.dialogObject.dialogVisible = true;
     },
-
     selectRows(selection) {
       console.log('asd');
-      this.SpuIds = [];
+      this.skuIds = [];
       selection.forEach((element) => {
-        this.SpuIds.push(element.spuId);
+        this.skuIds.push(element.skuId);
       });
     },
     //添加
     addSku() {
       ///validate()组件化表单验证，在提交前写入判断
       this.$refs['SkuFormModel'].validate((valid) => {
-        console.log(valid);
         if (valid) {
           const spu = {
             SpuId: this.SkuForm.SpuId,
@@ -249,14 +259,8 @@ export default {
         }
       });
     },
-    updateSku() {
-      const spu = {
-        SpuId: this.SkuForm.SpuId,
-        Name: this.SkuForm.Name,
-        Brand: this.SkuForm.Brand,
-        Type: this.SkuForm.GoodsTypeId,
-      };
-      this.$api.goods.updateSpu(spu).then((res) => {
+    updateSKUById() {
+      this.$api.goods.updateSKUById(this.SkuForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message({ message: '修改失败！', type: 'error' });
@@ -268,14 +272,14 @@ export default {
       });
     },
     //删除Spu
-    deleteSpu() {
-      if (this.SpuIds.length == 0) {
+    deleteSKUListById() {
+      if (this.skuIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
           type: 'warning',
         });
       } else {
-        this.$api.goods.deleteSpuById(this.SpuIds).then((res) => {
+        this.$api.goods.deleteSKUListById(this.skuIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -294,7 +298,6 @@ export default {
       this.queryForm.WarehouseId = '';
       this.queryForm.SpuId = '';
     },
-
     handleSizeChange(row) {
       this.queryForm.row = row;
       this.loadData();
@@ -304,8 +307,37 @@ export default {
       this.queryForm.page = page;
       this.loadData();
     },
-  }, //methods----end
-  //created是一个生命周期的钩子函数。在实例创建完成后被立即调用
+    //上传sku图片
+    uploadSKULogoImg(param) {
+      if (param.file.type != 'image/png' && param.file.type != 'image/gif' && param.file.type != 'image/jpg' && param.file.type != 'image/jpeg') {
+        this.$notify.warning({
+          title: '警告',
+          message: '请上传格式为.png .gif .jpg .jpeg的图片',
+        });
+      } else if (param.file.size / 1024 / 1024 / 2 > 2) {
+        this.$notify.warning({
+          title: '警告',
+          message: '图片大小必须小于2M',
+        });
+      } else {
+        //创建FormData对象(键值对集合) 将模型存在FormData中
+        const formdata = new FormData();
+        formdata.append('file', param.file);
+        formdata.append('skuId', this.SkuForm.SkuId);
+        this.$api.goods.uploadSKULogoImg(formdata).then((res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            this.$message({ message: message, type: 'error' });
+            return;
+          } else {
+            this.dialogObject.dialogVisible = false;
+            this.$message({ message: '上传成功！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
+  }, 
   created() {
     this.SkuForm.SpuId = this.$route.query.spuId;
     this.queryForm.SpuId = this.$route.query.spuId;

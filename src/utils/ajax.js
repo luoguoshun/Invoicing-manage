@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../store';
+import store from '@/store';
 import funs from './funs';
 import encrypt from './encrypt';
 import { Message } from 'element-ui';

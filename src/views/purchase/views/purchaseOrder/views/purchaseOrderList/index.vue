@@ -3,13 +3,20 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptOrderRequest()">
+        <el-dropdown>
+          <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="getSubmitOrderList()"> 历史记录 </el-dropdown-item>
+            <el-dropdown-item @click.native="getNeedRreviewOrderByUserId()">待办事项</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptOrderRequest()" v-show="IsToBeList == true">
           审核
         </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()">
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()" v-show="IsToBeList == true">
           驳回
         </el-button>
-      </div> 
+      </div>
       <div class="edit_query">
         <div class="edit_query_1">
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -45,7 +52,7 @@
       v-loading="table.loading"
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column label="采购单编号" width="120" align="center">
+      <el-table-column prop="purchaseOrderId" label="采购单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>采购计划编号: {{ scope.row.purchaseId }}</p>
@@ -63,7 +70,7 @@
       <el-table-column prop="orderTypeStr" label="开单类型" align="center"> </el-table-column>
       <el-table-column prop="supplierName" label="收款方" align="center"> </el-table-column>
       <el-table-column prop="operationPersonName" label="开单人" align="center"></el-table-column>
-      <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
+      <!-- <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column> -->
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="orderTotalPrice" label="采购总价" align="center"></el-table-column>
@@ -77,7 +84,8 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showorderDetailDiolog(scope.row)" plain>订单详情</el-button>
+          <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseOrderId)" plain>审批详情</el-button>
+          <el-button type="info" size="mini" @click="showorderDetailDialog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,14 +103,14 @@
       >
       </el-pagination>
     </div>
-     <!-- 采购单详情 -->
-     <el-dialog title="采购单详情" :visible.sync="orderDetailDiolog.show" center width="70%">
+    <!-- 采购单详情 -->
+    <el-dialog title="采购单详情" :visible.sync="orderDetailDialog.show" center width="70%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="orderDetailDiolog.show = false" plain>关闭</el-button>
-      <el-table :data="orderDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-button size="mini" type="primary" @click="orderDetailDialog.show = false" plain>关闭</el-button>
+      <el-table :data="orderDetailDialog.orderDetailItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.purchaseOrderDetailId }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
@@ -120,11 +128,33 @@
         <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
         <el-table-column prop="createTime" label="添加时间" align="center">
           <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
+            {{ $timeFormat.leaveTime(scope.row.createTime) }}
+          </template>
         </el-table-column>
       </el-table>
-     </el-dialog>
+    </el-dialog>
+    <!-- 审核记录对话框 -->
+    <el-dialog title="审批记录" center :visible.sync="approvalDetailsDialog.visible" width="30%">
+      <el-timeline>
+        <el-timeline-item :timestamp="approvalDetailsDialog.approvalDetails.createTime" type="primary" icon="el-icon-more">
+          <p>提交人</p>
+          {{ approvalDetailsDialog.approvalDetails.applicantName }}
+        </el-timeline-item>
+        <el-timeline-item
+          v-for="(Step, index) in approvalDetailsDialog.approvalDetails.workFlowSteps"
+          :key="index"
+          :timestamp="Step.completeTime"
+          :type="Step.approvalStateStr == '已通过' ? 'success ' : 'danger '"
+        >
+          <p>审核人:{{ Step.reviewerName }}</p>
+          <p>审核结果:{{ Step.approvalStateStr }}</p>
+          <p>审核备注:{{ Step.rejectReason }}</p>
+        </el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="approvalDetailsDialog.visible = false"> 关 闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -156,16 +186,21 @@ export default {
         total: 0,
         loading: true,
       },
-      orderDetailDiolog: {
-        editPurchaseId: '',
+      orderDetailDialog: {
+        eidtPurchaseOrderId: '',
         show: false,
-        detailPlanItems: [],
+        orderDetailItems: [],
+      },
+      approvalDetailsDialog: {
+        visible: false,
+        approvalDetails: {},
       },
       purchaseOrderIds: [],
       //仓库列表
       warehouseList: [],
       //供应商列表
       supplierList: [],
+      IsToBeList: false,
     };
   },
   computed: {},
@@ -175,16 +210,10 @@ export default {
     },
     //获取提交采购订单列表
     async getSubmitOrderList() {
+      this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      if (queryForm.orderState == '') {
-        queryForm.orderState = '0';
-      }
-      if (queryForm.supplierId == '') {
-        queryForm.supplierId = '0';
-      }
-      queryForm.orderState = parseInt(queryForm.orderState);
-      queryForm.supplierId = parseInt(queryForm.supplierId);
-      console.log(queryForm);
+      queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
+      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
       await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -210,33 +239,32 @@ export default {
         });
       });
     },
-    //获取采购订单详细项目列表
-    async getDetailPlanListByPurchasId(purchaseId) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(purchaseId).then((res) => {
+     //获取采购订单详细项目列表
+     async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+      await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.orderDetailDiolog.detailPlanItems = data;
+        this.orderDetailDialog.orderDetailItems = data;
       });
     },
-    //获取通过
-    async getPassPurchasePlanList() {
-      let planQueryForm = this.introducePlanDiolog.planQueryForm;
-      if (planQueryForm.supplierId == '') {
-        planQueryForm.supplierId = 0;
-      } else {
-        planQueryForm.planQueryForm = parseInt(planQueryForm.supplierId);
-      }
-      await this.$api.purchase.getPassPurchasePlanList(planQueryForm).then((res) => {
+    //获取登入人需要的审批的采购订单
+    async getNeedRreviewOrderByUserId() {
+      this.IsToBeList = true;
+      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
+      queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
+      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
+      await this.$api.purchaseOrder.getNeedRreviewOrderByUserId(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.introducePlanDiolog.passPlanTabledata = data.purchase;
-        this.introducePlanDiolog.total = data.count;
+        this.table.purchaseOrderList = data.purchaseOrders;
+        this.table.total = data.count;
+        this.table.loading = false;
       });
     },
     //构造供应商下拉数据
@@ -250,6 +278,17 @@ export default {
         data.forEach((item) => {
           this.supplierList.push({ supplierId: item.supplierId, supplierName: item.supplierName });
         });
+      });
+    },
+    //获取审批详情
+    async getApprovalDetails(projectId) {
+      await this.$api.workFlow.getApprovalDetails(projectId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.approvalDetailsDialog.approvalDetails = data;
       });
     },
     //条数改变
@@ -269,12 +308,6 @@ export default {
       this.queryForm.warehouseId = '';
       this.queryForm.publicationDates = [];
       this.loadData();
-    },
-    resetDialogQueryForm() {
-      this.introducePlanDiolog.planQueryForm.supplierId = '';
-      this.introducePlanDiolog.planQueryForm.warehouseId = '';
-      this.introducePlanDiolog.planQueryForm.approvalName = '';
-      this.getPassPurchasePlanList();
     },
     //获取采购订单选中行的数据
     selectOrderRows(selection) {
@@ -330,61 +363,79 @@ export default {
     },
     //驳回
     rejectOrderRequest() {
-      let adopt = true;
-      if (this.purchaseOrderIds.length == 0) {
-        this.$message({
-          message: '请选择要审核的采购单',
-          type: 'warning',
-        });
-        return false;
-      } else {
-        //找出在 采购数据列表ID包含在 purchaseOrderList 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.purchaseOrderList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
+      this.$prompt('驳回原因', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputErrorMessage: '请输入驳回原因',
+      })
+        .then(({ value }) => {
+          let adopt = true;
+          if (this.purchaseOrderIds.length == 0) {
+            this.$message({
+              message: '请选择要审核的采购单',
+              type: 'warning',
+            });
             return false;
-          }
-          this.purchaseOrderIds.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
-                this.$message({
-                  message: '请选择审核中的采购单',
-                  type: 'warning',
-                });
-                adopt = false;
+          } else {
+            //找出在 采购数据列表ID包含在 purchaseOrderList 里的数据 判断stateStr的值 是否全部是待审核
+            this.table.purchaseOrderList.forEach((plan, index) => {
+              //adopt = false 说明找到符合的数据 函数返回
+              if (adopt == false) {
                 return false;
               }
-            }
+              this.purchaseOrderIds.forEach((purchaseOrderId) => {
+                if (plan.purchaseOrderId == purchaseOrderId) {
+                  //找到不符合的数据 返回 并设置adopt = false
+                  if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
+                    this.$message({
+                      message: '请选择审核中的采购单',
+                      type: 'warning',
+                    });
+                    adopt = false;
+                    return false;
+                  }
+                }
+              });
+            });
+          }
+          //找不到符合的数据才允许审核
+          if (adopt) {
+            this.$api.purchaseOrder.rejectOrderRequest(this.purchaseOrderIds, value).then((res) => {
+              let { success, message } = res.data;
+              if (!success) {
+                console.log(message);
+                this.$message.error('驳回失败，服务器未知错误');
+              } else {
+                this.$message({ message: '已驳回！', type: 'success' });
+                this.loadData();
+              }
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入',
           });
         });
-      }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.purchaseOrder.rejectOrderRequest(this.purchaseOrderIds).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('驳回失败，服务器未知错误');
-          } else {
-            this.$message({ message: '已驳回！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
     },
     //显示采购单子项目
-    showorderDetailDiolog(row) {
-      this.orderDetailDiolog.editPurchaseId = row.purchaseId;
-      this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.orderDetailDiolog.show = true;
+    showorderDetailDialog(row) {
+      this.orderDetailDialog.eidtPurchaseOrderId = row.purchaseOrderId;
+      this.getOrderDetailByPurchaseOrderId(row.purchaseOrderId);
+      this.orderDetailDialog.show = true;
+    },
+    //查看审批详情
+    openApprovalDetails(purchaseOrderId) {
+      this.approvalDetailsDialog.visible = true;
+      this.getApprovalDetails(purchaseOrderId);
     },
     getElTagClass(row) {
-      if (row.orderStateStr=="已审核") {
-        return 'success'
-      } else if(row.orderStateStr=="审核中") {
+      if (row.orderStateStr == '已审核') {
+        return 'success';
+      } else if (row.orderStateStr == '审核中') {
         return 'warning';
-      }else {
+      } else {
         return '';
       }
     },

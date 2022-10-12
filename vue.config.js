@@ -29,6 +29,7 @@ function addStyleResource(rule) {
 //module变量代表当前模块，它的exports属性是对外的接口
 //通过exports可以将模块从模块中导出，其他文件加载该模块实际上就是读取module.exports变量，他们可以是变量、函数、对象等。
 module.exports = {
+  // baseURl: process.env.NODE_ENV === 'production' ?'/src/' :'/',
   devServer: {
     port: 8001
   }, //设置端口
