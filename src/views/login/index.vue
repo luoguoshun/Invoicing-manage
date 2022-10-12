@@ -39,7 +39,7 @@ export default {
     ...mapMutations({ setTokenInfo: 'token/setTokenInfo', setUserInfo: 'userInfo/setUserInfo', setRouters: 'routers/setRouters' }),
     login() {
       if (this.validateLoginInfo()) {
-        this.$api.account.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
+        this.$api.login.login(this.loginInfo.account, this.loginInfo.password).then((res) => {
           const { data, success, message } = res.data;
           if (success) {
             try {

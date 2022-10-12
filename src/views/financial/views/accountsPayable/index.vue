@@ -11,68 +11,79 @@
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
-        <el-select size="mini" filterable v-model="queryForm.supplierId" placeholder="收款方">
-          <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
+        <el-select size="mini" filterable v-model="queryForm.businessType" placeholder="业务类型">
+          <el-option label="采购" :value="1"></el-option>
+          <el-option label="采购退货" :value="2"></el-option>
+          <el-option label="销售订单" :value="3"></el-option>
+          <el-option label="售后退换" :value="4"></el-option>
         </el-select>
-        <el-select size="mini" v-model="queryForm.paymentState" placeholder="订单状态">
-          <el-option label="待付款" value="1"></el-option>
-          <el-option label="已付款" value="2"></el-option>
+        <el-select size="mini" filterable v-model="queryForm.accountObjectType" placeholder="业务对象类型">
+          <el-option label="供应商" :value="1"></el-option>
+          <el-option label="客户" :value="2"></el-option>
         </el-select>
-        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人编号"></el-input>
+        <el-select size="mini" v-model="queryForm.accountState" placeholder="账目状态">
+          <el-option label="待付款" :value="1"></el-option>
+          <el-option label="已付款" :value="2"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入查询内容"></el-input>
         <div class="edit_query_1">
-          <el-button type="primary" @click="getPaymentOrderList()" size="mini">查找</el-button>
+          <el-button type="primary" @click="getAccountList()" size="mini">查找</el-button>
           <el-button type="primary" @click="resetQueryForm(1)" size="mini">重置</el-button>
         </div>
       </div>
     </div>
     <!-- 表格 -->
     <el-table
-      :data="table.paymentOrderList"
+      :data="table.accountList"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectOrderRows"
       @row-dbclick="showOrderDetailDialog()"
       v-loading="table.loading"
     >
-      <el-table-column label="付款单编号" align="center">
+      <el-table-column prop="accountId" label="账目编号" align="center" width="120px">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>采购单编号: {{ scope.row.projectId }}</p>
             <div slot="reference" class="name-wrapper">
-              <el-tag disable-transitions>{{ scope.row.paymentOrdertId }}</el-tag>
+              <el-tag disable-transitions>{{ scope.row.accountId }}</el-tag>
             </div>
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="paymentStateStr" label="付款订单状态" align="center">
+      <el-table-column prop="accountStateStr" label="账目状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.paymentStateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.accountStateStr }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="sourceTypeStr" label="订单来源" align="center"> </el-table-column>
-      <el-table-column prop="supplierId" label="收款方编号" align="center"> </el-table-column>
-      <el-table-column prop="supplierName" label="收款方名称" align="center"> </el-table-column>
-      <el-table-column prop="operationPersonId" label="开单人编号" align="center"></el-table-column>
-      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="paymentTotalPrice" label="总付款金额" align="center"></el-table-column>
+      <el-table-column prop="accountTypeStr" label="账目类型" align="center"> </el-table-column>
+      <el-table-column prop="accountObjectTypeStr" label="对象类型" align="center"> </el-table-column>
+      <el-table-column prop="businessTypeStr" label="业务类型" align="center"> </el-table-column>
+      <el-table-column prop="accountObjectId" label="账单对象编号" align="center"> </el-table-column>
+      <el-table-column prop="accountObjectName" label="账单对象名称" align="center"></el-table-column>
+      <el-table-column prop="accountTotalPrice" label="应付金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label="开单时间" width="140px" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
+      <el-table-column prop="completeTime" label="完成时间" width="140px" align="center">
+        <template slot-scope="scope">
+          {{ $timeFormat.leaveTime(scope.row.completeTime) }}
+        </template>
+      </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="200" align="center">
+      <el-table-column label="编辑" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="showOrderDetailDialog(scope.row)" plain>订单详情</el-button>
-          <el-button type="primary" size="mini" @click="showPayDetailDialog(scope.row)" plain>付款详情</el-button>
         </template>
       </el-table-column>
       <el-table-column label="编辑" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="success" size="mini" @click="showPayDialog(scope.row)" plain v-if="scope.row.paymentStateStr == '待付款'">
-            付款
+          <el-button type="success" size="mini" @click="showPayDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待付款'">
+            点击付款
           </el-button>
+          <el-button v-else type="primary" size="mini" @click="showPayDetailDialog(scope.row)" plain>付款详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +107,7 @@
       <el-table :data="orderDetailDialog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.purchaseOrderDetailId }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
@@ -209,28 +220,63 @@
     <el-dialog title="付款" :visible.sync="payDialog.visible" center width="40%">
       <el-form ref="form" :model="payForm" label-width="90px" size="mini">
         <el-form-item label="操作人">
-          <el-input v-model="payForm.payUserId" disabled></el-input>
+          <el-input v-model="payForm.payUserName" disabled></el-input>
         </el-form-item>
         <el-form-item label="收款方编号">
-          <el-input v-model="payForm.supplierId" disabled></el-input>
+          <el-input v-model="payForm.accountObjectId" disabled></el-input>
         </el-form-item>
         <el-form-item label="收款方">
-          <el-input v-model="payForm.supplierName" disabled></el-input>
+          <el-input v-model="payForm.accountObjectName" disabled></el-input>
         </el-form-item>
         <el-form-item label="支付方式">
           <el-radio-group v-model="payForm.payType" size="medium">
             <el-radio border label="1">微信</el-radio>
             <el-radio border label="2">支付宝</el-radio>
-            <el-radio border label="3">银行卡转账</el-radio>
+            <el-radio border label="3">银行卡</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="银行卡" v-if="payForm.payType == 3">
+          <el-button type="primary" @click="showbankCardDialog()">请选择款银行卡</el-button>
+          <p>{{ payForm.bankName }}</p>
+          <p>{{ payForm.bankCardNo }}</p>
         </el-form-item>
         <el-form-item label="￥应付金额">
           <span style="color:red">
-            {{ payForm.paymentTotalPrice }}
+            {{ payForm.accountTotalPrice }}
           </span>
         </el-form-item>
       </el-form>
+      <el-dialog width="50%" title="请选择付款银行卡" :visible.sync="bankCardDialog.visible" append-to-body>
+        <!-- 银行卡信息表格 -->
+        <el-table :data="bankCardDialog.bankCardList" :header-cell-style="{ 'text-align': 'center' }">
+          <el-table-column prop="bankCardNo" label="卡号" align="center" width="120px">
+            <template slot-scope="scope">
+              <el-tag disable-transitions>{{ scope.row.bankCardNo }}</el-tag>
+            </template>
+          </el-table-column>
 
+          <el-table-column prop="cardholder" label="持卡人" align="center"> </el-table-column>
+          <el-table-column prop="accountBalance" label="账户余额" align="center"> </el-table-column>
+          <el-table-column prop="bankName" label="银行名称" align="center"></el-table-column>
+          <el-table-column prop="bankCardStateStr" label="银行卡状态" align="center">
+            <template slot-scope="scope">
+              <el-tag disable-transitions effect="plain">{{ scope.row.bankCardStateStr }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="140px" align="center">
+            <template slot-scope="scope">
+              {{ $timeFormat.leaveTime(scope.row.createTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="编辑" width="100" align="center">
+            <template slot-scope="scope">
+              <el-button type="warm" size="mini" @click="chooseBankCard(scope.row)">
+                选择
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
       <span slot="footer" class="dialog-footer">
         <el-button @click="payDialog.visible = false">取 消</el-button>
         <el-button type="primary" @click="paymentOrder()">确 定</el-button>
@@ -239,21 +285,20 @@
     <!-- 付款详情对话框 -->
     <el-dialog title="付款信息" :visible.sync="payDetailDialog.visible" center width="40%">
       <el-descriptions class="margin-top" title="详细信息" :column="1">
-        <el-descriptions-item label="详情编号">{{ payDetailDialog.paymentOrderDetail.paymentOrderDetailId }}</el-descriptions-item>
-        <el-descriptions-item label="付款编号">{{ payDetailDialog.paymentOrderDetail.paymentOrdertId }}</el-descriptions-item>
+        <el-descriptions-item label="付款编号">{{ payDetailDialog.accountDetail.accountId }}</el-descriptions-item>
         <el-descriptions-item label="付款方式" label-class-name="my-label">
           <el-tag size="small">
-            {{ payDetailDialog.paymentOrderDetail.payTypeStr }}
+            {{ payDetailDialog.accountDetail.payTypeStr }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="付款人">
-          <el-tag size="small">{{ payDetailDialog.paymentOrderDetail.payUserName }}</el-tag>
+        <el-descriptions-item label="业务员">
+          <el-tag size="small">{{ payDetailDialog.accountDetail.operationPersonName }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="收款人">
-          <el-tag size="small">{{ payDetailDialog.paymentOrderDetail.payeeName }}</el-tag>
+        <el-descriptions-item label="账单对象">
+          <el-tag size="small">{{ payDetailDialog.accountDetail.accountObjectName }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="收款账号">{{ payDetailDialog.paymentOrderDetail.collectionAccountNo }}</el-descriptions-item>
-        <el-descriptions-item label="付款时间">{{ $timeFormat.leaveTime(payDetailDialog.paymentOrderDetail.payTime) }}</el-descriptions-item>
+        <el-descriptions-item label="付款账号">{{ payDetailDialog.accountDetail.bankCardNo }}</el-descriptions-item>
+        <el-descriptions-item label="付款时间">{{ $timeFormat.leaveTime(payDetailDialog.accountDetail.payTime) }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
   </div>
@@ -267,12 +312,14 @@ export default {
       queryForm: {
         page: 1,
         row: 10,
-        publicationDates: [],
-        supplierId: '',
+        accountType: 2, //1应收  2，应付
+        publicationDates: [], //开单时间区域
+        businessType: '', //业务类型
+        accountObjectType: '', //对象类型 1 供应商 2.客户
+        accountState: '',
         conditions: '',
-        paymentState: '',
       },
-      //新建应付款订单表
+      //新建应账目表
       purchasPlanForm: {
         supplierId: '',
         supplierName: '',
@@ -282,12 +329,12 @@ export default {
         applicanSKUIds: [],
       },
       table: {
-        paymentOrderList: [],
+        accountList: [],
         total: 0,
         loading: true,
       },
       orderDetailDialog: {
-        editPurchaseId: '',
+        editPurchaseOrderId: '',
         show: false,
         detailPlanItems: [],
       },
@@ -308,20 +355,24 @@ export default {
       payDialog: {
         visible: false,
       },
+      bankCardDialog: {
+        visible: false,
+        bankCardList: [],
+      },
       payDetailDialog: {
         visible: false,
-        paymentOrderDetail: {},
+        accountDetail: {},
       },
       payForm: {
-        paymentOrdertId: '', //要支付的订单
+        accountId: '', //要支付的订单
         payType: '1',
-        supplierId: '',
-        supplierName: '',
+        accountObjectId: '',
+        accountObjectName: '',
         payUserId: '', //支付人
         payUserName: '', //支付人
-        payeeName: '', //收款人名称
-        paymentTotalPrice: '',
-        collectionAccountNo: '', //收款账号
+        accountTotalPrice: '',
+        bankCardNo: '', //收款账号
+        bankName: '', //收款账号
       },
       purchaseOrderIds: [],
       //仓库列表
@@ -333,20 +384,21 @@ export default {
   computed: {},
   methods: {
     loadData() {
-      this.getPaymentOrderList();
+      this.getAccountList();
     },
-    //获取提交应付款订单列表
-    async getPaymentOrderList() {
+    //获取提交应账目列表
+    async getAccountList() {
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
-      queryForm.paymentState = queryForm.paymentState == '' ? 0 : parseInt(queryForm.paymentState);
-      await this.$api.paymentOrder.getPaymentOrderList(queryForm).then((res) => {
+      queryForm.businessType = queryForm.businessType == '' ? 0 : parseInt(queryForm.businessType);
+      queryForm.accountObjectType = queryForm.accountObjectType == '' ? 0 : parseInt(queryForm.accountObjectType);
+      queryForm.accountState = queryForm.accountState == '' ? 0 : parseInt(queryForm.accountState);
+      await this.$api.finance.getAccountList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.paymentOrderList = data.paymentOrders;
+        this.table.accountList = data.accounts;
         this.table.total = data.count;
         this.table.loading = false;
       });
@@ -355,7 +407,6 @@ export default {
     async getNoExecuteOrderList() {
       let queryForm = JSON.parse(JSON.stringify(this.purchaseOrderDialog.queryForm));
       queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
-      console.log(queryForm);
       await this.$api.purchaseOrder.getNoExecuteOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -366,7 +417,7 @@ export default {
         this.purchaseOrderDialog.table.total = data.count;
       });
     },
-    //获取应付款订单详细项目列表
+    //获取应账目详细项目列表
     async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
       await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
@@ -377,7 +428,7 @@ export default {
         this.orderDetailDialog.detailPlanItems = data;
       });
     },
-    //获取通过
+    //
     async getPassPurchasePlanList() {
       let planQueryForm = this.introducePlanDiolog.planQueryForm;
       if (planQueryForm.supplierId == '') {
@@ -409,6 +460,17 @@ export default {
         });
       });
     },
+    async getBankCardInfoList() {
+      this.bankCardDialog.bankCardList = [];
+      await this.$api.finance.getBankCardInfoList().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.bankCardDialog.bankCardList = data;
+      });
+    },
     //条数改变
     handleSizeChange(row) {
       this.queryForm.row = row;
@@ -422,8 +484,10 @@ export default {
     //重置搜索条件
     resetQueryForm(editName) {
       if (editName == 1) {
-        this.queryForm.supplierId = '';
+        this.queryForm.businessType = 0;
+        this.queryForm.accountState = '';
         this.queryForm.conditions = '';
+        this.queryForm.accountObjectType = '';
         this.queryForm.publicationDates = [];
         this.loadData();
       } else {
@@ -432,7 +496,7 @@ export default {
         this.getPassPurchasePlanList();
       }
     },
-    //获取应付款订单选中行的数据
+    //获取应账目选中行的数据
     selectOrderRows(selection) {
       this.purchaseOrderIds = [];
       selection.forEach((element) => {
@@ -441,19 +505,15 @@ export default {
     },
     //显示采购单子项目
     showOrderDetailDialog(row) {
-      console.log(row);
-      //通过付款单获取采购单详情 再获取到采购计划详情进行展示
-      this.orderDetailDialog.editPurchaseId = row.projectId;
-      this.$api.purchaseOrder.getPurcahseOrderByOrderId(row.projectId).then((res) => {
-        const { data, success, message } = res.data;
-        this.getOrderDetailByPurchaseOrderId(data.purchaseOrderId);
-      });
+      //通过付款单获取采购单详情
+      this.orderDetailDialog.editPurchaseOrderId = row.purchaseOrderId;
+      this.getOrderDetailByPurchaseOrderId(row.purchaseOrderId);
       this.orderDetailDialog.show = true;
     },
     getElTagClass(row) {
-      if (row.paymentStateStr == '已付款') {
+      if (row.acountStateStr == '已付款') {
         return 'success';
-      } else if (row.paymentStateStr == '待付款') {
+      } else if (row.acountStateStr == '待付款') {
         return 'warning';
       } else {
         return '';
@@ -474,7 +534,8 @@ export default {
     },
     //引入采购单生成付款单
     importPurchaseOrder() {
-      this.$api.paymentOrder.addPaymentOrderByPurchaseOrder(this.purchaseOrderIds).then((res) => {
+      let userInfo = store.getters['userInfo/getUserInfo'];
+      this.$api.finance.addAccountByPurchaseOrder(this.purchaseOrderIds, userInfo.userId, userInfo.name).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message.error(message);
@@ -488,29 +549,51 @@ export default {
         }
       });
     },
-    //付款
+    //----------------------------付款-----------------
     showPayDialog(row) {
       //获取当前登入人信息
       let userInfo = store.getters['userInfo/getUserInfo'];
       this.payDialog.visible = true;
       this.payForm.payUserId = userInfo.userId;
       this.payForm.payUserName = userInfo.name;
-      this.payForm.paymentOrdertId = row.paymentOrdertId;
-      this.payForm.supplierId = row.supplierId;
-      this.payForm.supplierName = row.supplierName;
-      this.payForm.paymentTotalPrice = row.paymentTotalPrice;
+      this.payForm.accountId = row.accountId;
+      this.payForm.accountObjectId = row.accountObjectId;
+      this.payForm.accountObjectName = row.accountObjectName;
+      this.payForm.accountTotalPrice = row.accountTotalPrice;
     },
+    showbankCardDialog() {
+      this.getBankCardInfoList();
+      this.bankCardDialog.visible = true;
+    },
+    //选择银行卡
+    chooseBankCard(row) {
+      if (this.payForm.accountTotalPrice > row.accountBalance) {
+        this.$message({
+          message: '银行卡余额不足',
+          type: 'warning',
+        });
+      } else {
+        this.payForm.bankCardNo = row.bankCardNo;
+        this.payForm.bankName = row.bankName;
+        this.bankCardDialog.visible = false;
+      }
+    },
+    //支付订单
     paymentOrder() {
-      console.log(this.payForm);
-      if (this.payForm.payType == '') {
+      if (this.payForm.payType == '' || this.payForm.payType == null) {
         this.$message({
           message: '请选择支付方式',
           type: 'warning',
         });
+      } else if (this.payForm.payType == '3' && this.payForm.bankCardNo == '') {
+        this.$message({
+          message: '请选择付款银行卡',
+          type: 'warning',
+        });
       } else {
         let payForm = JSON.parse(JSON.stringify(this.payForm));
-        payForm.payType = parseInt(payForm.payType);
-        this.$api.paymentOrder.paymentOrder(payForm).then((res) => {
+        payForm.payType = payForm.payType == '' ? 0 : parseInt(payForm.payType);
+        this.$api.finance.paymentOrder(payForm).then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
             this.$message.error(message);
@@ -529,9 +612,10 @@ export default {
     },
     //付款详情
     showPayDetailDialog(row) {
-      this.payDetailDialog.paymentOrderDetail = row.paymentDetail;
+      this.payDetailDialog.accountDetail = row.accountDetail;
       this.payDetailDialog.visible = true;
     },
+    // ------------------------付款----------------------
   },
   created() {
     this.loadData();
@@ -548,7 +632,7 @@ export default {
     width: 100%;
     margin: 10px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 1fr 3fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -557,7 +641,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1.5fr;
       grid-column-gap: 5px;
       .edit_query_1:last-child {
         display: grid;
