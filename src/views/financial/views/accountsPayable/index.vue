@@ -253,7 +253,7 @@
           <el-tag size="small">{{ payDetailDialog.paymentOrderDetail.payeeName }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="收款账号">{{ payDetailDialog.paymentOrderDetail.collectionAccountNo }}</el-descriptions-item>
-        <el-descriptions-item label="付款时间">{{  $timeFormat.leaveTime(payDetailDialog.paymentOrderDetail.payTime) }}</el-descriptions-item>
+        <el-descriptions-item label="付款时间">{{ $timeFormat.leaveTime(payDetailDialog.paymentOrderDetail.payTime) }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
   </div>
@@ -367,8 +367,8 @@ export default {
       });
     },
     //获取应付款订单详细项目列表
-    async getDetailPlanListByPurchasId(purchaseId) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(purchaseId).then((res) => {
+    async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+      await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -446,8 +446,7 @@ export default {
       this.orderDetailDialog.editPurchaseId = row.projectId;
       this.$api.purchaseOrder.getPurcahseOrderByOrderId(row.projectId).then((res) => {
         const { data, success, message } = res.data;
-        console.log(data);
-        this.getDetailPlanListByPurchasId(data.purchaseId);
+        this.getOrderDetailByPurchaseOrderId(data.purchaseOrderId);
       });
       this.orderDetailDialog.show = true;
     },
@@ -574,6 +573,5 @@ export default {
   .my-label {
     background: #e0aab8;
   }
-
 }
 </style>

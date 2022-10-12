@@ -131,7 +131,8 @@
     <el-dialog title="审批记录" center :visible.sync="dialogObject.approvalDetails" width="30%">
       <el-timeline>
         <el-timeline-item :timestamp="approvalDetails.createTime" type="primary" icon="el-icon-more">
-          <p>提交人: {{ approvalDetails.applicantName }}</p>
+          <p>提交人</p>
+          {{ approvalDetails.applicantName }}
         </el-timeline-item>
         <el-timeline-item
           v-for="(Step, index) in approvalDetails.workFlowSteps"
