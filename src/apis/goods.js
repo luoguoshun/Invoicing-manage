@@ -24,6 +24,7 @@ export default {
             warehouseId,
             goodName,
             goodsTypeId,
+            //warehouseId,
         });
     },
     //获取品牌类型
