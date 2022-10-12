@@ -17,14 +17,19 @@ export default {
         return ajax.post('/api/Background/Googs/GetGoodsTypeInfo')
     },
     //通过仓库编号获取物品
-    getSKUListByWhId(page, row, warehouseId, goodsName, goodsTypeId) {
+    getSKUListByWhId(page, row, warehouseId, goodName, goodsType) {
+        console.log(page);
+        console.log(row);
+        console.log(warehouseId);
+        console.log(goodName);
+        console.log(goodsType);
         return ajax.post('/api/Background/Googs/GetSKUListByWarehouseId', {
             page,
             row,
             warehouseId,
-            goodsName,
-            goodsTypeId,
-            warehouseId,
+            goodName,
+            goodsType,
+            //warehouseId,
         });
     },
     //获取品牌类型
