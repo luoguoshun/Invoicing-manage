@@ -92,21 +92,17 @@
       <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
       <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
       <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
-      <!-- <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="salesTotalPrice" label="销售单总价" align="center"></el-table-column>
-      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column> -->
       <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label=" 顾客信息" width="138px" align="center">
+      <el-table-column prop="createTime" label=" 顾客信息" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+          <el-button type="warning" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="200" align="center">
+      <el-table-column label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
+          <el-button type="warning" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -252,13 +248,18 @@
       </el-descriptions>
       <!-- 客户信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
-        <el-descriptions-item label="客户编号">
+      <el-descriptions class="margin-top" :column="4" size="mini" style="width:90%" :border="true">
+        <el-descriptions-item label="顾客">
+          <el-select size="mini" filterable v-model="salesOrderForm.clientId" placeholder="请选择顾客户" @change="clientOnChange">
+            <el-option v-for="item in clientList" :key="item.userId" :label="item.name" :value="item.userId"></el-option>
+          </el-select>
+        </el-descriptions-item>
+        <!-- <el-descriptions-item label="客户编号">
           <el-input size="mini" type="text" v-model="salesOrderForm.clientId" clearable></el-input>
         </el-descriptions-item>
         <el-descriptions-item label="顾客名称">
           <el-input size="mini" type="text" v-model="salesOrderForm.clientName" clearable></el-input>
-        </el-descriptions-item>
+        </el-descriptions-item> -->
         <el-descriptions-item label="手机号码">
           <el-input size="mini" type="text" v-model="salesOrderForm.clientPhone" clearable></el-input>
         </el-descriptions-item>
@@ -275,7 +276,7 @@
       </el-descriptions>
       <!-- 费用信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
+      <el-descriptions class="margin-top" :column="4" size="mini" style="width:90%" :border="true">
         <el-descriptions-item label="支付方式">
           <el-select size="mini" v-model="salesOrderForm.payType" filterable>
             <el-option value="微信" label="微信"></el-option>
@@ -287,7 +288,7 @@
         <el-descriptions-item label="运输费用">
           <el-input size="mini" type="number" v-model="salesOrderForm.transportPrice" @change="ransportOrotherPriceChange"></el-input>
         </el-descriptions-item>
-        <el-descriptions-item label="其他费用" :span="2">
+        <el-descriptions-item label="其他费用">
           <el-input size="mini" type="number" v-model="salesOrderForm.otherPrice" @change="ransportOrotherPriceChange"></el-input>
         </el-descriptions-item>
         <el-descriptions-item label="物品总数">
@@ -301,19 +302,6 @@
         </el-descriptions-item>
         <el-descriptions-item> </el-descriptions-item>
       </el-descriptions>
-      <!-- <el-form ref="salesOrderForm" :inline="true" :model="salesOrderForm" label-width="80px" class="demo-form-inline">
-        <el-form-item label="出货仓库" prop="warehouseId">
-          <el-select size="mini" filterable v-model="salesOrderForm.warehouseId" @change="warehouseOnChange">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="业务员" prop="applicantName">
-          <el-input size="mini" type="text" v-model="salesOrderForm.applicantName" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input size="mini" type="text" v-model="salesOrderForm.remarks"></el-input>
-        </el-form-item>
-      </el-form> -->
       <el-divider></el-divider>
       <div class="dialogSelectInput">
         <div></div>
@@ -460,6 +448,7 @@ export default {
       warehouseList: [],
       //物品类型列表
       goodsTypes: [],
+      clientList: [], //客户列表
     };
   },
   computed: {},
@@ -507,7 +496,7 @@ export default {
         });
       });
     },
-    //获取物品数据
+    //获取供应商物品数据
     async getSKUListByWhId() {
       let queryForm = JSON.parse(JSON.stringify(this.applicationSalesDiolog.skuQueryForm));
       queryForm.goodsTypeId = queryForm.goodsTypeId == '' ? 0 : parseInt(queryForm.goodsTypeId);
@@ -522,6 +511,17 @@ export default {
           this.applicationSalesDiolog.skuTabledata = data.goods;
           this.applicationSalesDiolog.total = data.count;
         });
+    },
+    //获取客户列表数据
+    async getUsersByRoleId() {
+      await this.$api.user.getUsersByRoleId('Client').then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.clientList = data;
+      });
     },
     //展示客户信息
     showClientInfo(row) {
@@ -593,6 +593,7 @@ export default {
         this.salesIds.push(element.salesId);
       });
     },
+    //-----------------销售开单---------------------
     //打开申请表模态框
     openapplicationSalesDiolog() {
       this.applicationSalesDiolog.Visible = true;
@@ -602,6 +603,7 @@ export default {
       // 加载数据
       this.getWarehouseList();
       this.getGoodInfoType();
+      this.getUsersByRoleId();
     },
     //对话框表格条数改变
     dialogSizeChange(row) {
@@ -629,6 +631,16 @@ export default {
         }
       });
       this.getSKUListByWhId();
+    },
+    clientOnChange(value) {
+      console.log(value);
+      //根据供应商Id值修改供应商名称的值
+      this.clientList.forEach((item, index) => {
+        if (item.userId == value) {
+          this.salesOrderForm.clientName = item['name'];
+          return true;
+        }
+      });
     },
     //获取采购计划选中行的数据
     selectSKURows(selection) {
@@ -683,6 +695,7 @@ export default {
           item['totalPrice'] = row['exWarehouseCount'] * row['salesPrice'];
           item['salesDetailProfit'] = row['exWarehouseCount'] * (row['salesPrice'] - row['price']);
           item['goodsCount'] = row['exWarehouseCount'];
+          item['salesPrice'] = row['salesPrice'];
         }
         //2.计算每个订单的总价 利润 数量
         salesDetailTotalPrice += item['totalPrice'];
@@ -699,10 +712,10 @@ export default {
     },
     //运输费用或其他费用改变
     ransportOrotherPriceChange() {
-      if (this.salesOrderForm.transportPrice == NaN || this.salesOrderForm.transportPrice < 0 || this.salesOrderForm.transportPrice == null) {
+      if (this.salesOrderForm.transportPrice == '' || this.salesOrderForm.transportPrice < 0 || this.salesOrderForm.transportPrice == null) {
         this.salesOrderForm.transportPrice = 0;
       }
-      if (this.salesOrderForm.otherPrice == NaN || this.salesOrderForm.otherPrice < 0 || this.salesOrderForm.otherPrice == null) {
+      if (this.salesOrderForm.otherPrice == '' || this.salesOrderForm.otherPrice < 0 || this.salesOrderForm.otherPrice == null) {
         this.salesOrderForm.otherPrice = 0;
       }
       //1.先获取原本的（运输费用+其他费用）
@@ -726,6 +739,21 @@ export default {
       if (this.salesOrderForm.salesDetails.length == 0) {
         this.$message({
           message: '请选择单品',
+          type: 'warning',
+        });
+      } else if (this.salesOrderForm.clientAddress == '' || this.salesOrderForm.clientAddress == null) {
+        this.$message({
+          message: '请选择收获地址',
+          type: 'warning',
+        });
+      } else if (this.salesOrderForm.clientId == '' || this.salesOrderForm.clientId == null) {
+        this.$message({
+          message: '请选择客户',
+          type: 'warning',
+        });
+      } else if (this.salesOrderForm.payType == '' || this.salesOrderForm.payType == null) {
+        this.$message({
+          message: '请选择收获收款方式',
           type: 'warning',
         });
       } else {
@@ -756,6 +784,7 @@ export default {
         }
       }
     },
+    //-----------------销售开单---------------------
     //撤销
     async cancelSalesOrderRequest() {
       if (this.salesIds.length == 0) {

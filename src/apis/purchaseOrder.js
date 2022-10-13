@@ -19,7 +19,7 @@ export default {
             ...queryForm
         });
     },
-    //通过采购单编号获取单个采购单数据
+    //通获取未被付款模块引用采购单数据
     getNoExecuteOrderList(queryForm) {
         return ajax.post('/api/Background/purchaseOrder/GetNoExecuteOrderList', {
             ...queryForm

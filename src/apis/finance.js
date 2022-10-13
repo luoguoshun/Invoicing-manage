@@ -15,14 +15,28 @@ export default {
             operationPersonName,
         });
     },
+    //通过销售单新增应收款订单
+    addAccountBySalesOrder(salesOrderIds, operationPersonId, operationPersonName) {
+        return ajax.post('/api/Background/Finance/AddAccountBySalesOrder', {
+            salesOrderIds,
+            operationPersonId,
+            operationPersonName,
+        });
+    },
     //获取所有银行卡信息列表
     getBankCardInfoList() {
         return ajax.post('/api/Background/Finance/GetBankCardInfoList');
     },
     //支付订单
-    paymentOrder(payForm) {
+    paymentOrder(paymentForm) {
         return ajax.post('/api/Background/Finance/PaymentOrder', {
-            ...payForm
+            ...paymentForm
+        });
+    },
+    //支付订单
+    accountReceivable(paymentForm) {
+        return ajax.post('/api/Background/Finance/AccountReceivable', {
+            ...paymentForm
         });
     },
 };

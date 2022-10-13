@@ -66,7 +66,7 @@
               <span>{{ props.row.salesProfit }}</span>
             </el-form-item>
             <el-form-item label="开单时间">
-              <span>{{$timeFormat.leaveTime(props.row.createTime)}}</span>
+              <span>{{ $timeFormat.leaveTime(props.row.createTime) }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -92,20 +92,23 @@
       <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
       <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
       <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
-      <!-- <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="salesTotalPrice" label="销售单总价" align="center"></el-table-column>
-      <el-table-column prop="salesProfit" label="订单利润" align="center"></el-table-column> -->
       <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
+      <el-table-column label=" 顾客信息" width="120px" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="销售单据" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成</el-button>
+          <el-button
+            v-if="scope.row.salesNoteSrc == '' || scope.row.salesNoteSrc == null"
+            type="primary"
+            size="mini"
+            @click="createSalesNoteBysalesId(scope.row)"
+            plain
+            >点击生成
+          </el-button>
           <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
@@ -264,7 +267,6 @@ export default {
         warehouseId: '', //出货仓库
         conditions: '', //综合条件
         salesType: '', //销售类型
-        logisticsCompany: '', // 物流公司
         salesState: '', //销售单状态
       },
       //新建销售订单表
