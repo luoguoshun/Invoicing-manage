@@ -6,6 +6,9 @@
         <p>翻斗花园进销存管理系统</p>
       </div>
       <div class="user">
+        <el-badge :value="messageCount" class="item">
+          <el-button size="small">通知</el-button>
+        </el-badge>
         <el-avatar :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
@@ -66,6 +69,9 @@ export default {
   computed: {
     //将this.getDynamicTags 映射为 this.$store.getters.getDynamicTags
     ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getUserInfo: 'userInfo/getUserInfo' }),
+    messageCount:function(){
+      return this.messageList.length;
+    }
   },
   data() {
     var checkOldPwd = (value, callback) => {
@@ -107,6 +113,7 @@ export default {
         confirmPwd: [{ validator: checkconfirmPwd, trigger: 'blur' }],
       },
       breadcrumbList: [],
+      messageList: [],
     };
   },
   methods: {
@@ -114,7 +121,19 @@ export default {
       delTagFromArray: 'tagsView/removeTab',
       closeAllTags: 'tagsView/closeAllTags',
       clearToken: 'token/clearToken',
+      clearRouters: 'routers/clearRouters',
     }),
+    //获取我的消息列表
+    async getMessageListByUserId() {
+     await this.$api.message.getMessageListByUserId().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.messageList=data;
+      });
+    },
     //切换组件
     switchComponent(tab) {
       let routeName = tab.$vnode.data.key;
@@ -181,21 +200,24 @@ export default {
         }
       });
     },
+    closeConnection() {
+      if (this.$signalR.connection['_connectionState'] !== 'Disconnected') {
+        this.$signalR.connection.stop();
+      }
+    },
     //退出登入(清除Token、断开signalR连接、清除所有标签页、跳转登入页)
     exitLogin() {
-      try {
-        this.closeAllTags();
-        this.clearToken();
-        // this.$signalR.connection.stop();
-        this.$router.push({ name: 'login' });
-      } catch (err) {
-        console.log(err);
-      }
+      this.closeAllTags();
+      this.clearToken();
+      this.clearRouters();
+      this.closeConnection();
+      this.$router.push({ name: 'login' });
     },
   },
   created() {
     //获取路由内的全部信息
     this.breadcrumbList = this.$route.matched;
+    this.getMessageListByUserId();
   },
   watch: {
     //监听，实时获取路由变动信息

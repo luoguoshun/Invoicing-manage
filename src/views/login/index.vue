@@ -87,11 +87,20 @@ export default {
       }
       return true;
     },
+    closeConnection() {
+      console.log(this.$signalR.connection);
+      if (this.$signalR.connection['_connectionState'] == 'Disconnected') {
+        this.$signalR.connection.invoke('RemoveFromGroup', 'background').catch(function(err) {
+          return console.error(err.toString());
+        });
+      }
+    },
   },
   created() {
     localStorage.removeItem('tokenInfo');
     localStorage.removeItem('routersData');
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('dynamicTagData');
   },
 };
 </script>

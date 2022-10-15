@@ -9,13 +9,9 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectrouter()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="selectrouter()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -46,7 +42,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="component" label="组件路径(component)" width="200px" align="left"> </el-table-column>
-      <el-table-column prop="menuIndex" label="(导航栏访问路径)menuIndex" width="250px"  align="left"> </el-table-column>
+      <el-table-column prop="menuIndex" label="(导航栏访问路径)menuIndex" width="250px" align="left"> </el-table-column>
       <el-table-column prop="description" label="说明" align="center"> </el-table-column>
       <el-table-column fixed="right" label="操作" align="center">
         <template slot-scope="scope">
@@ -441,12 +437,13 @@ export default {
     .edit_btn {
       display: flex;
       flex-direction: row;
+      // border: 1px solid red;
     }
     .edit_query {
       // border: 1px solid red;
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 2fr 0.8fr 0.8fr;
       overflow: hidden;
       grid-column-gap: 5px;
       text-align: center;

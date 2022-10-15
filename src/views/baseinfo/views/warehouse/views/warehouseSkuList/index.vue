@@ -6,18 +6,12 @@
         <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()">添加 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.goodsTypeId" placeholder="请选择类别">
-            <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectGoods()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-select size="mini" v-model="queryForm.goodsTypeId" placeholder="请选择类别">
+          <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="selectGoods()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -178,7 +172,7 @@ export default {
     //获取货品数据选择绑定供应商
     async getAllSKUList() {
       await this.$api.goods
-        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.skuId,this.skuForm.spuId,  this.skuForm.goodsName, this.skuForm.goodsTypeId)
+        .getSKUList(this.skuForm.page, this.skuForm.row, this.skuForm.skuId, this.skuForm.spuId, this.skuForm.goodsName, this.skuForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -269,27 +263,20 @@ export default {
   height: 100%;
   .editbar {
     width: 100%;
-    margin: 20px 0px 10px 0px;
+    margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 2fr 1.1fr;
+    grid-template-columns: 2fr 1.5fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
       // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
     }
   }
   .demo-table-expand {

@@ -11,22 +11,14 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.level" placeholder="请选择日志等级">
-            <el-option v-for="item in logLevelType" :key="item.level" :label="item.typeName" :value="item.level"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectLog()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.level" placeholder="日志等级">
+          <el-option v-for="item in logLevelType" :key="item.level" :label="item.typeName" :value="item.level"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="selectLog()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -41,7 +33,7 @@
       <el-table-column prop="logId" label="编号" width="50" align="center"> </el-table-column>
       <el-table-column prop="appName" label="记录框架名称" width="150" align="center"> </el-table-column>
       <el-table-column prop="thread" label="线程编号" width="100" align="center"> </el-table-column>
-      <el-table-column prop="source" label="错误来源"  align="center"> </el-table-column>
+      <el-table-column prop="source" label="错误来源" align="center"> </el-table-column>
       <el-table-column prop="level" label="等级" width="80" align="center"> </el-table-column>
       <el-table-column prop="message" label="错误信息" align="center"></el-table-column>
       <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
@@ -240,7 +232,6 @@ export default {
   },
 };
 </script>
-
 <style lang="less" scoped>
 .log_container {
   width: 100%;
@@ -261,16 +252,8 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr ;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-        div {
-          width: 100%;
-          color: rgb(0, 153, 255);
-        }
-      }
     }
   }
 }
