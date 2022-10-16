@@ -69,9 +69,6 @@ export default {
   computed: {
     //将this.getDynamicTags 映射为 this.$store.getters.getDynamicTags
     ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getUserInfo: 'userInfo/getUserInfo' }),
-    // messageCount: function() {
-    //   return this.messageList.length;
-    // },
   },
   data() {
     var checkOldPwd = (value, callback) => {
