@@ -60,7 +60,7 @@
       <el-table-column prop="operationPersonId" label="开单人" align="center"></el-table-column>
       <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column>
       <el-table-column prop="exwarehouseCout" label="出库总数" align="center"></el-table-column>
-      <el-table-column prop="exGoodsTypeNum" label="出库货物总类" align="center"></el-table-column>
+      <el-table-column prop="exGoodsTypeNum" label="货品种类数" align="center"></el-table-column>
       <el-table-column prop="nn" label="物流公司" align="center"> </el-table-column>
       <el-table-column prop="nn" label="物流单号" align="center"> </el-table-column>
       <el-table-column prop="exwarehouseMoney" label="出库总价" align="center"></el-table-column>
