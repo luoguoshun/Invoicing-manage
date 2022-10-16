@@ -62,8 +62,8 @@
         </template>
         <div class="collapseContent">{{ item.content }}</div>
         <div>
-          <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button>
-          <el-button type="warning" size="mini">办理</el-button>
+          <!-- <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button> -->
+          <el-button v-if="item.messageParameter" type="warning" size="mini" @click="processEvent(item.messageParameter)">详情</el-button>
         </div>
       </el-collapse-item>
     </el-collapse>
@@ -89,22 +89,22 @@ export default {
       try {
         this.$signalR.connection.on('SendDataStatistics', function(message) {
           if (document.getElementById('skuTotal') != null) {
-            document.getElementById('skuTotal').innerHTML = message.Content.skuTotal;
+            document.getElementById('skuTotal').innerHTML = message.MessageParameter.skuTotal;
           }
           if (document.getElementById('todayLoginTotal') != null) {
-            document.getElementById('todayLoginTotal').innerHTML = message.Content.todayLoginTotal;
+            document.getElementById('todayLoginTotal').innerHTML = message.MessageParameter.todayLoginTotal;
           }
           if (document.getElementById('userTotal') != null) {
-            document.getElementById('userTotal').innerHTML = message.Content.userTotal;
+            document.getElementById('userTotal').innerHTML = message.MessageParameter.userTotal;
           }
           if (document.getElementById('todayPlanAppTotal') != null) {
-            document.getElementById('todayPlanAppTotal').innerHTML = message.Content.todayPlanAppTotal;
+            document.getElementById('todayPlanAppTotal').innerHTML = message.MessageParameter.todayPlanAppTotal;
           }
           if (document.getElementById('salesTotalPrice') != null) {
-            document.getElementById('salesTotalPrice').innerHTML = message.Content.salesTotalPrice;
+            document.getElementById('salesTotalPrice').innerHTML = message.MessageParameter.salesTotalPrice;
           }
           if (document.getElementById('todayPlanAppTotal') != null) {
-            document.getElementById('todayPlanAppTotal').innerHTML = message.Content.todayPlanAppTotal;
+            document.getElementById('todayPlanAppTotal').innerHTML = message.MessageParameter.todayPlanAppTotal;
           }
         });
       } catch (err) {
@@ -149,6 +149,17 @@ export default {
           });
         }
       });
+    },
+    //处理时间
+    processEvent(messageParameter) {
+      if (messageParameter['targetRouterName']) {
+        this.$router.push({
+          name: messageParameter['targetRouterName'],
+          query: {
+            IsToBeList: true,
+          },
+        });
+      }
     },
   },
   created() {

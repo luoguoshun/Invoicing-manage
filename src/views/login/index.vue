@@ -46,14 +46,12 @@ export default {
               this.setTokenInfo(data);
               this.setRouters(data.routers);
               this.setUserInfo(data.userInfo);
-              this.$signalR.connection.start();
+              this.connectionSignalR();
               let redirectUrl = this.$route.query.redirectUrl;
               if (redirectUrl) {
-                //跳转至进入登录页前的路由（重定向）
-                this.$router.replace(redirectUrl);
+                this.$router.replace(redirectUrl); //跳转至进入登录页前的路由（重定向）
               } else {
-                // 否则跳转至首页
-                this.$router.replace('home');
+                this.$router.replace('home'); // 否则跳转至首页
               }
             } catch (err) {
               console.log(err);
@@ -87,12 +85,9 @@ export default {
       }
       return true;
     },
-    closeConnection() {
-      console.log(this.$signalR.connection);
-      if (this.$signalR.connection['_connectionState'] == 'Disconnected') {
-        this.$signalR.connection.invoke('RemoveFromGroup', 'background').catch(function(err) {
-          return console.error(err.toString());
-        });
+    connectionSignalR() {
+      if (this.$signalR.connection['_connectionState'] == 'Disconnected') {     
+        this.$signalR.connection.start();
       }
     },
   },

@@ -21,19 +21,15 @@
     </div>
     <!-- 标签区 -->
     <div class="header_tab">
-      <div class="tabs">
-        <el-tabs v-model="getDynamicTags.activeRoute" @tab-remove="removeTab" @tab-click="switchComponent" type="card">
-          <el-tab-pane key="home" label="首页" name="home" :closable="false"> </el-tab-pane>
-          <el-tab-pane v-for="tab in getDynamicTags.tabs" :key="tab.routeName" :label="tab.tabName" :name="tab.routeName" :closable="true">
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-      <div class="closetabs">
-        <el-button size="small" @click="closeTags()">
-          <i class="el-icon-close"></i>
-          关闭
-        </el-button>
-      </div>
+      <el-tabs v-model="getDynamicTags.activeRoute" @tab-remove="removeTab" @tab-click="switchComponent" type="card">
+        <el-tab-pane key="home" label="首页" name="home" :closable="false"> </el-tab-pane>
+        <el-tab-pane v-for="tab in getDynamicTags.tabs" :key="tab.routeName" :label="tab.tabName" :name="tab.routeName" :closable="true">
+        </el-tab-pane>
+      </el-tabs>
+      <el-button type="danger" size="mini" @click="closeTags()">
+        <i class="el-icon-close"></i>
+        关闭
+      </el-button>
     </div>
     <!-- 面包屑 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -111,7 +107,7 @@ export default {
       },
       breadcrumbList: [],
       messageList: [],
-      messageCount:0,
+      messageCount: 0,
     };
   },
   methods: {
@@ -139,7 +135,7 @@ export default {
     getNewMessageCount() {
       if (this.$signalR.connection['_connectionState'] == 'Connected') {
         this.$signalR.connection.on('SendNewMessageCount', (message) => {
-          this.messageCount=message.Content
+          this.messageCount = message.MessageParameter;
         });
       }
     },
@@ -265,14 +261,17 @@ export default {
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      grid-gap: 5px;
+      grid-gap: 10px;
     }
   }
   .header_tab {
-    display: flex;
-    flex-direction: row;
-    .tabs {
-      width: 95%;
+    height: 45px;
+    display: grid;
+    grid-template-columns: 94% 6%;
+    padding-right: 10px;
+    .el-button {
+      margin: 10px auto;
+      height: 30px;
     }
   }
 }

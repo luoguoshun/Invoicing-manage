@@ -496,6 +496,9 @@ export default {
   },
   created() {
     this.loadData();
+    if (this.$route.query.IsToBeList) {
+      this.IsToBeList = true;
+    }
   },
 };
 </script>

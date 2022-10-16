@@ -23,6 +23,7 @@ connection.on('SendMessageToGroup', function (message) {
   console.log(message.Content);
 })
 connection.on('SendPrivateMessage', function (message) {
+  
   Notification.info({
     title: message.Title,
     message: message.Content
