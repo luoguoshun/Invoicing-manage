@@ -1,4 +1,4 @@
-import account from './account';
+import login from './login';
 import user from './user';
 import role from './role';
 import system from './system';
@@ -13,12 +13,13 @@ import Putinwarehous from './Putinwarehous';
 import purchaseOrder from './purchaseOrder';
 import exwarehouse from './exwarehouse';
 import workFlow from './workFlow'
-import paymentOrder from './paymentOrder'
+import finance from './finance'
 import department from './department'
 import sales  from './sales';
+import message from './message'
 
 export default {
-  account,
+  login,
   system,
   user,
   log,
@@ -33,7 +34,8 @@ export default {
   purchaseOrder,
   exwarehouse,
   workFlow,//审核
-  paymentOrder,//应付款
+  finance,//应付款
   department,//部门
   sales,//销售
+  message,//消息通知
 };

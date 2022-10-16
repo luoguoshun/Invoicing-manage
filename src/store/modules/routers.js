@@ -13,5 +13,8 @@ export default {
         setRouters(state, newsdata) {
             state.dynamicRouters = newsdata
         },
+        clearRouters(){
+        localStorage.removeItem('routersData');
+        }
     },
 };

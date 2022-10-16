@@ -344,42 +344,44 @@ const routes = [{
           isAuth: true
         },
         children: [{
-          path: 'salesOrder',
-          name: 'salesOrder',
-          component: () => import('@/views/sales/views/salesOrder'),
-          meta: {
-            title: '销售订单管理',
-            isAuth: true
-          },
-          children: [{
-              path: 'salesOrderList',
-              name: 'salesOrderList',
-              component: () => import('@/views/sales/views/salesOrder/views/salesOrderList'),
-              meta: {
-                title: '销售订单列表',
-                isAuth: true
-              },
+            path: 'salesOrder',
+            name: 'salesOrder',
+            component: () => import('@/views/sales/views/salesOrder'),
+            meta: {
+              title: '销售订单管理',
+              isAuth: true
             },
-            {
-              path: 'salesInvoicing',
-              name: 'salesInvoicing',
-              component: () => import('@/views/sales/views/salesOrder/views/salesInvoicing'),
-              meta: {
-                title: '申请销售开单',
-                isAuth: true
+            children: [{
+                path: 'salesOrderList',
+                name: 'salesOrderList',
+                component: () => import('@/views/sales/views/salesOrder/views/salesOrderList'),
+                meta: {
+                  title: '销售订单列表',
+                  isAuth: true
+                },
               },
-            }
-          ]
-        }, {
-          path: 'salesReturn',
-          name: 'salesReturn',
-          component: () => import('@/views/sales/views/salesReturn'),
-          meta: {
-            title: '销售退货管理',
-            isAuth: true
+              {
+                path: 'salesInvoicing',
+                name: 'salesInvoicing',
+                component: () => import('@/views/sales/views/salesOrder/views/salesInvoicing'),
+                meta: {
+                  title: '申请销售开单',
+                  isAuth: true
+                },
+              }
+            ]
           },
-          children: []
-        }]
+          {
+            path: 'salesReturn',
+            name: 'salesReturn',
+            component: () => import('@/views/sales/views/salesReturn'),
+            meta: {
+              title: '销售退货管理',
+              isAuth: true
+            },
+            children: []
+          }
+        ]
       },
       //财务管理
       {
@@ -446,7 +448,7 @@ const router = new VueRouter({
 // 当一个导航触发时，全局前置守卫按照创建的顺序调用。守卫可以是异步解析执行，此时导航在所有守卫解析完之前一直处于挂起状态
 router.beforeEach(async (to, from, next) => {
   // 路由对象的matched属性是一个数组，包含了当前路由的所有嵌套路径片段的路由记录。
-  //只需要给较高一级的路由添加isAuth即可，其下的所有子路由不必添加。
+  // 只需要给较高一级的路由添加isAuth即可，其下的所有子路由不必添加。
   // 函数执行次数 !== 数组长度
   // return true: 循环结束, 找到了满足条件的元素
   // return false: 循环继续, 没找到循环继续, 如果所有元素全部遍历还是没找到, 最终结果为false

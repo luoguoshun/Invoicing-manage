@@ -9,13 +9,9 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectrouter()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="selectrouter()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -45,24 +41,12 @@
           <el-tag disable-transitions>{{ scope.row.name }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="component" label="组件路径(component)" width="400px" align="left"> </el-table-column>
+      <el-table-column prop="component" label="组件路径(component)" width="200px" align="left"> </el-table-column>
+      <el-table-column prop="menuIndex" label="(导航栏访问路径)menuIndex" width="250px" align="left"> </el-table-column>
       <el-table-column prop="description" label="说明" align="center"> </el-table-column>
-      <!-- <el-table-column prop="state" label="状态" width="80" align="center">
+      <el-table-column fixed="right" label="操作" align="center">
         <template slot-scope="scope">
-          <el-switch
-            class="switch"
-            :inactive-value="0"
-            :active-value="1"
-            active-color="rgb(0, 255, 149)"
-            inactive-color="rgb(151, 148, 148)"
-            v-model="scope.row.state"
-            @change="updateRouterState(scope.row)"
-          />
-        </template>
-      </el-table-column> -->
-      <el-table-column fixed="right" label="操作" width="200" align="center">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="openEditDialog('add')">添加子路由</el-button>
+          <!-- <el-button type="text" size="small" @click="openEditDialog('add')">添加子路由</el-button> -->
           <el-button type="text" size="small" @click="openEditDialog('update', scope.row)">查看</el-button>
         </template>
       </el-table-column>
@@ -331,10 +315,9 @@ export default {
         this.routerForm.title = '';
         this.routerForm.description = '';
         this.routerForm.icon = '';
-      } else {
+      } else if (editName == 'update') {
         this.editName = 'update';
-        //当前结点的所有父节点Id
-        let parentIds = findParents(this.routerOptions, row.routerId);
+        let parentIds = findParents(this.routerOptions, row.routerId); //当前结点的所有父节点Id
         parentIds.splice(0, 1);
         this.routerForm.parentIdArray = parentIds;
         this.routerForm.routerId = row.routerId;
@@ -454,12 +437,13 @@ export default {
     .edit_btn {
       display: flex;
       flex-direction: row;
+      // border: 1px solid red;
     }
     .edit_query {
       // border: 1px solid red;
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 2fr 0.8fr 0.8fr;
       overflow: hidden;
       grid-column-gap: 5px;
       text-align: center;

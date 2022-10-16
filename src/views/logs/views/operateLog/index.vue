@@ -11,30 +11,22 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.type" placeholder="请选择操作日志等级">
-            <!-- <el-option v-for="item in logtypeType" :key="item.type" :label="item.typeName" :value="item.type"></el-option> -->
-            <el-option value="1" label="新增"></el-option>
-            <el-option value="2" label="修改"></el-option>
-            <el-option value="3" label="删除"></el-option>
-            <el-option value="4" label="审批"></el-option>
-            <el-option value="5" label="驳回"></el-option>
-            <el-option value="6" label="申请"></el-option>
-            <el-option value="7" label="付款"></el-option>
-            <el-option value="8" label="登入"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectLog()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.type" placeholder="操作日志类型">
+          <!-- <el-option v-for="item in logtypeType" :key="item.type" :label="item.typeName" :value="item.type"></el-option> -->
+          <el-option value="1" label="新增"></el-option>
+          <el-option value="2" label="修改"></el-option>
+          <el-option value="3" label="删除"></el-option>
+          <el-option value="4" label="审批"></el-option>
+          <el-option value="5" label="驳回"></el-option>
+          <el-option value="6" label="申请"></el-option>
+          <el-option value="7" label="付款"></el-option>
+          <el-option value="8" label="登入"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="selectLog()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -47,8 +39,8 @@
     >
       <el-table-column type="selection" width="55" align="center"> </el-table-column>
       <el-table-column prop="operateId" label="编号" width="50" align="center"> </el-table-column>
-      <el-table-column prop="userId" label="操作人编号"  align="center"> </el-table-column>
-      <el-table-column prop="operateName" label="操作人姓名"  align="center"> </el-table-column>
+      <el-table-column prop="userId" label="操作人编号" align="center"> </el-table-column>
+      <el-table-column prop="operateName" label="操作人姓名" align="center"> </el-table-column>
       <el-table-column prop="tableId" label="表名编号" align="center"> </el-table-column>
       <el-table-column prop="tableName" label="表名" align="center"> </el-table-column>
       <el-table-column prop="remarks" label="操作说明" align="center">
@@ -276,7 +268,7 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr ;
       grid-column-gap: 5px;
       .edit_query_1 {
         width: 100%;

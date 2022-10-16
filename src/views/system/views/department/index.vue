@@ -128,7 +128,6 @@ export default {
     async getUserList() {
       await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.roleId).then((res) => {
         const { data, success, message } = res.data;
-        console.log(data);
         if (!success) {
           console.log(message);
           return;

@@ -3,24 +3,18 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add"  @click="openDiolog('add', '')">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteWarehouse()" >
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openDiolog('add', '')">添加 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteWarehouse()">
           移除
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.WarehouseType" placeholder="请选择类别">
-            <el-option v-for="item in warehouseTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getWarehouseList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-select size="mini" v-model="queryForm.WarehouseType" placeholder="请选择类别">
+          <el-option v-for="item in warehouseTypes" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="getWarehouseList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -391,7 +385,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 2fr 1.1fr;
+    grid-template-columns: 2fr 1.5fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -403,12 +397,8 @@ export default {
       width: 100%;
       display: grid;
       // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
     }
   }
 }

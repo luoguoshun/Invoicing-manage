@@ -9,19 +9,14 @@
       </div>
     </div>
 
-     <!-- 表格 -->
-    <el-table
-      :header-cell-style="{ 'text-align': 'center' }"
-      @selection-change="selectRows"
-      border=""
-      ref="supplierSkuTable"
-    >
+    <!-- 表格 -->
+    <el-table :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="" ref="supplierSkuTable">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column  label="退换单号" align="center"> </el-table-column>
-      <el-table-column  label="来源单号" align="center"> </el-table-column>
-      <el-table-column  label="物品编码" align="center"> </el-table-column>
-      <el-table-column  label="物品名称" align="center"> </el-table-column>
-      <el-table-column  label="物品采购价" align="center" width="120px">
+      <el-table-column label="退换单号" align="center"> </el-table-column>
+      <el-table-column label="来源单号" align="center"> </el-table-column>
+      <el-table-column label="物品编码" align="center"> </el-table-column>
+      <el-table-column label="物品名称" align="center"> </el-table-column>
+      <el-table-column label="物品采购价" align="center" width="120px">
         <template slot-scope="scope">
           <el-input v-model="scope.row.purchasePrice" placeholder="" align="center" />
         </template>
@@ -44,7 +39,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <!-- 引用采购单 -->
     <el-dialog title="采购单据信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%">
       <!-- 搜索条件 -->
@@ -68,20 +63,19 @@
           ><div class="grid-content bg-purple">
             <span>请选择收货仓库 </span>
             <div class="edit_query_1">
-          <el-select size="mini" placeholder="请选择类别">
-            <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-          </el-select>
-        </div>
-            </div
+              <el-select size="mini" placeholder="请选择类别">
+                <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
+              </el-select>
+            </div></div
         ></el-col>
       </el-row>
       <div class="edit_query_1">
         <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
-      <el-divider></el-divider>     
+      <el-divider></el-divider>
       <!-- 采购单表格 -->
-      <el-table  :header-cell-style="{ 'text-align': 'center' }" border="">
+      <el-table :header-cell-style="{ 'text-align': 'center' }" border="">
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
         <el-table-column label="采购单号" align="center"> </el-table-column>
         <el-table-column label="供应商" align="center"> </el-table-column>
@@ -107,18 +101,16 @@ export default {
   name: 'InvoicingManageIndex',
   data() {
     return {
-        dialogObject: {
+      dialogObject: {
         addVisible: false,
       },
     };
-    
   },
   methods: {
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;
     },
-
   },
 };
 </script>
@@ -136,20 +128,13 @@ export default {
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
-      // border: 1px solid red;
+      border: 1px solid red;
       grid-template-columns: 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
     }
   }
 

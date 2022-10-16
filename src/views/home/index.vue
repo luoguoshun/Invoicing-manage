@@ -38,7 +38,7 @@
             <p>销售统计</p>
             <el-tag size="mini" type="primary">实时</el-tag>
           </div>
-          <div class="num">7</div>
+          <div class="num" id="salesTotalPrice">{{ salesTotalPrice }}</div>
           <div class="tip">当前总销售(元)</div>
         </div>
       </el-col>
@@ -53,6 +53,20 @@
         </div>
       </el-col>
     </el-row>
+    <el-badge value="new" class="item"> <p class="collapseTip">通知列表</p> </el-badge>
+    <el-collapse v-model="activeMessageId" @change="readMessage" accordion>
+      <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
+        <template slot="title">
+          <i class="el-icon-chat-dot-round"></i>{{ item.title }}
+          <el-badge v-if="item.messageState == 3 || item.messageState == 2" is-dot class="item" />
+        </template>
+        <div class="collapseContent">{{ item.content }}</div>
+        <div>
+          <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button>
+          <el-button type="warning" size="mini">办理</el-button>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
   </div>
 </template>
 
@@ -64,13 +78,16 @@ export default {
       skuTotal: 0,
       userTotal: 0,
       todayPlanAppTotal: 0,
+      salesTotalPrice: 0,
+      activeMessageId: '',
+      messageList: [],
     };
   },
   methods: {
+    //数据渲染
     dataStatistics() {
       try {
-        this.$signalR.connection.start();
-        this.$signalR.connection.on('SendMessageToGroup', function(message) {
+        this.$signalR.connection.on('SendDataStatistics', function(message) {
           if (document.getElementById('skuTotal') != null) {
             document.getElementById('skuTotal').innerHTML = message.Content.skuTotal;
           }
@@ -83,14 +100,60 @@ export default {
           if (document.getElementById('todayPlanAppTotal') != null) {
             document.getElementById('todayPlanAppTotal').innerHTML = message.Content.todayPlanAppTotal;
           }
+          if (document.getElementById('salesTotalPrice') != null) {
+            document.getElementById('salesTotalPrice').innerHTML = message.Content.salesTotalPrice;
+          }
+          if (document.getElementById('todayPlanAppTotal') != null) {
+            document.getElementById('todayPlanAppTotal').innerHTML = message.Content.todayPlanAppTotal;
+          }
         });
       } catch (err) {
         console.log(err);
       }
     },
+    //获取我的消息列表
+    async getMessageListByUserId() {
+      await this.$api.message.getMessageListByUserId().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.messageList = data;
+      });
+    },
+    //点开面板 消息被读取
+    readMessage(messageId) {
+      //展开面板时触发
+      if (messageId == '') {
+        return;
+      }
+      //判断是否需要调取接口messageState == 4（已读）则不需要
+      for (let i = 0; i < this.messageList.length; i++) {
+        let message = this.messageList[i];
+        if (message.messageId == messageId && message.messageState == 4) {
+          return;
+        }
+      }
+      this.$api.message.readMessage(messageId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        } else {
+          this.messageList.forEach((item) => {
+            if (item.messageId == messageId) {
+              item.messageState = 4;
+              return;
+            }
+          });
+        }
+      });
+    },
   },
   created() {
     this.dataStatistics();
+    this.getMessageListByUserId();
   },
 };
 </script>
@@ -99,7 +162,7 @@ export default {
 .home {
   .el-row {
     padding: 0 9px;
-    margin: 5px 0px 10px 0px;
+    margin: 5px 0px 20px 0px;
     .statistics {
       color: white;
       height: 100px;
@@ -125,6 +188,28 @@ export default {
       .tip {
         font-size: 12px;
       }
+    }
+  }
+  .collapseTip {
+    font-size: 20px;
+    margin-left: 10px;
+    .item {
+      // margin-top: 30px;
+      // margin-right: 40px;
+    }
+  }
+  .el-collapse {
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 50%;
+    height: 400px;
+    overflow: auto;
+    margin-left: 10px;
+    padding-left: 10px;
+    .collapseContent {
+      font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+      font-size: 15px;
+      margin-bottom: 5px;
     }
   }
 }

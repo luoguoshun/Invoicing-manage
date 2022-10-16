@@ -2,8 +2,12 @@ import axios from 'axios';
 import store from '@/store';
 import funs from './funs';
 import encrypt from './encrypt';
-import { Message } from 'element-ui';
-import { createThrottle } from './throttle';
+import {
+  Message
+} from 'element-ui';
+import {
+  createThrottle
+} from './throttle';
 import router from '@/router';
 
 const baseurl = 'http://127.0.0.1:36559';
@@ -39,12 +43,7 @@ const isEncrypt = (() => {
 //请求拦截器
 ajax.interceptors.request.use(
   (config) => {
-    // const access_token = store.getters['token/accessToken'];
-    let tokenInfo = JSON.parse(localStorage.getItem('tokenInfo')) || null;
-    let access_token = null;
-    if (tokenInfo !== null) {
-      access_token = tokenInfo.accessToken
-    }
+    const access_token = store.getters['token/accessToken'];
     if (access_token != null) {
       config.headers['Authorization'] = 'Bearer ' + access_token;
     }
@@ -84,12 +83,20 @@ ajax.interceptors.response.use(
         unauthorizedHandler();
       } else if (error.response.status === 403) {
         Message.warning('没有权限访问');
+      } else if (error.response.status === 404) {
+        Message.warning('API Not Found');
       } else if (error.response.status === 400) {
         Message.warning('请求参数错误');
-      } else if (error.response.status === 500) {
-        Message.warning('服务器错误');
+      } else if (error.response.status === 405) {
+        Message.warning('Method Not Allowed');
       } else if (error.response.status === 415) {
         Message.warning('不支持的媒体类型');
+      } else if (error.response.status === 408) {
+        Message.warning('请求超时。服务器等待客户端发送的请求时间过长，超时。');
+      } else if (error.response.status === 500) {
+        Message.warning('服务器错误');
+      } else if (error.response.status === 503) {
+        Message.warning('服务器没有准备好处理请求。由于超载或系统维护，服务器暂时的无法处理客户端的请求。');
       }
     }
     return Promise.reject(error.response);

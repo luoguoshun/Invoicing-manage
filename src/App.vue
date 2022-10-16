@@ -9,22 +9,22 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'App',
   computed: {
-    ...mapGetters({ getToken: 'token/access_token' }),
+    ...mapGetters({ accessToken: 'token/accessToken' }),
   },
   methods: {
-    startConnection() {
-      if (this.getToken != null) {
+    //连接SignalR
+    connectionSignalR() {
+      if (this.$signalR.connection['_connectionState'] !== 'Connected' && (this.accessToken != null || this.accessToken != undefined)) {
         try {
           this.$signalR.connection.start();
-          console.log('SignalR Connected.');
         } catch (err) {
           console.log(err);
         }
       }
     },
   },
-  mounted() {
-    // this.startConnection();
+  created() {
+    this.connectionSignalR();
   },
 };
 </script>
@@ -34,7 +34,7 @@ html,
 body,
 #app {
   height: 100%;
-  width: 100%;
+  width: 99.9%;
   font-weight: 350;
   color: #343a40;
   font-family: 'Microsoft Yahei', OpenSans, Avenir, Arial, -apple-system, PingFang SC, Arial, Microsoft YaHei, sans-serif;

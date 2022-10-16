@@ -8,18 +8,12 @@
         <el-button type="danger " size="mini" class="el-icon-check" round @click="deletetPutinWarehousApply()">删除</el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-select size="mini" placeholder="请选择入库仓库" v-model="queryForm.warehouseId">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getPutinWarehouseOrder()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-select size="mini" placeholder="请选择入库仓库" v-model="queryForm.warehouseId">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        <el-button type="primary" @click="getPutinWarehouseOrder()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
 
@@ -99,11 +93,8 @@
         <el-table-column prop="purchaseCount" label="采购数量" align="center"> </el-table-column>
         <el-table-column label="入库数量" align="center">
           <template slot-scope="scope">
-            <el-input-number
-              type="number"
-              size="mini"
-              v-model.number="scope.row.putinCount"
-            ></el-input-number><!--              @change="addGoodsCount(scope.$index, scope.row)"-->
+            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number
+            ><!--              @change="addGoodsCount(scope.$index, scope.row)"-->
           </template>
         </el-table-column>
         <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
@@ -278,18 +269,17 @@ export default {
     //更新入库详情
     async updatePutinWarehousOrder() {
       console.log(this.PurchaseDetailDiolog.detailPlanItems);
-      this.$api.Putinwarehous.EditPutinWarhouseOrder(
-        this.PurchaseDetailDiolog.editPurchaseId,
-        this.PurchaseDetailDiolog.detailPlanItems
-      ).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          this.$message.error(success);
-        } else {
-          this.$message({ message: '修改成功！', type: 'success' });
-          this.loadData();
-        }
-      });
+      this.$api.Putinwarehous.EditPutinWarhouseOrder(this.PurchaseDetailDiolog.editPurchaseId, this.PurchaseDetailDiolog.detailPlanItems).then(
+        (res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            this.$message.error(success);
+          } else {
+            this.$message({ message: '修改成功！', type: 'success' });
+            this.loadData();
+          }
+        },
+      );
     },
     //显示采购单子项目
     showplanDetailDiolog(row) {
@@ -335,24 +325,16 @@ export default {
     margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 2fr 1.1fr;
+    grid-template-columns: 2fr 1.5fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
-      // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
     }
   }
 }

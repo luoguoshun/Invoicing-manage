@@ -12,6 +12,12 @@ export default {
     getSalesDatailBySalesId(salesId) {
         return ajax.get('/api/Background/Sales/GetSalesDatailBySalesId?salesId=' + salesId + '');
     },
+    //通获取未被付款模块引用销售单数据
+    getNoExecuteSalesList(queryForm) {
+        return ajax.post('/api/Background/Sales/getNoExecuteSalesList', {
+            ...queryForm
+        });
+    },
     //新增销售单
     addSalesOrder(salesOrders) {
         return ajax.post('/api/Background/Sales/AddSalesOrder', salesOrders);
