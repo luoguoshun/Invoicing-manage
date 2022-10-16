@@ -21,10 +21,6 @@ let connection = new signalR.HubConnectionBuilder()
 //注册方法 用于服务器向客户端调取
 connection.on('SendMessageToGroup', function (message) {
   console.log(message.Content);
-  // Notification.info({
-  //   title: '',
-  //   message: message.Content
-  // });
 })
 connection.on('SendPrivateMessage', function (message) {
   Notification.info({
@@ -34,7 +30,6 @@ connection.on('SendPrivateMessage', function (message) {
 })
 connection.on('Abort', function (message) {
   Message.warning(message.Content);
-
 })
 export default {
   connection

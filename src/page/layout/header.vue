@@ -69,9 +69,9 @@ export default {
   computed: {
     //将this.getDynamicTags 映射为 this.$store.getters.getDynamicTags
     ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getUserInfo: 'userInfo/getUserInfo' }),
-    messageCount:function(){
-      return this.messageList.length;
-    }
+    // messageCount: function() {
+    //   return this.messageList.length;
+    // },
   },
   data() {
     var checkOldPwd = (value, callback) => {
@@ -114,6 +114,7 @@ export default {
       },
       breadcrumbList: [],
       messageList: [],
+      messageCount:0,
     };
   },
   methods: {
@@ -125,14 +126,25 @@ export default {
     }),
     //获取我的消息列表
     async getMessageListByUserId() {
-     await this.$api.message.getMessageListByUserId().then((res) => {
+      await this.$api.message.getMessageListByUserId().then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.messageList=data;
+        // filter()数组方法不会改变原数组
+        this.messageList = data.filter((item) => {
+          //符合条件 就添加到新的 filter( ) 方法所创建出来的数组
+          return item.messageState == 2 || item.messageState == 3;
+        });
       });
+    },
+    getNewMessageCount() {
+      if (this.$signalR.connection['_connectionState'] == 'Connected') {
+        this.$signalR.connection.on('SendNewMessageCount', (message) => {
+          this.messageCount=message.Content
+        });
+      }
     },
     //切换组件
     switchComponent(tab) {
@@ -218,6 +230,7 @@ export default {
     //获取路由内的全部信息
     this.breadcrumbList = this.$route.matched;
     this.getMessageListByUserId();
+    this.getNewMessageCount();
   },
   watch: {
     //监听，实时获取路由变动信息

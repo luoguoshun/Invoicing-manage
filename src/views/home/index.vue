@@ -58,7 +58,7 @@
       <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
         <template slot="title">
           <i class="el-icon-chat-dot-round"></i>{{ item.title }}
-          <el-badge v-if="item.messageState == 3" is-dot class="item" />
+          <el-badge v-if="item.messageState == 3 || item.messageState == 2" is-dot class="item" />
         </template>
         <div class="collapseContent">{{ item.content }}</div>
         <div>
@@ -125,7 +125,7 @@ export default {
     //点开面板 消息被读取
     readMessage(messageId) {
       //展开面板时触发
-      if (messageId=='') {
+      if (messageId == '') {
         return;
       }
       //判断是否需要调取接口messageState == 4（已读）则不需要
