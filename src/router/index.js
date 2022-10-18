@@ -456,9 +456,10 @@ router.beforeEach(async (to, from, next) => {
   //判断目标路由是否需要验证
   if (isAuth) {
     // 否则判Token时间是否失效
-    let tokenInfo = JSON.parse(localStorage.getItem('tokenInfo')) || null
+    const accessToken = store.getters['token/accessToken'];
+    const expiresTime = store.getters['token/expiresTime'];
     let isExpires = true;
-    if (tokenInfo !== null) isExpires = new Date().getTime() > tokenInfo.expiresTime;
+    if (accessToken !== null) isExpires = new Date().getTime() > expiresTime;
     if (isExpires) {
       Message.warning("凭证过期，请重新登录!");
       next({

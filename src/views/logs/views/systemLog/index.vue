@@ -30,14 +30,14 @@
       border
     >
       <el-table-column type="selection" width="55" align="center"> </el-table-column>
-      <el-table-column prop="logId" label="编号" width="50" align="center"> </el-table-column>
-      <el-table-column prop="appName" label="记录框架名称" width="150" align="center"> </el-table-column>
-      <el-table-column prop="thread" label="线程编号" width="100" align="center"> </el-table-column>
+      <el-table-column prop="logId" label="logId" width="60" align="center"> </el-table-column>
+      <el-table-column prop="appName" label="记录框架名称" align="center"> </el-table-column>
+      <el-table-column prop="thread" label="线程编号" width="50" align="center"> </el-table-column>
       <el-table-column prop="source" label="错误来源" align="center"> </el-table-column>
-      <el-table-column prop="level" label="等级" width="80" align="center"> </el-table-column>
+      <el-table-column prop="level" label="等级" width="60" w align="center"> </el-table-column>
       <el-table-column prop="message" label="错误信息" align="center"></el-table-column>
       <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
-      <el-table-column label="时间" width="140" align="center" sortable="true" sort-by>
+      <el-table-column label="时间" align="center" sortable="true" sort-by>
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.LogDate) }}
         </template>
@@ -92,7 +92,7 @@ export default {
       //搜索模型
       queryForm: {
         page: 1,
-        row: 5,
+        row: 10,
         conditions: '',
         level: '',
         publicationDates: [],
@@ -252,7 +252,7 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr ;
+      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }
   }

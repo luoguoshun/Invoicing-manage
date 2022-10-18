@@ -63,7 +63,7 @@ ajax.interceptors.response.use(
   (response) => {
     // 后端返回字符串表示需要解密操作
     if (isEncrypt && typeof response.data.data == 'string' && funs.strTrim(response.data.data) !== '') {
-      let data = encrypt.DecryptData(response.data.data);
+      let data = encrypt.DecryptData(response.data.data);  
       try {
         response.data.data = JSON.parse(data);
       } catch (e) {

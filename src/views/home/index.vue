@@ -58,12 +58,12 @@
       <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
         <template slot="title">
           <i class="el-icon-chat-dot-round"></i>{{ item.title }}
-          <el-badge v-if="item.messageState == 3 || item.messageState == 2" is-dot class="item" />
+          <el-badge v-if="item.messageState != 4" is-dot class="item" />
         </template>
         <div class="collapseContent">{{ item.content }}</div>
         <div>
           <!-- <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button> -->
-          <el-button v-if="item.messageParameter" type="warning" size="mini" @click="processEvent(item.messageParameter)">详情</el-button>
+          <el-button v-if="item.messageParameter" type="warning" size="mini" @click="processEvent(item.messageParameter)">详情 </el-button>
         </div>
       </el-collapse-item>
     </el-collapse>

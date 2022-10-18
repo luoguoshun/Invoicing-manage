@@ -49,7 +49,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
-      <el-table-column label="时间" width="140" align="center" sortable="true" sort-by>
+      <el-table-column label="时间"  align="center" sortable="true" sort-by>
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.LogDate) }}
         </template>
@@ -104,7 +104,7 @@ export default {
       //搜索模型
       queryForm: {
         page: 1,
-        row: 5,
+        row: 10,
         conditions: '',
         type: '',
         publicationDates: [],

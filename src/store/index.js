@@ -28,6 +28,14 @@ const store = new Vuex.Store({
       key: 'dynamicTagData',
       paths: ["tagsView.dynamicTag"],
     }),
+    createPersistedState({
+      key: 'tokenData',
+      paths: ["token.tokenInfo"],
+    }),
+    createPersistedState({
+      key: 'UserData',
+      paths: ["userInfo.userInfo"],
+    }),
   ]
 });
 export default store;

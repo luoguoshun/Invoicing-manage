@@ -239,8 +239,8 @@ export default {
         });
       });
     },
-     //获取采购订单详细项目列表
-     async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+    //获取采购订单详细项目列表
+    async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
       await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -444,6 +444,9 @@ export default {
     this.loadData();
     this.getWarehouseList();
     this.getSupplierList();
+    if (this.$route.query.IsToBeList) {
+      this.IsToBeList = true;
+    }
   },
 };
 </script>

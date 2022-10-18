@@ -47,11 +47,10 @@ export default {
               this.setRouters(data.routers);
               this.setUserInfo(data.userInfo);
               this.connectionSignalR();
-              let redirectUrl = this.$route.query.redirectUrl;
-              if (redirectUrl) {
-                this.$router.replace(redirectUrl); //跳转至进入登录页前的路由（重定向）
+              if (this.$route.query.redirectUrl) {
+                this.$router.replace(this.$route.query.redirectUrl); //跳转至进入登录页前的路由（重定向）
               } else {
-                this.$router.replace('home'); // 否则跳转至首页
+                this.$router.replace('home'); //否则跳转至首页
               }
             } catch (err) {
               console.log(err);
@@ -92,7 +91,7 @@ export default {
     },
   },
   created() {
-    localStorage.removeItem('tokenInfo');
+    localStorage.removeItem('tokenData');
     localStorage.removeItem('routersData');
     localStorage.removeItem('userInfo');
     localStorage.removeItem('dynamicTagData');

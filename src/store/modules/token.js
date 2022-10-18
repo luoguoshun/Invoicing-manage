@@ -2,7 +2,10 @@ export default {
   namespaced: true,
   // 存放状态
   state: {
-    tokenInfo: JSON.parse(localStorage.getItem('tokenInfo'))||null,
+    tokenInfo: {
+      accessToken: "",
+      expiresTime: 0,
+    }
   },
   //加工state成员给外界
   getters: {
@@ -13,24 +16,20 @@ export default {
       return state.tokenInfo.accessToken;
     },
     expiresTime(state) {
-      debugger;
       if (state.tokenInfo == null) {
-        return true;
+        return null;
       }
-      return new Date().getTime() > state.tokenInfo.expiresTime;
+      return state.tokenInfo.expiresTime;
     },
   },
   // 操作state成员
   mutations: {
     setTokenInfo(state, tokenInfo) {
-      //将token信息存入本地浏览器中
-      localStorage.setItem('tokenInfo', JSON.stringify({
-        accessToken: tokenInfo.accessToken,
-        expiresTime: new Date().getTime() + tokenInfo.expiresIn * 1000
-      }));
+      state.tokenInfo['accessToken'] = tokenInfo['accessToken'];
+      state.tokenInfo['expiresTime'] = new Date().getTime() + tokenInfo['expiresIn'];
     },
     clearToken(state) {
-      localStorage.removeItem('tokenInfo');
+      localStorage.removeItem('tokenData');
     },
   },
 };
