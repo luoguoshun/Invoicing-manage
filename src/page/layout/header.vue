@@ -57,7 +57,7 @@
       </el-form>
     </el-dialog>
   </div>
-</template>
+</template> 
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
