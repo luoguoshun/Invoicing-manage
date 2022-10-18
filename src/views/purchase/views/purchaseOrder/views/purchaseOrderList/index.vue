@@ -206,7 +206,11 @@ export default {
   computed: {},
   methods: {
     loadData() {
-      this.getSubmitOrderList();
+      if (this.IsToBeList) {
+        this.getNeedRreviewOrderByUserId();
+      } else {
+        this.getSubmitOrderList();
+      }
     },
     //获取提交采购订单列表
     async getSubmitOrderList() {
@@ -215,6 +219,23 @@ export default {
       queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
       queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
       await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.table.purchaseOrderList = data.purchaseOrders;
+        this.table.total = data.count;
+        this.table.loading = false;
+      });
+    },
+    //获取登入人需要的审批的采购订单
+    async getNeedRreviewOrderByUserId() {
+      this.IsToBeList = true;
+      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
+      queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
+      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
+      await this.$api.purchaseOrder.getNeedRreviewOrderByUserId(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -248,23 +269,6 @@ export default {
           return;
         }
         this.orderDetailDialog.orderDetailItems = data;
-      });
-    },
-    //获取登入人需要的审批的采购订单
-    async getNeedRreviewOrderByUserId() {
-      this.IsToBeList = true;
-      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
-      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
-      await this.$api.purchaseOrder.getNeedRreviewOrderByUserId(queryForm).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          console.log(message);
-          return;
-        }
-        this.table.purchaseOrderList = data.purchaseOrders;
-        this.table.total = data.count;
-        this.table.loading = false;
       });
     },
     //构造供应商下拉数据
@@ -441,12 +445,12 @@ export default {
     },
   },
   created() {
-    this.loadData();
-    this.getWarehouseList();
-    this.getSupplierList();
     if (this.$route.query.IsToBeList) {
       this.IsToBeList = true;
     }
+    this.loadData();
+    this.getWarehouseList();
+    this.getSupplierList();
   },
 };
 </script>

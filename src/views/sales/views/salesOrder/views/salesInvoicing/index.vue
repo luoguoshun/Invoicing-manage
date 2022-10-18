@@ -254,12 +254,6 @@
             <el-option v-for="item in clientList" :key="item.userId" :label="item.name" :value="item.userId"></el-option>
           </el-select>
         </el-descriptions-item>
-        <!-- <el-descriptions-item label="客户编号">
-          <el-input size="mini" type="text" v-model="salesOrderForm.clientId" clearable></el-input>
-        </el-descriptions-item>
-        <el-descriptions-item label="顾客名称">
-          <el-input size="mini" type="text" v-model="salesOrderForm.clientName" clearable></el-input>
-        </el-descriptions-item> -->
         <el-descriptions-item label="手机号码">
           <el-input size="mini" type="text" v-model="salesOrderForm.clientPhone" clearable></el-input>
         </el-descriptions-item>
@@ -513,7 +507,7 @@ export default {
         });
     },
     //获取客户列表数据
-    async getUsersByRoleId() {
+    async getClientList() {
       await this.$api.user.getUsersByRoleId('Client').then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -603,7 +597,7 @@ export default {
       // 加载数据
       this.getWarehouseList();
       this.getGoodInfoType();
-      this.getUsersByRoleId();
+      this.getClientList();
     },
     //对话框表格条数改变
     dialogSizeChange(row) {
@@ -633,7 +627,6 @@ export default {
       this.getSKUListByWhId();
     },
     clientOnChange(value) {
-      console.log(value);
       //根据供应商Id值修改供应商名称的值
       this.clientList.forEach((item, index) => {
         if (item.userId == value) {

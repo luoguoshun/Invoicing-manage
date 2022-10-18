@@ -4,9 +4,9 @@ export default {
     getSalesList(queryForm) {
         return ajax.post('/api/Background/Sales/GetSalesList', queryForm);
     },
-    //获取所有销售单
-    getUnsubmittedSalesList(queryForm) {
-        return ajax.post('/api/Background/Sales/GetUnsubmittedSalesList', queryForm);
+    //获取登入人需要的审批的销售单
+    getNeedRreviewSalesByUserId(queryForm) {
+        return ajax.post('/api/Background/Sales/GetNeedRreviewSalesByUserId', queryForm);
     },
     //通过销售单Id获取销售单详情
     getSalesDatailBySalesId(salesId) {
@@ -35,8 +35,11 @@ export default {
         return ajax.post('/api/Background/Sales/AdoptSalesOrderRequest', salesIds);
     },
     //驳回销售单
-    rejectSalesOrderRequest(salesIds) {
-        return ajax.post('/api/Background/Sales/RejectSalesOrderRequest', salesIds);
+    rejectSalesOrderRequest(salesIds, value) {
+        return ajax.post('/api/Background/Sales/RejectSalesOrderRequest', {
+            ProjectIds: salesIds,
+            Reason: value,
+        });
     },
     //驳回销售单
     createSalesNoteBysalesId(salesId) {
