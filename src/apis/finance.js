@@ -7,6 +7,12 @@ export default {
             ...queryForm
         });
     },
+    //自主开应付应收单
+    addAccount(accountForm) {
+        return ajax.post('/api/Background/Finance/AddAccount', {
+            ...accountForm
+        });
+    },
     //通过采购单新增应付款订单
     addAccountByPurchaseOrder(purchaseOrderIds, operationPersonId, operationPersonName) {
         return ajax.post('/api/Background/Finance/AddAccountByPurchaseOrder', {

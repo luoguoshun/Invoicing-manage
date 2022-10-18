@@ -6,7 +6,7 @@
         <el-button type="primary" size="mini" @click="opensalesOrderDialog()" icon="el-icon-plus">
           引入销售单
         </el-button>
-        <el-button type="primary" size="mini">自主开单</el-button>
+        <el-button type="primary" size="mini" @click="openAppAccountsPayDiolog()">自主开单</el-button>
       </div>
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -82,12 +82,7 @@
           <el-button type="success" size="mini" @click="showPaymentDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待收款'">
             点击收款
           </el-button>
-          <el-button
-            v-else-if="scope.row.accountStateStr == '已收款'"
-            type="primary"
-            size="mini"
-            @click="showPaymentDetailDialog(scope.row)"
-            plain
+          <el-button v-else-if="scope.row.accountStateStr == '已收款'" type="primary" size="mini" @click="showPaymentDetailDialog(scope.row)" plain
             >收款详情</el-button
           >
         </template>
@@ -261,8 +256,8 @@
         </el-form-item>
         <el-form-item label="支付方式">
           <el-radio-group v-model="payForm.payType" size="medium">
-            <el-radio border label="1">微信</el-radio>
-            <el-radio border label="2">支付宝</el-radio>
+            <!-- <el-radio border label="1">微信</el-radio>
+            <el-radio border label="2">支付宝</el-radio> -->
             <el-radio border label="3">银行卡</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -332,6 +327,60 @@
         <el-descriptions-item label="付款账号">{{ payDetailDialog.accountDetail['bankCardNo'] }}</el-descriptions-item>
         <el-descriptions-item label="付款时间">{{ $timeFormat.leaveTime(payDetailDialog['payTime']) }}</el-descriptions-item>
       </el-descriptions>
+    </el-dialog>
+    <!-- 添加销售开单对话框 -->
+    <el-dialog
+      id="applicationSalesDiolog"
+      title="应收开单"
+      center
+      :visible.sync="appAccountsPayDiolog.visible"
+      :close-on-click-modal="false"
+      :fullscreen="true"
+    >
+      <el-form ref="accountForm" :model="accountForm" label-width="110px" style="width:50%" :rules="accountRules">
+        <el-form-item label="业务员">
+          <el-input size="mini" type="text" v-model="accountForm.operationPersonName" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="业务类型" prop="businessType">
+          <el-select size="mini" v-model="accountForm.businessType" placeholder="业务类型">
+            <!-- <el-option label="物品采购" :value="1"></el-option> -->
+            <el-option label="采购退货" :value="2"></el-option>
+            <el-option label="销售订单" :value="3"></el-option>
+            <!-- <el-option label="售后退换" :value="4"></el-option> -->
+          </el-select>
+        </el-form-item>
+        <el-form-item label="业务对象类型" prop="accountObjectType">
+          <el-radio-group v-model="accountForm.accountObjectType">
+            <el-radio border label="1">供应商</el-radio>
+            <el-radio border label="2">客户</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="业务对象" prop="operationPersonId">
+          <el-select
+            v-if="accountForm.accountObjectType == '1'"
+            size="mini"
+            filterable
+            v-model="accountForm.accountObjectId"
+            placeholder="请选择供应商"
+            @change="supplierChange"
+          >
+            <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
+          </el-select>
+          <el-select v-else size="mini" filterable v-model="accountForm.accountObjectId" placeholder="请选择顾客户" @change="clientOnChange">
+            <el-option v-for="item in clientList" :key="item.userId" :label="item.name" :value="item.userId"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="应收金额" prop="accountTotalPrice">
+          <el-input size="mini" type="number" v-model.number="accountForm.accountTotalPrice"></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input type="textarea" v-model.trim="accountForm.remarks"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="appAccountsPayDiolog.visible = false">取 消</el-button>
+        <el-button type="success" @click="addAccount()">确定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -404,11 +453,32 @@ export default {
         bankCardNo: '', //收款账号
         bankName: '', //收款账号
       },
+      appAccountsPayDiolog: {
+        visible: false,
+      },
+      accountForm: {
+        accountType: 1,
+        businessType: '',
+        operationPersonId: '',
+        operationPersonName: '',
+        accountObjectType: '1',
+        accountObjectId: '',
+        accountObjectName: '',
+        accountTotalPrice: 0,
+        remarks: '',
+      },
       salesOrderIds: [],
       //仓库列表
       warehouseList: [],
       //供应商列表
       supplierList: [],
+      clientList: [],
+      accountRules: {
+        businessType: [{ required: true, message: '请选择业务类型', trigger: 'blur' }],
+        accountObjectType: [{ required: true, message: '请选择业务对象类型', trigger: 'change' }],
+        accountTotalPrice: [{ required: true, message: '请输入应付金额', trigger: 'change' }],
+      },
+      accountObjectId: [{ required: true, message: '请选择业务对象', trigger: 'change' }],
     };
   },
   computed: {},
@@ -480,6 +550,17 @@ export default {
           return;
         }
         this.bankCardDialog.bankCardList = data;
+      });
+    },
+    //获取客户列表数据
+    async getClientList() {
+      await this.$api.user.getUsersByRoleId('Client').then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.clientList = data;
       });
     },
     //条数改变
@@ -640,10 +721,70 @@ export default {
       this.payDetailDialog.visible = true;
     },
     // ------------------------付款----------------------
+    //-------------自主开单-------------
+    openAppAccountsPayDiolog() {
+      this.appAccountsPayDiolog.visible = true;
+      const userInfo = store.getters['userInfo/getUserInfo'];
+      this.accountForm.operationPersonId = userInfo.userId || '';
+      this.accountForm.operationPersonName = userInfo.name || '';
+      this.accountForm.businessType = '';
+      this.accountForm.accountObjectType = '1';
+      this.accountForm.accountObjectId = '';
+      this.accountForm.accountObjectName = '';
+      this.accountForm.accountTotalPrice = '';
+      this.accountForm.remarks = '';
+    },
+    clientOnChange(value) {
+      this.clientList.forEach((item, index) => {
+        if (item.userId == value) {
+          this.accountForm.accountObjectId = item['userId'];
+          this.accountForm.accountObjectName = item['name'];
+          return true;
+        }
+      });
+    },
+    supplierChange(value) {
+      //根据供应商Id值修改供应商名称的值
+      this.supplierList.forEach((item, index) => {
+        if (item.supplierId == value) {
+          this.accountForm.accountObjectId = item['supplierId'];
+          this.accountForm.accountObjectName = item['supplierName'];
+          return true;
+        }
+      });
+    },
+    addAccount() {
+      let accountForm = JSON.parse(JSON.stringify(this.accountForm));
+      accountForm.accountObjectType = parseInt(accountForm.accountObjectType);
+      accountForm.accountObjectId = accountForm.accountObjectId.toString();
+      accountForm.accountTotalPrice = parseInt(accountForm.accountTotalPrice);
+      this.$refs['accountForm'].validate((valid) => {
+        if (valid) {
+          this.$api.finance.addAccount(this.accountForm).then((res) => {
+            const { data, success, message } = res.data;
+            if (!success) {
+              this.$message.error(message);
+            } else {
+              this.$message({
+                message: message,
+                type: 'success',
+              });
+              this.appAccountsPayDiolog.visible = false;
+              this.loadData();
+            }
+          });
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    //end----------自主开单------------
   },
   created() {
     this.loadData();
     this.getSupplierList();
+    this.getClientList();
   },
 };
 </script>

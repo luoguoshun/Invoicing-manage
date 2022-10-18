@@ -473,10 +473,6 @@ export default {
       this.getDetailPlanListByPurchasId(row.purchaseId);
       this.planDetailDiolog.show = true;
     },
-    //获取我的待办事项（待审批计划）
-    showToBeListDrawer() {
-      this.ToBeListDrawer.show = true;
-    },
     getElTagClass(row) {
       if (row.stateStr == '已审核') {
         return 'success';
@@ -495,10 +491,10 @@ export default {
     },
   },
   created() {
-    this.loadData();
     if (this.$route.query.IsToBeList) {
       this.IsToBeList = true;
     }
+    this.loadData();
   },
 };
 </script>

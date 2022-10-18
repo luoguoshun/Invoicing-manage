@@ -3,20 +3,29 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()">
+        <!-- <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()">
           审核
         </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()">
           驳回
+        </el-button> -->
+        <el-dropdown>
+          <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="getSalesList()"> 历史记录 </el-dropdown-item>
+            <el-dropdown-item @click.native="getNeedRreviewSalesByUserId()">待办事项</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()" v-show="IsToBeList == true">
+          审核
+        </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()" v-show="IsToBeList == true">
+          驳回
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
+        <div>
+          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
             <el-option label="审核中" value="2"></el-option>
             <el-option label="待出库" value="4"></el-option>
             <el-option label="已出库" value="5"></el-option>
@@ -25,18 +34,14 @@
             <el-option label="已完成" value="8"></el-option>
           </el-select>
         </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -109,7 +114,7 @@
             plain
             >点击生成
           </el-button>
-          <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
+          <el-button v-else type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
       <!-- 操作 -->
@@ -308,6 +313,7 @@ export default {
       salesId: [],
       warehouseList: [], //仓库列表
       salesNoteSrc: '',
+      IsToBeList: false, //是否为待办事项
     };
   },
   computed: {},
@@ -317,9 +323,26 @@ export default {
     },
     //获取提交销售订单列表
     async getSalesList() {
+      this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
       await this.$api.sales.getSalesList(queryForm).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.table.salesOrderList = data.sales;
+        this.table.total = data.count;
+        this.table.loading = false;
+      });
+    },
+    //获取提交销售订单列表
+    async getNeedRreviewSalesByUserId() {
+      this.IsToBeList = true;
+      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
+      queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
+      await this.$api.sales.getNeedRreviewSalesByUserId(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -458,48 +481,55 @@ export default {
     },
     //驳回
     rejectOrderRequest() {
-      let adopt = true;
-      if (this.salesId.length == 0) {
-        this.$message({
-          message: '请选择要审核的销售单',
-          type: 'warning',
-        });
-        return false;
-      } else {
-        //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.salesOrderList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
-            return false;
-          }
-          this.salesId.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
-                this.$message({
-                  message: '请选择审核中的销售单',
-                  type: 'warning',
-                });
-                adopt = false;
-                return false;
+      this.$prompt('驳回原因', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: '',
+        inputErrorMessage: '请输入驳回原因',
+      }).then(({ value }) => {
+        let adopt = true;
+        if (this.salesId.length == 0) {
+          this.$message({
+            message: '请选择要审核的销售单',
+            type: 'warning',
+          });
+          return false;
+        } else {
+          //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
+          this.table.salesOrderList.forEach((plan, index) => {
+            //adopt = false 说明找到符合的数据 函数返回
+            if (adopt == false) {
+              return false;
+            }
+            this.salesId.forEach((purchaseOrderId) => {
+              if (plan.purchaseOrderId == purchaseOrderId) {
+                //找到不符合的数据 返回 并设置adopt = false
+                if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
+                  this.$message({
+                    message: '请选择审核中的销售单',
+                    type: 'warning',
+                  });
+                  adopt = false;
+                  return false;
+                }
               }
+            });
+          });
+        }
+        //找不到符合的数据才允许审核
+        if (adopt) {
+          this.$api.sales.rejectSalesOrderRequest(this.salesId, value).then((res) => {
+            let { success, message } = res.data;
+            if (!success) {
+              console.log(message);
+              this.$message.error('驳回失败，服务器未知错误');
+            } else {
+              this.$message({ message: '已驳回！', type: 'success' });
+              this.loadData();
             }
           });
-        });
-      }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.sales.rejectSalesOrderRequest(this.salesId).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('驳回失败，服务器未知错误');
-          } else {
-            this.$message({ message: '已驳回！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
+        }
+      });
     },
     //获取审批详情
     async getApprovalDetails(projectId) {
@@ -532,17 +562,6 @@ export default {
       });
     },
     lookCreateSalesNote(row) {
-      // this.$api.sales.getSalesNoteFileBysalesId(row.salesId).then((res) => {
-      //   console.log(res.data);
-      //   docx.renderAsync(res.data.fileContents, this.$refs.file); // 获取到biob文件流，进行渲染到页面预览
-      //   // if (!success) {
-      //   //   console.log(message);
-      //   //   this.$message.error(message);
-      //   // } else {
-      //   //   this.$message({ message: message, type: 'success' });
-      //   //   this.loadData();
-      //   // }
-      // });
       this.salesNoteSrc = row.salesNoteSrc;
       const accessToken = store.getters['token/accessToken'];
       if (accessToken !== null) {
@@ -592,6 +611,9 @@ export default {
   created() {
     this.loadData();
     this.getWarehouseList();
+    if (this.$route.query.IsToBeList) {
+      this.IsToBeList = true;
+    }
   },
 };
 </script>
@@ -604,7 +626,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 0.5fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -613,12 +635,8 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .demo-table-expand {
