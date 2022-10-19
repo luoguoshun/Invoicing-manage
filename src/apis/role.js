@@ -13,8 +13,11 @@ export default {
   },
   //通过Excel文件导入数据
   importRolesByExcel(excelFile) {
-    console.log(excelFile);
-    return ajax.post('/api/Background/Role/ImportRolesByExcel',excelFile);
+    return ajax.post('/api/Background/Role/ImportRolesByExcel', excelFile);
+  },
+  //通过Excel文件导入数据
+  exportRoleDataToExcel(roleIds) {
+    return ajax.post('/api/Background/Role/ExportRoleDataToExcel', roleIds);
   },
   //修改部分角色信息
   updateRole(RoleForm) {

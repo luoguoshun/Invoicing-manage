@@ -6,10 +6,12 @@
         <p>翻斗花园进销存管理系统</p>
       </div>
       <div class="user">
+        <el-avatar :size="40" :src="userInfo.headerImgUrl" shape="circle"></el-avatar>
+
         <el-badge :value="messageCount" class="item">
           <el-button size="small">通知</el-button>
+          <!-- <i class="el-icon-bell"></i> -->
         </el-badge>
-        <el-avatar :size="40" :src="getUserInfo.headerImgUrl"></el-avatar>
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -38,16 +40,16 @@
         <!-- <router-link v-if="index!==0" :to="item.path">{{item.meta.title}}</router-link> -->
       </el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 日志详细信息对话框 -->
-    <el-dialog title="修改登入密码" :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="25%" center>
+    <!-- 修改登入密码对话框 -->
+    <el-dialog title="修改登入密码" :visible.sync="updateDialog.visible" :close-on-click-modal="false" width="30%" center>
       <el-form :model="updateForm" :rules="updatePwdRules" ref="updateForm" label-width="100px" class="demo-ruleForm" status-icon>
-        <el-form-item label="原密码" prop="oldPwd">
+        <el-form-item label="原密码" prop="oldPwd" required>
           <el-input type="password" v-model="updateForm.oldPwd" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="新密码" prop="newPwd">
+        <el-form-item label="新密码" prop="newPwd" required>
           <el-input type="password" v-model="updateForm.newPwd" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPwd">
+        <el-form-item label="确认密码" prop="confirmPwd" required>
           <el-input type="password" v-model="updateForm.confirmPwd" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
@@ -57,14 +59,14 @@
       </el-form>
     </el-dialog>
   </div>
-</template> 
+</template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 export default {
   computed: {
     //将this.getDynamicTags 映射为 this.$store.getters.getDynamicTags
-    ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', getUserInfo: 'userInfo/getUserInfo' }),
+    ...mapGetters({ getDynamicTags: 'tagsView/getDynamicTags', userInfo: 'userInfo/getUserInfo' }),
   },
   data() {
     var checkOldPwd = (value, callback) => {
@@ -181,7 +183,7 @@ export default {
     updatePwd(updateForm) {
       this.$refs[updateForm].validate((valid) => {
         if (valid) {
-          this.$api.admin.updatePwd('luo', this.updateForm.oldPwd, this.updateForm.newPwd).then((res) => {
+          this.$api.admin.updatePwd(userInfo.userId, this.updateForm.oldPwd, this.updateForm.newPwd).then((res) => {
             const { data, success, message } = res.data;
             if (success) {
               this.updateDialog.visible = false;
@@ -261,14 +263,14 @@ export default {
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      grid-gap: 10px;
+      grid-gap: 15px;
     }
   }
   .header_tab {
     height: 45px;
     display: grid;
-    grid-template-columns: 94% 6%;
-    padding-right: 10px;
+    grid-template-columns: 95% 5%;
+    padding-right: 15px;
     .el-button {
       margin: 10px auto;
       height: 30px;
