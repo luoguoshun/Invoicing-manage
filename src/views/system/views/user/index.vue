@@ -4,9 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()">添加 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()">
-          移除
-        </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()"> 移除 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -45,12 +43,8 @@
       </el-table-column>
       <el-table-column prop="sex" label="性别" width="60px" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.sex == 1">
-            男
-          </span>
-          <span v-else-if="scope.row.sex == 2">
-            女
-          </span>
+          <span v-if="scope.row.sex == 1"> 男 </span>
+          <span v-else-if="scope.row.sex == 2"> 女 </span>
         </template>
       </el-table-column>
       <!-- <el-table-column prop="idNumber" label="身份证号码"  align="center"> </el-table-column> -->
@@ -106,15 +100,11 @@
         <el-form-item label="头像">
           <img :src="userForm.headerImgUrl" width="100" height="100" />
           <el-upload ref="upload" action="" :http-request="uploadUserHeaderImg" :auto-upload="false" :limit="1">
-            <el-button slot="trigger" size="small" type="primary">
-              选取文件
-            </el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
+            <el-button slot="trigger" size="small" type="primary"> 选取文件 </el-button>
+            <el-button style="margin-left: 10px" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
           </el-upload>
         </el-form-item>
-        <el-form-item label="用户名称">
-          <el-input v-model="userForm.name"></el-input> </el-form-item
-        >
+        <el-form-item label="用户名称"> <el-input v-model="userForm.name"></el-input> </el-form-item>
         <el-form-item label="性别">
           <el-radio-group v-model="userForm.sex" size="mini">
             <el-radio :label="1">男</el-radio>
@@ -122,7 +112,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="部门">
-          <el-select v-model="userForm.departmentId" filterable  placeholder="请选择部门">
+          <el-select v-model="userForm.departmentId" filterable placeholder="请选择部门">
             <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName" :value="item.departmentId"></el-option>
           </el-select>
         </el-form-item>
@@ -135,6 +125,9 @@
         </el-form-item>
         <el-form-item label="联系方式">
           <el-input type="text" v-model="userForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="省区">
+          <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
         </el-form-item>
         <el-form-item label="地址">
           <el-input type="text" v-model="userForm.address"></el-input>
@@ -161,12 +154,15 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="部门">
-          <el-select v-model="userForm.departmentId" filterable  placeholder="请选择部门">
+          <el-select v-model="userForm.departmentId" filterable placeholder="请选择部门">
             <el-option v-for="item in departmentList" :key="item.departmentId" :label="item.departmentName" :value="item.departmentId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
           <el-input type="text" v-model="userForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="省区">
+          <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
         </el-form-item>
         <el-form-item label="地址">
           <el-input type="text" v-model="userForm.address"></el-input>
@@ -181,6 +177,8 @@
 </template>
 
 <script>
+import { regionDataPlus } from 'element-china-area-data';
+import provinceAndCity from '@/assets/js/province';
 export default {
   data() {
     // 验证手机号的规则
@@ -255,7 +253,8 @@ export default {
         phone: '',
         roleIdStr: '',
         state: 0,
-        departmentId:'',
+        departmentId: '',
+        areadata: '',
       },
       roleIds: [],
       userIds: [],
@@ -281,6 +280,10 @@ export default {
         ],
       },
       departmentList: [],
+      options: regionDataPlus,
+      selectedOptions: [],
+      provinceAndCity,
+      search: { current: 1, size: 6 },
     };
   },
   methods: {
@@ -397,7 +400,7 @@ export default {
       this.userForm.address = '';
       this.userForm.phone = '';
       this.roleIds = [];
-      this.userForm.departmentId='';
+      this.userForm.departmentId = '';
     },
     //添加新用户
     addUser() {
@@ -407,10 +410,10 @@ export default {
             userId: this.userForm.userId,
             name: this.userForm.name,
             sex: this.userForm.sex,
-            address: this.userForm.address,
+            address: this.queryForm.areadata + this.userForm.address,
             phone: this.userForm.phone,
             roleIds: this.roleIds,
-            departmentId:this.userForm.departmentId,
+            departmentId: this.userForm.departmentId,
           };
           this.$api.user.addUser(user).then((res) => {
             const { data, success, message } = res.data;
@@ -474,10 +477,10 @@ export default {
         userId: this.userForm.userId,
         roleIds: this.roleIds,
         phone: this.userForm.phone,
-        address: this.userForm.address,
+        address: this.queryForm.areadata + this.userForm.address,
         sex: this.userForm.sex,
         name: this.userForm.name,
-        departmentId:this.userForm.departmentId,
+        departmentId: this.userForm.departmentId,
       };
       this.$api.user.updateUser(user).then((res) => {
         const { data, success, message } = res.data;
@@ -505,6 +508,40 @@ export default {
           this.loadData();
         }
       });
+    },
+    //地址框选择触发
+    handleChange(value) {
+      this.search.province = '';
+      this.search.city = '';
+      this.search.district = '';
+      for (var k = 0, lengthk = provinceAndCity.length; k < lengthk; k++) {
+        //确定省
+        if (provinceAndCity[k].code == value[0]) {
+          this.search.province = provinceAndCity[k].name;
+          if (provinceAndCity[k].cityList && value.length >= 2 && value[1] != '') {
+            for (var i = 0, lengthi = provinceAndCity[k].cityList.length; i < lengthi; i++) {
+              //确定市
+              if (provinceAndCity[k].cityList[i].code == value[1] || provinceAndCity[k].cityList.length == 1) {
+                this.search.city = provinceAndCity[k].cityList[i].name;
+                //确定区
+                if (provinceAndCity[k].cityList[i].areaList && value.length == 3 && value[2] != '') {
+                  for (var j = 0, lengthj = provinceAndCity[k].cityList[i].areaList.length; j < lengthj; j++) {
+                    if (provinceAndCity[k].cityList[i].areaList[j].code == value[2]) {
+                      this.search.district = provinceAndCity[k].cityList[i].areaList[j].name;
+                      break;
+                    }
+                  }
+                }
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
+      this.queryForm.areadata = '';
+      this.queryForm.areadata = this.search.province + this.search.city + this.search.district;
+      console.log(this.queryForm.areadata);
     },
   },
   created() {

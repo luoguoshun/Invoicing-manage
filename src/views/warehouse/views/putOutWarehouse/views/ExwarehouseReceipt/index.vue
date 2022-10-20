@@ -72,7 +72,7 @@
         <div style="float: left">
           <el-form-item label="申请仓库" prop="supplierId">
             <el-select size="mini" filterable v-model="purchasePlanForm.warehouseId" @change="getSKUListByWarehouseId">
-              <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId" ></el-option>
+              <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="出库原因" prop="warehouseId">
@@ -176,47 +176,47 @@
         border=""
       >
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
-              <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
-        <template slot-scope="scope">
-          <el-popover trigger="hover" placement="top">
-            <p>销售计划编号: {{ scope.row.salesId }}</p>
-            <div slot="reference" class="name-wrapper">
-              <el-tag disable-transitions>{{ scope.row.salesId }}</el-tag>
-            </div>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column prop="salesStateStr" label="状态" align="center">
-        <template slot-scope="scope">
-          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesStateStr }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="salesTypeStr" label="销售类型" align="center"> </el-table-column>
-      <el-table-column prop="payTypeStr" label="支付方式" align="center"> </el-table-column>
-      <el-table-column prop="logisticsCompanyStr" label="物流公司" align="center"></el-table-column>
-      <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
-      <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
-      <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
-      <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
-      <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="销售单据" align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成</el-button>
-          <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
-        </template>
-      </el-table-column>
-      <!-- 操作 -->
-      <el-table-column label="编辑" width="200" align="center">
-        <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
-          <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
-        </template>
-      </el-table-column>
+        <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
+          <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top">
+              <p>销售计划编号: {{ scope.row.salesId }}</p>
+              <div slot="reference" class="name-wrapper">
+                <el-tag disable-transitions>{{ scope.row.salesId }}</el-tag>
+              </div>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column prop="salesStateStr" label="状态" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesStateStr }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="salesTypeStr" label="销售类型" align="center"> </el-table-column>
+        <el-table-column prop="payTypeStr" label="支付方式" align="center"> </el-table-column>
+        <el-table-column prop="logisticsCompanyStr" label="物流公司" align="center"></el-table-column>
+        <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
+        <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
+        <el-table-column prop="arrivalCount" label="到货总数" align="center"></el-table-column>
+        <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
+        <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
+        <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="销售单据" align="center">
+          <template slot-scope="scope">
+            <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成</el-button>
+            <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
+          </template>
+        </el-table-column>
+        <!-- 操作 -->
+        <el-table-column label="编辑" width="200" align="center">
+          <template slot-scope="scope">
+            <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
+            <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="block">
@@ -233,7 +233,7 @@
         </el-pagination>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="importSalesDiolog.Visible = false">取 消</el-button>
+        <el-button @click="importSalesDiolog.Visible = false" >取 消</el-button>
         <el-button type="success" @click="addExwareHousePlan()">确 定</el-button>
       </div>
     </el-dialog>
@@ -290,7 +290,7 @@ export default {
         ExwarehouseState: 1, //待引用
         IsToBeSubmitted: true,
       },
-            SalequeryForm: {
+      SalequeryForm: {
         page: 1,
         row: 10,
         publicationDates: [],
@@ -312,6 +312,7 @@ export default {
         applicanSKUIds: [],
         skuPrices: [],
         logisticsCompany: '',
+        salesId:'',//销售id
       },
       table: {
         purchasePlanList: [],
@@ -360,7 +361,7 @@ export default {
       //物品类别列表
       goodsTypes: [],
       puchasePlanRules: {
-        warehouseId: [{ required: true, message: '请选择开单仓库', trigger: 'blur' }],
+        //warehouseId: [{ required: true, message: '请选择开单仓库', trigger: 'blur' }],
         //supplierId: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
@@ -633,11 +634,13 @@ export default {
     },
     //获取采购计划选中行的数据
     selectSalesRows(selection) {
+      console.log(selection);
       this.purchasePlanForm.applicanSKUIds = [];
       (this.purchasePlanForm.skuPrices = []),
         selection.forEach((element) => {
           this.purchasePlanForm.applicanSKUIds.push(element.skuId);
           this.purchasePlanForm.skuPrices.push(element.price);
+          this.purchasePlanForm.salesId=element.salesId;
         });
       console.log(this.purchasePlanForm.applicanSKUIds);
     },
@@ -657,6 +660,7 @@ export default {
               applicanSKUIds: this.purchasePlanForm.applicanSKUIds,
               skuPrices: this.purchasePlanForm.skuPrices,
               postage: this.purchasePlanForm.postage,
+              SalesId:this.purchasePlanForm.salesId,
             };
             this.$api.exwarehouse.createExWarhousePlan(ExPlan).then((res) => {
               const { data, success, message } = res.data;
@@ -665,6 +669,7 @@ export default {
               } else {
                 this.$message({ message: '添加成功！', type: 'success' });
                 this.applicationPlanDiolog.Visible = false;
+                this.importSalesDiolog.Visible = false;
                 this.loadData();
               }
             });
@@ -722,6 +727,7 @@ export default {
       //}
       //}
     },
+    //删除出库计划
     getElTagClass(row) {
       if (row.stateStr == '驳回') {
         return 'danger';

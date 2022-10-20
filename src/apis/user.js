@@ -35,6 +35,7 @@ export default {
   //修改用户状态
   addUser(userForm) {
     console.log(userForm);
+    debugger;
     return ajax.post("/api/Background/User/AddUser", {
       ...userForm
     });

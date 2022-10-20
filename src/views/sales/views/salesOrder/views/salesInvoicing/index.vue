@@ -3,15 +3,9 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-edit" @click="openapplicationSalesDiolog()">
-          新建申请
-        </el-button>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()">
-          提交
-        </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesOrderRequest()">
-          撤销
-        </el-button>
+        <el-button type="primary" size="mini" class="el-icon-edit" @click="openapplicationSalesDiolog()"> 新建申请 </el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesOrderRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
@@ -216,7 +210,7 @@
       :fullscreen="true"
     >
       <!-- 销售单基本信息 -->
-      <el-descriptions class="margin-top" :column="5" size="mini" style="width:90%" :border="true">
+      <el-descriptions class="margin-top" :column="5" size="mini" style="width: 90%" :border="true">
         <el-descriptions-item label="出货仓库"
           ><el-select size="mini" v-model="salesOrderForm.warehouseId" @change="warehouseOnChange" filterable>
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"> </el-option>
@@ -248,7 +242,7 @@
       </el-descriptions>
       <!-- 客户信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="4" size="mini" style="width:90%" :border="true">
+      <el-descriptions class="margin-top" :column="4" size="mini" style="width: 90%" :border="true">
         <el-descriptions-item label="顾客">
           <el-select size="mini" filterable v-model="salesOrderForm.clientId" placeholder="请选择顾客户" @change="clientOnChange">
             <el-option v-for="item in clientList" :key="item.userId" :label="item.name" :value="item.userId"></el-option>
@@ -263,14 +257,16 @@
         <el-descriptions-item label="邮编">
           <el-input size="mini" type="text" v-model="salesOrderForm.postalCode" clearable></el-input>
         </el-descriptions-item>
-        <el-descriptions-item label="收获地址" :span="2">
+        <el-descriptions-item label="收获地址" :span="1">
+          <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
+        </el-descriptions-item>
+        <el-descriptions-item label="详细地址" :span="1">
           <el-input size="mini" type="textarea" v-model="salesOrderForm.clientAddress" clearable></el-input>
         </el-descriptions-item>
-        <el-descriptions-item> </el-descriptions-item>
       </el-descriptions>
       <!-- 费用信息 -->
       <el-divider></el-divider>
-      <el-descriptions class="margin-top" :column="4" size="mini" style="width:90%" :border="true">
+      <el-descriptions class="margin-top" :column="4" size="mini" style="width: 90%" :border="true">
         <el-descriptions-item label="支付方式">
           <el-select size="mini" v-model="salesOrderForm.payType" filterable>
             <el-option value="微信" label="微信"></el-option>
@@ -367,6 +363,8 @@
 
 <script>
 import store from '@/store';
+import { regionDataPlus } from 'element-china-area-data';
+import provinceAndCity from '@/assets/js/province';
 export default {
   data() {
     return {
@@ -393,8 +391,9 @@ export default {
         clientId: '',
         clientName: '',
         postalCode: '', //邮编
-        clientAddress: '',
+        clientAddress:'',
         clientPhone: '',
+        areadata:'',
         clientRemarks: '', //顾客备注
         otherPrice: 0,
         transportPrice: 0,
@@ -443,12 +442,48 @@ export default {
       //物品类型列表
       goodsTypes: [],
       clientList: [], //客户列表
+      options: regionDataPlus,
+      selectedOptions: [],
+      provinceAndCity,
+      search: { current: 1, size: 6 },
     };
   },
   computed: {},
   methods: {
     loadData() {
       this.getSalesList();
+    },
+    handleChange(value) {
+      this.search.province = '';
+      this.search.city = '';
+      this.search.district = '';
+      for (var k = 0, lengthk = provinceAndCity.length; k < lengthk; k++) {
+        //确定省
+        if (provinceAndCity[k].code == value[0]) {
+          this.search.province = provinceAndCity[k].name;
+          if (provinceAndCity[k].cityList && value.length >= 2 && value[1] != '') {
+            for (var i = 0, lengthi = provinceAndCity[k].cityList.length; i < lengthi; i++) {
+              //确定市
+              if (provinceAndCity[k].cityList[i].code == value[1] || provinceAndCity[k].cityList.length == 1) {
+                this.search.city = provinceAndCity[k].cityList[i].name;
+                //确定区
+                if (provinceAndCity[k].cityList[i].areaList && value.length == 3 && value[2] != '') {
+                  for (var j = 0, lengthj = provinceAndCity[k].cityList[i].areaList.length; j < lengthj; j++) {
+                    if (provinceAndCity[k].cityList[i].areaList[j].code == value[2]) {
+                      this.search.district = provinceAndCity[k].cityList[i].areaList[j].name;
+                      break;
+                    }
+                  }
+                }
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
+      this.salesOrderForm.areadata=this.search.province + this.search.city + this.search.district
+      console.log(this.salesOrderForm.areadata);
     },
     //获取提交销售订单列表
     async getSalesList() {
@@ -761,6 +796,9 @@ export default {
           }
         }
         if (success) {
+          let tempaddress=this.salesOrderForm.clientAddress;
+          this.salesOrderForm.clientAddress="";
+          this.salesOrderForm.clientAddress=this.salesOrderForm.areadata+tempaddress;
           this.$api.sales.addSalesOrder([this.salesOrderForm]).then((res) => {
             const { data, success, message } = res.data;
             if (!success) {
