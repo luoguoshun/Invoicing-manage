@@ -7,9 +7,8 @@
       </div>
       <div class="user">
         <el-avatar :size="40" :src="userInfo.headerImgUrl" shape="circle"></el-avatar>
-
         <el-badge :value="messageCount" class="item">
-          <el-button size="small">通知</el-button>
+          <el-button size="small" @click="$router.push({ name: 'home' })">通知</el-button>
           <!-- <i class="el-icon-bell"></i> -->
         </el-badge>
         <el-dropdown>
@@ -18,7 +17,7 @@
             <el-dropdown-item @click.native="updateDialog.visible = true">修改密码</el-dropdown-item>
             <el-dropdown-item @click.native="exitLogin()">退出登入</el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown>  
       </div>
     </div>
     <!-- 标签区 -->
@@ -220,6 +219,9 @@ export default {
       this.closeConnection();
       this.$router.push({ name: 'login' });
     },
+    // toHome(){
+    //   this.$router.push({ name: 'home' });
+    // }
   },
   created() {
     //获取路由内的全部信息
