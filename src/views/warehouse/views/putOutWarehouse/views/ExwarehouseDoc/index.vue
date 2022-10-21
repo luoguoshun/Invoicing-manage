@@ -100,7 +100,7 @@
       </el-pagination>
     </div>
     <!-- 出库单详情 -->
-    <el-drawer title="编辑出库开单信息" :visible.sync="planDetailDiolog.show" direction="rtl" size="80%">
+    <el-drawer title="出库单据详情信息" :visible.sync="planDetailDiolog.show" direction="rtl" size="80%">
       <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
@@ -294,8 +294,27 @@ export default {
       this.introducePlanDiolog.planQueryForm.approvalName = '';
       this.getPassPurchasePlanList();
     },
+        //更新采购计划项目
+    updatePurchaseDetails() {
+      this.planDetailDiolog.detailPlanItems.forEach((item) => {
+        this.updateExdetFrom.exwarehouseDeteilIds.push(item.exwarehouseDeteilId);
+        this.updateExdetFrom.prices.push(item.price);
+        this.updateExdetFrom.count.push(item.count);
+      });
+      this.$api.exwarehouse.updateExWareHouseDet(this.updateExdetFrom).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          this.$message.error(message);
+        } else {
+          this.$message({ message: '保存成功！', type: 'success' });
+          this.planDetailDiolog.show = false;
+          this.loadData();
+        }
+      });
+    },
     //获取采购订单选中行的数据
     selectOrderRows(selection) {
+      console.log(selection);
       this.purchaseOrderIds = [];
       this.OrderState = [];
       selection.forEach((element) => {
@@ -360,38 +379,14 @@ export default {
     },
     //驳回
     rejectOrderRequest() {
-      let adopt = true;
       if (this.purchaseOrderIds.length == 0) {
         this.$message({
-          message: '请选择要审核的采购单',
+          message: '请选择要取消的出库单',
           type: 'warning',
         });
         return false;
       } else {
-        //找出在 采购数据列表ID包含在 purchaseOrderList 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.purchaseOrderList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
-            return false;
-          }
-          this.purchaseOrderIds.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.purchaseOrderList[index]['orderStateStr'] !== '审核中') {
-                this.$message({
-                  message: '请选择审核中的采购单',
-                  type: 'warning',
-                });
-                adopt = false;
-                return false;
-              }
-            }
-          });
-        });
-      }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.purchaseOrder.rejectOrderRequest(this.purchaseOrderIds).then((res) => {
+        this.$api.exwarehouse.rejectOrderRequest(this.purchaseOrderIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -410,12 +405,13 @@ export default {
       this.orderDetailDiolog.show = true;
     },
     getElTagClass(row) {
-      if (row.orderStateStr == '已审核') {
+      console.log(row);
+      if (row.exwarehouseStateStr == '已完成') {
         return 'success';
-      } else if (row.orderStateStr == '审核中') {
+      } else if (row.exwarehouseStateStr == '待编辑') {
         return 'warning';
-      } else {
-        return '';
+      } else if(row.exwarehouseStateStr=='已取消'){
+        return 'info';
       }
     },
   },

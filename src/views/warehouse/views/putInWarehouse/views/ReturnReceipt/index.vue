@@ -5,7 +5,7 @@
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()"> 引用退换单 </el-button>
         <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round>提交</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" round @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
@@ -104,6 +104,9 @@ export default {
       dialogObject: {
         addVisible: false,
       },
+      SourceOrderIds: [{
+        arr:"1",
+      }],
     };
   },
   methods: {
@@ -111,7 +114,32 @@ export default {
     openAddDialog() {
       this.dialogObject.addVisible = true;
     },
+
+    async CreatePutinWarehousId() {
+      //this.SourceOrderIds
+
+      // if (this.SourceOrderIds.length == 0) {
+      //   this.$message({
+      //     message: '请选择提交的销售退库入库单',
+      //     type: 'warning',
+      //   });
+      // } else {
+
+
+      this.SourceOrderIds;
+      await this.$api.Putinwarehous.CreatePutinWarehousId(this.SourceOrderIds, 1).then((res) => {
+        const { success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          this.$message.error('提交失败！');
+        } else {
+          this.$message({ message: '提交成功！', type: 'success' });
+          this.loadData();
+        }
+      });
+    },
   },
+  // },
 };
 </script>
 
