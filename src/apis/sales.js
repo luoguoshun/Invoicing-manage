@@ -4,6 +4,10 @@ export default {
     getSalesList(queryForm) {
         return ajax.post('/api/Background/Sales/GetSalesList', queryForm);
     },
+     //获取所有销售单
+     getUnsubmittedSalesList(queryForm) {
+        return ajax.post('/api/Background/Sales/GetUnsubmittedSalesList', queryForm);
+    },
     //获取登入人需要的审批的销售单
     getNeedRreviewSalesByUserId(queryForm) {
         return ajax.post('/api/Background/Sales/GetNeedRreviewSalesByUserId', queryForm);

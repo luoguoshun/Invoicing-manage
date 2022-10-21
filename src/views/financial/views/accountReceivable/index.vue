@@ -818,10 +818,6 @@ export default {
     display: grid;
     grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
-    > div {
-      width: 100%;
-      border: 1px solid rebeccapurple;
-    }
   }
 }
 </style>

@@ -8,10 +8,13 @@
           移除
         </el-button>
         <el-upload class="upload" action="" :http-request="importRolesByExcel" :auto-upload="true" :limit="1" :show-file-list="false">
-          <el-button slot="trigger" size="mini" type="warning">
+          <el-button slot="trigger" size="mini" type="success">
             导入数据
           </el-button>
         </el-upload>
+        <el-button slot="trigger" size="mini" type="warning" @click="exportRoleDataToExcel()">
+          导出数据
+        </el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -31,7 +34,7 @@
     </el-table>
 
     <!-- 修改角色信息对话框 -->
-    <el-dialog title="角色信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="55%">
+    <el-dialog title="角色信息" center :visible.sync="dialogObject.updateVisible" :close-on-click-modal="false" width="40%">
       <el-form ref="updateform" :model="roleForm" label-width="80px">
         <el-form-item label="角色Id">
           <el-input v-model="roleForm.roleId" disabled></el-input>
@@ -50,7 +53,7 @@
     </el-dialog>
 
     <!-- 权限分配信息对话框 -->
-    <el-dialog title="权限分配" center :visible.sync="dialogObject.allocationDiolog" :close-on-click-modal="false" width="35%" :append-to-body="true">
+    <el-dialog title="权限分配" center :visible.sync="dialogObject.allocationDiolog" :close-on-click-modal="false" width="40%" :append-to-body="true">
       <el-tree
         :data="permissionData"
         ref="routerTree"
@@ -73,7 +76,7 @@
     </el-dialog>
 
     <!-- 添加角色信息对话框 -->
-    <el-dialog title="角色信息" center :visible.sync="dialogObject.createVisible" :close-on-click-modal="false" width="30%">
+    <el-dialog title="角色信息" center :visible.sync="dialogObject.createVisible" :close-on-click-modal="false" width="40%">
       <el-form ref="createform" :model="roleForm" label-width="80px">
         <el-form-item label="角色Id">
           <el-input v-model="roleForm.roleId"></el-input>
@@ -94,6 +97,7 @@
 </template>
 
 <script>
+import { baseUrl } from '@/config/defaultString.js';
 export default {
   data() {
     return {
@@ -148,6 +152,22 @@ export default {
           } else {
             this.$message({ message: message, type: 'success' });
             this.loadData();
+          }
+        });
+      }
+    },
+    //导出数据到Excel
+    exportRoleDataToExcel() {
+      if (this.roleIds.length == 0) {
+        this.$message({ message: '请选择要导出的数据', type: 'info' });
+      } else {
+        this.$api.role.exportRoleDataToExcel(this.roleIds).then((res) => {
+          const { data, success, message } = res.data;
+          console.log(data);
+          if (!success) {
+            this.$message({ message: message, type: 'error' });
+          } else {
+            window.open(baseUrl + message, '_self');
           }
         });
       }
@@ -324,20 +344,7 @@ export default {
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
-    }
-    .edit_query {
-      width: 100%;
-      display: grid;
-      // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 1.5fr;
-      grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-      }
+      grid-gap: 5px;
     }
   }
 }

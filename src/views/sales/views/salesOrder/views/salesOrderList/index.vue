@@ -635,7 +635,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 0.5fr 0.5fr;
+      grid-template-columns: 1fr 2fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }
   }
