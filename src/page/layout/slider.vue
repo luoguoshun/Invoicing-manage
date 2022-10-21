@@ -64,13 +64,18 @@
         <el-menu-item
           index="/warehouse/putInWarehouse/PurchaseReceipt"
           @click.native="createTab({ tabName: '入库管理', routeName: 'PurchaseReceipt' })"
-          >入库管理</el-menu-item
-        >
+          >入库管理
+        </el-menu-item>
         <el-menu-item
           index="/warehouse/putOutWarehouse/ExwarehouseReceipt"
           @click.native="createTab({ tabName: '出库管理', routeName: 'ExwarehouseReceipt' })"
-          >出库管理</el-menu-item
-        >
+          >出库管理
+        </el-menu-item>
+        <el-menu-item
+          index="/warehouse/ItemManage"
+          @click.native="createTab({ tabName: '物资管理', routeName: 'ItemManage' })"
+          >物资管理
+        </el-menu-item>
       </el-submenu>
 
       <el-submenu index="sales">
@@ -81,7 +86,7 @@
         <el-menu-item index="/sales/salesOrder/salesOrderList" @click.native="createTab({ tabName: '销售管理', routeName: 'salesOrderList' })">
           销售管理
         </el-menu-item>
-        <el-menu-item index="/sales/salesReturn" @click.native="createTab({ tabName: '销售管理', routeName: 'salesReturn' })">
+        <el-menu-item index="/sales/salesReturn/salesReturnList" @click.native="createTab({ tabName: '销售管理', routeName: 'salesReturn' })">
           销售退货
         </el-menu-item>
       </el-submenu>

@@ -64,9 +64,6 @@
     <!-- 添加修改仓库信息对话框 -->
     <el-dialog title="仓库信息" center :visible.sync="dialogObject.editVisible" :close-on-click-modal="false" width="40%">
       <el-form ref="warehouseForm" :model="warehouseForm" :rules="rules" label-width="80px">
-        <!-- <el-form-item label="仓库编号" prop="warehouseId" v-if="dialogObject.editName == 'add'">
-          <el-input v-model="warehouseForm.warehouseId"></el-input>
-        </el-form-item> -->
         <el-form-item label="仓库名称" prop="warehouseName">
           <el-input v-model="warehouseForm.warehouseName"></el-input>
         </el-form-item>
@@ -206,7 +203,6 @@ export default {
             console.log(message);
             return;
           }
-          console.log(data.warehouses);
           this.table.warehouseList = data.warehouses;
           this.table.total = data.count;
         });
@@ -219,7 +215,6 @@ export default {
           console.log(message);
           return;
         }
-        console.log(data);
         this.warehouseTypes = data;
       });
     },
@@ -231,7 +226,6 @@ export default {
           console.log(message);
           return;
         }
-        console.log(data);
         this.userList = data;
       });
     },

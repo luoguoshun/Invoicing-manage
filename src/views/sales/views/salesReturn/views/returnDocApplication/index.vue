@@ -3,16 +3,22 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-edit" @click="openapplicationSalesDiolog()"> 新建申请 </el-button>
+        <el-dropdown>
+          <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="getSalesList()"> 引入销售单 </el-dropdown-item>
+            <el-button type="primary" size="mini" class="el-icon-edit" @click="openapplicationSalesDiolog()"> 新建申请 </el-button>
+          </el-dropdown-menu>
+        </el-dropdown>
         <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
-        <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesOrderRequest()"> 撤销 </el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesReturnRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
         <div class="edit_query_1">
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
           </el-date-picker>
         </div>
-        <!-- <div class="edit_query_1">
+        <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
             <el-option label="待出库" value="2"></el-option>
             <el-option label="已出库" value="3"></el-option>
@@ -20,7 +26,7 @@
             <el-option label="已发货" value="5"></el-option>
             <el-option label="已完成" value="6"></el-option>
           </el-select>
-        </div> -->
+        </div>
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -37,7 +43,7 @@
     </div>
     <!-- 表格 -->
     <el-table
-      :data="table.salesOrderList"
+      :data="table.salesReturnList"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectOrderRows"
       v-loading="table.loading"
@@ -53,11 +59,11 @@
             <el-form-item label="其他费用">
               <span>{{ props.row.otherPrice }}</span>
             </el-form-item>
-            <el-form-item label="销售单总价">
-              <span>{{ props.row.salesTotalPrice }}</span>
+            <el-form-item label="销售退货单总价">
+              <span>{{ props.row.returnTotalPrice }}</span>
             </el-form-item>
-            <el-form-item label="订单利润">
-              <span>{{ props.row.salesProfit }}</span>
+            <el-form-item label="实际退款金额">
+              <span>{{ props.row.actualRefundPrice }}</span>
             </el-form-item>
             <el-form-item label="开单时间">
               <span>{{ $timeFormat.leaveTime(props.row.createTime) }}</span>
@@ -65,7 +71,7 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
+      <el-table-column prop="salesId" label="销售退货单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
             <p>销售计划编号: {{ scope.row.salesId }}</p>
@@ -75,9 +81,9 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="salesStateStr" label="状态" align="center">
+      <el-table-column prop="salesReturnStateStr" label="状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesStateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesReturnStateStr }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="salesTypeStr" label="销售类型" align="center"> </el-table-column>
@@ -96,7 +102,7 @@
       <!-- 操作 -->
       <el-table-column label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
+          <el-button type="warning" size="mini" @click="showDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,18 +120,18 @@
       >
       </el-pagination>
     </div>
-    <!-- 销售单详情 -->
-    <el-drawer id="salesDetailDiolog" title="销售单详情" :visible.sync="salesDetailDiolog.show" direction="rtl" size="70%">
+    <!-- 销售退货单详情 -->
+    <el-drawer id="salesDetailDiolog" title="销售退货单详情" :visible.sync="salesDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
       <el-button size="mini" type="primary" @click="salesDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="salesDetailDiolog.salesDetails" :header-cell-style="{ 'text-align': 'center' }" border>
-        <el-table-column prop="salesDetailId" label="销售明细编号" align="center">
+        <el-table-column prop="salesReturnDetailId" label="销售明细编号" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.salesDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.salesReturnDetailId }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" width="200px" align="center"> </el-table-column>
-        <el-table-column label="销售单价" align="center">
+        <el-table-column label="销售退货单价" align="center">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
           </template>
@@ -209,7 +215,7 @@
       :close-on-click-modal="false"
       :fullscreen="true"
     >
-      <!-- 销售单基本信息 -->
+      <!-- 销售退货单基本信息 -->
       <el-descriptions class="margin-top" :column="5" size="mini" style="width: 90%" :border="true">
         <el-descriptions-item label="出货仓库"
           ><el-select size="mini" v-model="salesOrderForm.warehouseId" @change="warehouseOnChange" filterable>
@@ -325,7 +331,7 @@
             ></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="销售单价" align="center">
+        <el-table-column prop="price" label="销售退货单价" align="center">
           <template slot-scope="scope">
             <el-input-number
               type="number"
@@ -375,10 +381,9 @@ export default {
         warehouseId: '', //出货仓库
         conditions: '', //综合条件
         salesType: '', //销售类型
-        logisticsCompany: '', // 物流公司
-        salesState: '', //销售单状态
+        salesState: '', //销售退货单状态
       },
-      //新建销售订单表
+      //新建销售退货单表
       salesOrderForm: {
         warehouseId: '',
         warehouseName: '',
@@ -401,10 +406,10 @@ export default {
         arrivalCount: 0,
         salesTotalPrice: 0, //订单总价
         salesProfit: 0, //利润
-        salesDetails: [], //销售单详情
+        salesDetails: [], //销售退货单详情
       },
       table: {
-        salesOrderList: [],
+        salesReturnList: [],
         total: 0,
         loading: true,
       },
@@ -436,7 +441,7 @@ export default {
         skuTabledata: [],
         total: 0,
       },
-      salesIds: [],
+      salesReturnIds: [],
       //仓库列表
       warehouseList: [],
       //物品类型列表
@@ -451,7 +456,7 @@ export default {
   computed: {},
   methods: {
     loadData() {
-      this.getSalesList();
+      this.getUnsubmittedSalesReturnList();
     },
     handleChange(value) {
       this.search.province = '';
@@ -485,24 +490,24 @@ export default {
       this.salesOrderForm.areadata = this.search.province + this.search.city + this.search.district;
       console.log(this.salesOrderForm.areadata);
     },
-    //获取提交销售订单列表
-    async getSalesList() {
+    //获取未提交销售退货单列表
+    async getUnsubmittedSalesReturnList() {
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
-      await this.$api.sales.getUnsubmittedSalesList(queryForm).then((res) => {
+      await this.$api.salesReturn.getUnsubmittedSalesReturnList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.salesOrderList = data.sales;
+        this.table.salesReturnList = data.salesReturns;
         this.table.total = data.count;
         this.table.loading = false;
       });
     },
-    //获取销售订单详细项目列表
-    async getSalesDatailBySalesId(salesId) {
-      await this.$api.sales.getSalesDatailBySalesId(salesId).then((res) => {
+    //获取销售退货单详细项目列表
+    async getSalesReturnDatailByReturnId(salesReturnId) {
+      await this.$api.sales.getSalesReturnDatailByReturnId(salesReturnId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -562,10 +567,9 @@ export default {
       this.clientDialog.postalCode = row.postalCode;
       this.clientDialog.clientRemarks = row.clientRemarks;
     },
-    //显示销售单子项目
-    showsalesDetailDiolog(row) {
-      this.salesDetailDiolog.editSalesId = row.salesId;
-      this.getSalesDatailBySalesId(row.salesId);
+    //显示销售退货单子项目
+    showDetailDiolog(row) {
+      this.getSalesReturnDatailByReturnId(row.salesReturnId);
       this.salesDetailDiolog.show = true;
     },
     getElTagClass(row) {
@@ -615,11 +619,11 @@ export default {
       this.queryForm.publicationDates = [];
       this.loadData();
     },
-    //获取销售订单选中行的数据
+    //获取销售退货单选中行的数据
     selectOrderRows(selection) {
-      this.salesIds = [];
+      this.salesReturnIds = [];
       selection.forEach((element) => {
-        this.salesIds.push(element.salesId);
+        this.salesReturnIds.push(element.salesId);
       });
     },
     //-----------------销售开单---------------------
@@ -673,7 +677,7 @@ export default {
     //获取采购计划选中行的数据
     selectSKURows(selection) {
       let salesDetailTotalPrice = 0; //销售详情单总价之和
-      let salesDetailProfit = 0; //销售单利润之和
+      let salesDetailProfit = 0; //销售退货单利润之和
       let salesDetailgoodsCount = 0;
       this.salesOrderForm.salesDetails = [];
       selection.forEach((element) => {
@@ -692,14 +696,14 @@ export default {
         salesDetailgoodsCount += salesDetail['goodsCount'];
         this.salesOrderForm.salesDetails.push(salesDetail);
       });
-      //销售单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
+      //销售退货单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
       this.salesOrderForm.salesTotalPrice =
         salesDetailTotalPrice + parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice);
-      //销售单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
+      //销售退货单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
       this.salesOrderForm.salesProfit = salesDetailProfit - (parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice));
       this.salesOrderForm.goodsTotalCount = salesDetailgoodsCount;
     },
-    //销售单价改变 index 当前操作行的下标 row 当前行
+    //销售退货单价改变 index 当前操作行的下标 row 当前行
     goodsCountOrsalesPriceChange(index, row) {
       if (row['exWarehouseCount'] > row['count']) {
         this.$message({
@@ -714,8 +718,8 @@ export default {
       if (row['exWarehouseCount'] < 0 || row['exWarehouseCount'] == null || row['exWarehouseCount'] == '') {
         row['exWarehouseCount'] = 0;
       }
-      let salesDetailTotalPrice = 0; //销售单总价
-      let salesDetailProfit = 0; //销售单利润
+      let salesDetailTotalPrice = 0; //销售退货单总价
+      let salesDetailProfit = 0; //销售退货单利润
       let salesDetailgoodsCount = 0;
       //1.获取当前行的数据进行赋值
       this.salesOrderForm.salesDetails.forEach((item, i) => {
@@ -731,10 +735,10 @@ export default {
         salesDetailgoodsCount += item['goodsCount'];
       });
       //计算总数 总利润 总价格
-      //销售单总价=每个销售详情单单的总价之和+运输费用+其他费用
+      //销售退货单总价=每个销售详情单单的总价之和+运输费用+其他费用
       this.salesOrderForm.salesTotalPrice =
         salesDetailTotalPrice + parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice);
-      //销售单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
+      //销售退货单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
       this.salesOrderForm.salesProfit = salesDetailProfit - (parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice));
       this.salesOrderForm.goodsTotalCount = salesDetailgoodsCount;
     },
@@ -755,10 +759,10 @@ export default {
       });
       ransportOrotherPrice = this.salesOrderForm.salesTotalPrice - salesDetailTotalPrice;
       //3.减掉原本的(运输费用+其他费用） 再加上新的(运输费用+其他费用）
-      //销售单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
+      //销售退货单总价=每个销售详情单单的总价之和+（运输费用+其他费用）
       this.salesOrderForm.salesTotalPrice +=
         parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice) - ransportOrotherPrice;
-      //销售单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
+      //销售退货单利润=每个销售详情单单的利润之和-（运输费用+其他费用）
       this.salesOrderForm.salesProfit -=
         parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice) - ransportOrotherPrice;
     },
@@ -790,7 +794,7 @@ export default {
         for (let i = 0; i < this.salesOrderForm.salesDetails.length; i++) {
           const item = this.salesOrderForm.salesDetails[i];
           if (item.goodsCount == 0 || item.goodsCount == NaN) {
-            this.$message({ message: '销售单中含有数量为0的数据', type: 'warning' });
+            this.$message({ message: '销售退货单中含有数量为0的数据', type: 'warning' });
             success = false;
             break; //终止所有for循环
           }
@@ -817,14 +821,14 @@ export default {
     },
     //-----------------销售开单---------------------
     //撤销
-    async cancelSalesOrderRequest() {
-      if (this.salesIds.length == 0) {
+    async cancelSalesReturnRequest() {
+      if (this.salesReturnIds.length == 0) {
         this.$message({
           message: '请选择数据',
           type: 'warning',
         });
       } else {
-        await this.$api.sales.cancelSalesOrderRequest(this.salesIds).then((res) => {
+        await this.$api.salesReturn.cancelSalesReturnRequest(this.salesReturnIds).then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
             this.$message.error(message);
@@ -834,19 +838,19 @@ export default {
               type: 'success',
             });
             this.loadData();
-            this.applicationSalesDiolog.Visible = false;
           }
         });
       }
     },
+    //提交
     async submitApplications() {
-      if (this.salesIds.length == 0) {
+      if (this.salesReturnIds.length == 0) {
         this.$message({
           message: '请选择数据',
           type: 'warning',
         });
       } else {
-        await this.$api.sales.submitApplications(this.salesIds).then((res) => {
+        await this.$api.salesReturn.submitApplications(this.salesReturnIds).then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
             this.$message.error(message);
@@ -886,7 +890,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
       .edit_query_1:last-child {
         display: grid;

@@ -202,6 +202,11 @@
     </el-dialog>
     <!-- 采购开单申请对话框 -->
     <el-dialog title="采购开单" center :visible.sync="appOrderDialog.visible" :close-on-click-modal="false" :fullscreen="true">
+      <el-steps :active="1" style="width:50%;margin:0px auto;">
+        <el-step title="步骤 1" description="提交采购单"></el-step>
+        <el-step title="步骤 2" description="审核采购单"></el-step>
+        <el-step title="步骤 3" description="采购单审核完后待执行"></el-step>
+      </el-steps>
       <el-form ref="orderForm" :rules="puchaseOrderRules" :model="appOrderDialog.orderForm" label-width="80px" class="editform">
         <el-form-item label="申请仓库" prop="warehouseId">
           <el-select size="mini" filterable v-model="appOrderDialog.orderForm.warehouseId">
@@ -535,7 +540,8 @@ export default {
       orderForm.orderTotalPrice = 0;
       orderForm.totalCount = 0;
       orderForm.remarks = '';
-      (orderForm.purchaseOrderDetails = []), (this.appOrderDialog.visible = true);
+      orderForm.purchaseOrderDetails = [];
+      this.appOrderDialog.visible = true;
       const userInfo = store.getters['userInfo/getUserInfo'];
       this.appOrderDialog.orderForm.operationPersonId = userInfo.userId || '';
       this.appOrderDialog.orderForm.operationPersonName = userInfo.name || '';
@@ -646,16 +652,28 @@ export default {
           if (this.appOrderDialog.orderForm.purchaseOrderDetails.length == 0) {
             this.$message({ message: '请选择商品', type: 'warning' });
           } else {
-            this.$api.purchaseOrder.addPurchaseOrder(orderForm).then((res) => {
-              const { data, success, message } = res.data;
-              if (!success) {
-                this.$error(message);
-              } else {
-                this.$message({ message: '添加成功！', type: 'success' });
-                this.appOrderDialog.visible = false;
-                this.loadData();
+            let success = true;
+            //判断采购计划是否含有采购数量为空的数据
+            for (let i = 0; i < this.appOrderDialog.orderForm.purchaseOrderDetails.length; i++) {
+              const item = this.appOrderDialog.orderForm.purchaseOrderDetails[i];
+              if (item.count == 0 || item.count == NaN) {
+                this.$message({ message: '采购单中含有数量为0的数据', type: 'warning' });
+                success = false;
+                break; //终止所有for循环
               }
-            });
+            }
+            if (success) {
+              this.$api.purchaseOrder.addPurchaseOrder(orderForm).then((res) => {
+                const { data, success, message } = res.data;
+                if (!success) {
+                  this.$error(message);
+                } else {
+                  this.$message({ message: '添加成功！', type: 'success' });
+                  this.appOrderDialog.visible = false;
+                  this.loadData();
+                }
+              });
+            }
           }
         }
       });

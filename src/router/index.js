@@ -330,6 +330,14 @@ const routes = [{
               //   component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
               // }
             ],
+          }, {
+            path: 'ItemManage',
+            name: 'ItemManage',
+            component: () => import(`@/views/warehouse/views/ItemManage`),
+            meta: {
+              title: '物资管理',
+              isAuth: true
+            },
           }
 
         ]
@@ -379,7 +387,25 @@ const routes = [{
               title: '销售退货管理',
               isAuth: true
             },
-            children: []
+            children: [{
+                path: 'salesReturnList',
+                name: 'salesReturnList',
+                component: () => import('@/views/sales/views/salesReturn/views/salesReturnList'),
+                meta: {
+                  title: '销售退货单管理',
+                  isAuth: true
+                },
+              },
+              {
+                path: 'returnDocApplication',
+                name: 'returnDocApplication',
+                component: () => import('@/views/sales/views/salesReturn/views/returnDocApplication'),
+                meta: {
+                  title: '销售退货开单',
+                  isAuth: true
+                },
+              }
+            ]
           }
         ]
       },

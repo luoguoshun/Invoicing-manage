@@ -7,6 +7,9 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSkuFromWarehouse()">移除</el-button>
       </div>
       <div class="edit_query">
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
         <el-select size="mini" v-model.number="queryForm.goodsTypeId" placeholder="请选择类别">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
@@ -36,6 +39,7 @@
           </el-form>
         </template>
       </el-table-column>
+      <el-table-column prop="warehouseName" label="仓库" align="center"> </el-table-column>
       <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
       <el-table-column prop="goodsTypeName" label="类型" align="center"> </el-table-column>
       <el-table-column label="物品名称" align="center">
@@ -87,8 +91,13 @@
       </el-pagination>
     </div>
     <!-- 添加供应商货品对话框 -->
-    <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="50%">
+    <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="50%" fullscreen>
+      <el-select size="mini" v-model="warehouseId" placeholder="仓库">
+        <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+      </el-select>
+      <el-divider content-position="left"></el-divider>
       <div class="selectInput">
+        <div></div>
         <el-select size="mini" filterable v-model.number="skuForm.supplierId" placeholder="请选择供应商">
           <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"></el-option>
         </el-select>
@@ -161,6 +170,8 @@ export default {
       warehouseSkuIds: [],
       goodsTypes: [],
       supplierList: [],
+      warehouseList: [], //仓库列表
+      warehouseId: '',
     };
   },
   methods: {
@@ -227,6 +238,20 @@ export default {
         });
       });
     },
+    //获取仓库列表数据
+    async getWarehouseList() {
+      this.warehouseList = [];
+      await this.$api.warehouse.getWarehouseList(1, 100, '', 0).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        data.warehouses.forEach((item) => {
+          this.warehouseList.push({ warehouseId: item.warehouseId, warehouseName: item.warehouseName });
+        });
+      });
+    },
     selectWarehouseSkuRows(selection) {
       this.warehouseSkuIds = [];
       selection.forEach((element) => {
@@ -287,10 +312,12 @@ export default {
     },
     //添加物品到仓库
     addSkuToWarehouse() {
-      if (this.supplierIdSkuIds.length == 0) {
+      if (this.warehouseId == '' || this.warehouseId == null) {
+        this.$message({ message: '请选择仓库', type: 'warning' });
+      } else if (this.supplierIdSkuIds.length == 0) {
         this.$message({ message: '请选择物资', type: 'warning' });
       } else {
-        this.$api.warehouse.addSkuToWarehouse(this.queryForm.warehouseId, this.supplierIdSkuIds).then((res) => {
+        this.$api.warehouse.addSkuToWarehouse(this.warehouseId, this.supplierIdSkuIds).then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
             this.$message({ message: '添加失败！', type: 'error' });
@@ -309,7 +336,7 @@ export default {
     },
     //修改信息
     updateWarehouseSku(row) {
-      this.$api.warehouse.updateWarehouseSku(this.queryForm.warehouseId, row.skuId, row.count, row.warnCount, row.costPrice).then((res) => {
+      this.$api.warehouse.updateWarehouseSku(row.warehouseId, row.skuId, row.count, row.warnCount, row.costPrice).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message({ message: '修改失败！', type: 'error' });
@@ -334,10 +361,10 @@ export default {
     },
   },
   created() {
-    this.queryForm.warehouseId = this.$route.query.warehouseId;
     this.loadData();
     this.getGoodInfoType();
     this.getSupplierList();
+    this.getWarehouseList();
   },
 };
 </script>
@@ -360,7 +387,7 @@ export default {
       width: 100%;
       display: grid;
       // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
+      grid-template-columns: 1fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }
   }
@@ -378,7 +405,7 @@ export default {
   }
   .selectInput {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-template-columns: 3fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
 }

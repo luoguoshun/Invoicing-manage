@@ -10,9 +10,6 @@
             <el-dropdown-item @click.native="getNeedRreviewSalesByUserId()">待办事项</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="warning" size="mini" class="el-icon-check" @click="salesOrderReturnRequest()" v-show="IsToBeList == false">
-          退货
-        </el-button>
         <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()" v-show="IsToBeList == true">
           审核
         </el-button>
@@ -618,51 +615,6 @@ export default {
           this.loadData();
         }
       });
-    },
-    //销售退货
-    salesOrderReturnRequest() {
-      let adopt = true;
-      if (this.salesId.length == 0) {
-        this.$message({
-          message: '请选择要审核的销售单',
-          type: 'warning',
-        });
-        return false;
-      } else {
-        //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是已完成或者已出库
-        this.table.salesOrderList.forEach((plan, index) => {
-          //adopt = false 说明找到符合的数据 函数返回
-          if (adopt == false) {
-            return false;
-          }
-          this.salesId.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
-              //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.salesOrderList[index]['salesStateStr'] !== '已完成' || this.table.salesOrderList[index]['salesStateStr'] !== '已出库') {
-                this.$message({
-                  message: '请选择已完成或者已出库的销售单',
-                  type: 'warning',
-                });
-                adopt = false;
-                return false;
-              }
-            }
-          });
-        });
-      }
-      //找不到符合的数据才允许审核
-      if (adopt) {
-        this.$api.sales.salesOrderReturnRequest(this.salesId).then((res) => {
-          let { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('审核失败，服务器未知错误');
-          } else {
-            this.$message({ message: '已审核！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
     },
   },
   created() {

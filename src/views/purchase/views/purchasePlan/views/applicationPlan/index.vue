@@ -101,6 +101,11 @@
     </div>
     <!-- 采购计划申请对话框 -->
     <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
+      <el-steps :active="1" style="width:50%;margin:0px auto;">
+        <el-step title="步骤 1" description="提交采购计划"></el-step>
+        <el-step title="步骤 2" description="审核采购计划"></el-step>
+        <el-step title="步骤 3" description="采购计划完后待执行"></el-step>
+      </el-steps>
       <el-form ref="purchasePlanForm" :rules="puchasePlanRules" :model="purchasePlanForm" label-width="80px" class="editform">
         <el-form-item label="申请仓库" prop="warehouseId">
           <el-select size="mini" filterable v-model="purchasePlanForm.warehouseId">
