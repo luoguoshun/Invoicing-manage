@@ -4,6 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-edit" @click="openApplicationPlanDiolog()"> 新建申请 </el-button>
+        <el-button type="primary" size="mini" @click="OpenSalesDiolog()">引入销售单</el-button>
         <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
       </div>
       <div class="edit_query">
@@ -233,7 +234,7 @@
         </el-pagination>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="importSalesDiolog.Visible = false" >取 消</el-button>
+        <el-button @click="importSalesDiolog.Visible = false">取 消</el-button>
         <el-button type="success" @click="addExwareHousePlan()">确 定</el-button>
       </div>
     </el-dialog>
@@ -312,7 +313,7 @@ export default {
         applicanSKUIds: [],
         skuPrices: [],
         logisticsCompany: '',
-        salesId:'',//销售id
+        salesId: '', //销售id
       },
       table: {
         purchasePlanList: [],
@@ -591,9 +592,11 @@ export default {
     },
     //打开引入销售单模态框
     OpenSalesDiolog() {
-      this.importSalesDiolog.Visible = true;
-      this.getSalesList();
       const userInfo = store.getters['userInfo/getUserInfo'];
+      this.importSalesDiolog.Visible = true;
+      this.purchasePlanForm.exwarehouseTypeId = 2;
+      this.purchasePlanForm.applicantId = userInfo.userId;
+      this.getSalesList();
     },
     //重置申请采购计划模态框搜索条件
     resetDialogQueryForm() {
@@ -640,42 +643,38 @@ export default {
         selection.forEach((element) => {
           this.purchasePlanForm.applicanSKUIds.push(element.skuId);
           this.purchasePlanForm.skuPrices.push(element.price);
-          this.purchasePlanForm.salesId=element.salesId;
+          this.purchasePlanForm.salesId = element.salesId;
         });
       console.log(this.purchasePlanForm.applicanSKUIds);
     },
     //添加出库计划数据
     addExwareHousePlan() {
-      this.$refs['purchasePlanForm'].validate((valid) => {
-        if (valid) {
-          if (this.purchasePlanForm.applicanSKUIds.length == 0) {
-            this.$message({ message: '请选择商品', type: 'warning' });
+      if (this.purchasePlanForm.applicanSKUIds.length == 0) {
+        this.$message({ message: '请选择商品', type: 'warning' });
+      } else {
+        const ExPlan = {
+          applicantId: this.purchasePlanForm.applicantId,
+          warehouseId: this.purchasePlanForm.warehouseId,
+          remakes: this.purchasePlanForm.remarks,
+          departmentId: this.purchasePlanForm.departmentId,
+          exwarehouseType: this.purchasePlanForm.exwarehouseTypeId,
+          applicanSKUIds: this.purchasePlanForm.applicanSKUIds,
+          skuPrices: this.purchasePlanForm.skuPrices,
+          postage: this.purchasePlanForm.postage,
+          SalesId: this.purchasePlanForm.salesId,
+        };
+        this.$api.exwarehouse.createExWarhousePlan(ExPlan).then((res) => {
+          const { data, success, message } = res.data;
+          if (!success) {
+            this.$error(message);
           } else {
-            const ExPlan = {
-              applicantId: this.purchasePlanForm.applicantId,
-              warehouseId: this.purchasePlanForm.warehouseId,
-              remakes: this.purchasePlanForm.remarks,
-              departmentId: this.purchasePlanForm.departmentId,
-              exwarehouseType: this.purchasePlanForm.exwarehouseTypeId,
-              applicanSKUIds: this.purchasePlanForm.applicanSKUIds,
-              skuPrices: this.purchasePlanForm.skuPrices,
-              postage: this.purchasePlanForm.postage,
-              SalesId:this.purchasePlanForm.salesId,
-            };
-            this.$api.exwarehouse.createExWarhousePlan(ExPlan).then((res) => {
-              const { data, success, message } = res.data;
-              if (!success) {
-                this.$error(message);
-              } else {
-                this.$message({ message: '添加成功！', type: 'success' });
-                this.applicationPlanDiolog.Visible = false;
-                this.importSalesDiolog.Visible = false;
-                this.loadData();
-              }
-            });
+            this.$message({ message: '添加成功！', type: 'success' });
+            this.applicationPlanDiolog.Visible = false;
+            this.importSalesDiolog.Visible = false;
+            this.loadData();
           }
-        }
-      });
+        });
+      }
     },
     //添加物品数量触发函数
     addGoodsCount(index, row) {

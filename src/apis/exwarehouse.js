@@ -31,7 +31,9 @@ export default{
     updateExWareHouseDet(from)
     {
         console.log(from);
-        return ajax.post('/api/Background/ExWarehouse/UpdateExWareHouseDet',from)
+        return ajax.post('/api/Background/ExWarehouse/UpdateExWareHouseDet',{
+            ...from
+        })
     },
     //出库开单
     CreateExWarehousePlanOrder(exwarehouseIds)
