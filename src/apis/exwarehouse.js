@@ -45,4 +45,9 @@ export default{
     {
         return ajax.post('/api/Background/ExWarehouse/SubmitExWarehouseOrder',exwarehouseIds)
     },
+    //取消出库订单
+    rejectOrderRequest(exwarehouseIds)
+    {
+        return ajax.post('/api/Background/ExWarehouse/rejectOrderRequest',exwarehouseIds)
+    },
 };

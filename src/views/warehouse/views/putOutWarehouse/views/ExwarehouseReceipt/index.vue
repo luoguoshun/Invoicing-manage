@@ -48,8 +48,8 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
+          <!-- <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button> -->
+          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>编辑详情</el-button>
         </template>
       </el-table-column>
     </el-table>
