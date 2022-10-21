@@ -1,16 +1,16 @@
 <template>
-  <div class="purchasOrder">
+  <div class="salesReturnList">
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="getSalesList()"> 历史记录 </el-dropdown-item>
-            <el-dropdown-item @click.native="getNeedRreviewSalesByUserId()">待办事项</el-dropdown-item>
+            <el-dropdown-item @click.native="getSalesReturnList()"> 历史记录 </el-dropdown-item>
+            <el-dropdown-item @click.native="getNeedRreviewSalesReturnByUserId()">待办事项</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()" v-show="IsToBeList == true">
+        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesReturnRequest()" v-show="IsToBeList == true">
           审核
         </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()" v-show="IsToBeList == true">
@@ -19,7 +19,7 @@
       </div>
       <div class="edit_query">
         <div>
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
+          <el-select size="mini" v-model="queryForm.salesReturnState" placeholder="订单状态" v-show="IsToBeList == false">
             <el-option label="审核中" value="2"></el-option>
             <el-option label="待出库" value="4"></el-option>
             <el-option label="已出库" value="5"></el-option>
@@ -40,15 +40,13 @@
     </div>
     <!-- 表格 -->
     <el-table
-      :data="table.salesOrderList"
+      :data="table.salesReturnList"
       :header-cell-style="{ 'text-align': 'center' }"
-      @selection-change="selectOrderRows"
+      @selection-change="selectSalesReturnRows"
       v-loading="table.loading"
       show-summary
-      highlight-current-row
-      style="width: 100%"
     >
-      <el-table-column type="selection" width="50" align="center"> </el-table-column>
+      <el-table-column type="selection" width="80" align="center"> </el-table-column>
       <el-table-column type="expand" label="展开查看">
         <template slot-scope="props">
           <el-form label-position="left" class="demo-table-expand">
@@ -58,11 +56,11 @@
             <el-form-item label="其他费用">
               <span>{{ props.row.otherPrice }}</span>
             </el-form-item>
-            <el-form-item label="销售单总价">
-              <span>{{ props.row.salesTotalPrice }}</span>
+            <el-form-item label="销售退货单总价">
+              <span>{{ props.row.returnTotalPrice }}</span>
             </el-form-item>
-            <el-form-item label="订单利润">
-              <span>{{ props.row.salesProfit }}</span>
+            <el-form-item label="实际退款金额">
+              <span>{{ props.row.actualRefundPrice }}</span>
             </el-form-item>
             <el-form-item label="开单时间">
               <span>{{ $timeFormat.leaveTime(props.row.createTime) }}</span>
@@ -70,54 +68,38 @@
           </el-form>
         </template>
       </el-table-column>
-      <el-table-column prop="salesId" label="销售单编号" width="120" align="center">
+      <el-table-column prop="salesReturnId" label="销售退货单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>销售计划编号: {{ scope.row.salesId }}</p>
+            <p>销售计划编号: {{ scope.row.salesReturnId }}</p>
             <div slot="reference" class="name-wrapper">
-              <el-tag disable-transitions>{{ scope.row.salesId }}</el-tag>
+              <el-tag disable-transitions>{{ scope.row.salesReturnId }}</el-tag>
             </div>
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="salesStateStr" label="状态" align="center">
+      <el-table-column prop="salesReturnStateStr" label="状态" align="center">
         <template slot-scope="scope">
-          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesStateStr }}</el-tag>
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesReturnStateStr }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="salesTypeStr" label="销售类型" align="center"> </el-table-column>
-      <el-table-column prop="payTypeStr" label="支付方式" align="center"> </el-table-column>
-      <el-table-column prop="logisticsCompanyStr" label="物流公司" align="center"></el-table-column>
+      <el-table-column prop="payType" label="支付方式" align="center"> </el-table-column>
+      <el-table-column prop="logisticsCompany" label="物流公司" align="center"></el-table-column>
+      <el-table-column prop="logisticsNo" label="物流编号" align="center"></el-table-column>
       <el-table-column prop="applicantName" label="业务员" align="center"></el-table-column>
       <el-table-column prop="goodsTotalCount" label="物品总数" align="center"></el-table-column>
       <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column label=" 顾客信息" width="120px" align="center">
+      <el-table-column prop="createTime" label=" 顾客信息" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
-        </template>
-      </el-table-column>
-      <el-table-column prop="createTime" label="销售单据" align="center">
-        <template slot-scope="scope">
-          <el-button
-            v-if="scope.row.salesNoteSrc == '' || scope.row.salesNoteSrc == null"
-            type="primary"
-            size="mini"
-            @click="createSalesNoteBysalesId(scope.row)"
-            plain
-            >点击生成
-          </el-button>
-          <el-button v-else type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
+          <el-button type="warning" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="300" align="center">
+      <el-table-column width="200px" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
-          <el-button type="info" size="mini" @click="showSalesDetailDiolog(scope.row)" plain>订单详情</el-button>
-          <el-button v-show="scope.row.salesStateStr == '已出库'" type="primary" size="mini" @click="finishSales(scope.row.salesId)" plain
-            >完成</el-button
-          >
+          <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesReturnId)" plain>审核详情</el-button>
+          <el-button type="warning" size="mini" @click="showSalesReturnDetailDialog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -135,29 +117,28 @@
       >
       </el-pagination>
     </div>
-    <!-- 销售单详情 -->
-    <el-drawer title="销售单详情" :visible.sync="salesDetailDiolog.show" direction="rtl" size="70%">
-      <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="salesDetailDiolog.show = false" plain>关闭</el-button>
-      <el-table :data="salesDetailDiolog.salesDetails" :header-cell-style="{ 'text-align': 'center' }" border>
-        <el-table-column prop="salesDetailId" label="销售明细编号" align="center">
+    <!-- 销售退货详情 -->
+    <el-drawer title="销售退货单详情" :visible.sync="salesReturnDetailDialog.show" center size="70%" direction="rtl">
+      <el-button size="mini" type="primary" @click="salesReturnDetailDialog.show = false" plain>关闭</el-button>
+      <el-table :data="salesReturnDetailDialog.salesReturnDetails" :header-cell-style="{ 'text-align': 'center' }" border>
+        <el-table-column prop="salesReturnDetailId" label="退货明细编号" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.salesDetailId }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.salesReturnDetailId }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="skuId" label="物品编号" width="200px" align="center"> </el-table-column>
-        <el-table-column label="销售单价" align="center">
-          <template slot-scope="scope">
-            <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="成本价" align="center">
+        <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+        <el-table-column prop="costPrice" label="供应商进价" align="center">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.costPrice }}</el-tag>
           </template>
         </el-table-column>
+        <el-table-column prop="salesPrice" label="单品售价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="goodsCount" label="销售数量" align="center"> </el-table-column>
-        <el-table-column prop="totalPrice" label="单品总价" align="center">
+        <el-table-column prop="totalPrice" label="总价" align="center">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.totalPrice }}</el-tag>
           </template>
@@ -267,28 +248,17 @@ export default {
         publicationDates: [],
         warehouseId: '', //出货仓库
         conditions: '', //综合条件
-        salesType: '', //销售类型
-        salesState: '', //销售单状态
-      },
-      //新建销售订单表
-      purchasPlanForm: {
-        warehouseId: '',
-        supplierId: '',
-        supplierName: '',
-        applicantId: '', //申请人
-        applicanName: '',
-        remarks: '',
-        applicanSKUIds: [],
+        salesReturnState: '', //销售单状态
       },
       table: {
-        salesOrderList: [],
+        salesReturnList: [],
         total: 0,
         loading: true,
       },
-      salesDetailDiolog: {
+      salesReturnDetailDialog: {
         editSalesId: '',
         show: false,
-        salesDetails: [],
+        salesReturnDetails: [],
       },
       clientDialog: {
         visible: false,
@@ -306,7 +276,7 @@ export default {
       salesNotedialog: {
         visible: false,
       },
-      salesId: [],
+      salesReturnIds: [],
       warehouseList: [], //仓库列表
       salesNoteSrc: '',
       IsToBeList: false, //是否为待办事项
@@ -315,49 +285,49 @@ export default {
   computed: {},
   methods: {
     loadData() {
-      this.getSalesList();
+      this.getSalesReturnList();
     },
     //获取提交销售订单列表
-    async getSalesList() {
+    async getSalesReturnList() {
       this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
-      await this.$api.sales.getSalesList(queryForm).then((res) => {
+      queryForm.salesReturnState = queryForm.salesReturnState == '' ? 0 : parseInt(queryForm.salesReturnState);
+      await this.$api.salesReturn.getSalesReturnList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.salesOrderList = data.sales;
+        this.table.salesReturnList = data.salesReturns;
         this.table.total = data.count;
         this.table.loading = false;
       });
     },
     //获取提交销售订单列表
-    async getNeedRreviewSalesByUserId() {
+    async getNeedRreviewSalesReturnByUserId() {
       this.IsToBeList = true;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      queryForm.salesState = queryForm.salesState == '' ? 0 : parseInt(queryForm.salesState);
-      await this.$api.sales.getNeedRreviewSalesByUserId(queryForm).then((res) => {
+      queryForm.salesReturnState = queryForm.salesReturnState == '' ? 0 : parseInt(queryForm.salesReturnState);
+      await this.$api.salesReturn.getNeedRreviewSalesReturnByUserId(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.salesOrderList = data.sales;
+        this.table.salesReturnList = data.salesReturns;
         this.table.total = data.count;
         this.table.loading = false;
       });
     },
-    //获取销售订单详细项目列表
-    getSalesDatailBySalesId(salesId) {
-      this.$api.sales.getSalesDatailBySalesId(salesId).then((res) => {
+    //获取销售退货单详细项目列表
+    async getSalesReturnDatailByReturnId(salesReturnId) {
+      await this.$api.salesReturn.getSalesReturnDatailByReturnId(salesReturnId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
           return;
         }
-        this.salesDetailDiolog.salesDetails = data;
+        this.salesReturnDetailDialog.salesReturnDetails = data;
       });
     },
     //展示客户信息
@@ -370,16 +340,16 @@ export default {
       this.clientDialog.postalCode = row.postalCode;
       this.clientDialog.clientRemarks = row.clientRemarks;
     },
-    //显示销售单子项目
-    showSalesDetailDiolog(row) {
-      this.salesDetailDiolog.editSalesId = row.salesId;
-      this.getSalesDatailBySalesId(row.salesId);
-      this.salesDetailDiolog.show = true;
+    //显示销售退货单子项目
+    showSalesReturnDetailDialog(row) {
+      //通过付款单获取销售退货单详情
+      this.getSalesReturnDatailByReturnId(row.salesReturnId);
+      this.salesReturnDetailDialog.show = true;
     },
     getElTagClass(row) {
-      if (row.salesStateStr == '已审核') {
+      if (row.salesReturnStateStr == '已审核') {
         return 'success';
-      } else if (row.salesStateStr == '审核中') {
+      } else if (row.salesReturnStateStr == '审核中') {
         return 'warning';
       } else {
         return '';
@@ -403,7 +373,7 @@ export default {
     selectSalesList() {
       this.queryForm.page = 1;
       this.queryForm.row = 10;
-      this.getSalesList();
+      this.getSalesReturnList();
     },
     //条数改变
     handleSizeChange(row) {
@@ -418,38 +388,37 @@ export default {
     //重置搜索条件
     resetQueryForm() {
       this.queryForm.conditions = '';
-      this.queryForm.salesState = '';
+      this.queryForm.salesReturnState = '';
       this.queryForm.warehouseId = '';
       this.queryForm.publicationDates = [];
       this.loadData();
     },
-    //获取销售订单选中行的数据
-    selectOrderRows(selection) {
-      this.salesId = [];
+    selectSalesReturnRows(selection) {
+      this.salesReturnIds = [];
       selection.forEach((element) => {
-        this.salesId.push(element.salesId);
+        this.salesReturnIds.push(element.salesReturnId);
       });
     },
     //审核
-    adoptSalesOrderRequest() {
+    adoptSalesReturnRequest() {
       let adopt = true;
-      if (this.salesId.length == 0) {
+      if (this.salesReturnIds.length == 0) {
         this.$message({
-          message: '请选择要审核的销售单',
+          message: '请选择要审核的退货单',
           type: 'warning',
         });
         return false;
       } else {
-        //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
-        this.table.salesOrderList.forEach((plan, index) => {
+        //找出在 销售数据列表ID包含在 salesReturnList 里的数据 判断stateStr的值 是否全部是待审核
+        this.table.salesReturnList.forEach((salesReturn, index) => {
           //adopt = false 说明找到符合的数据 函数返回
           if (adopt == false) {
             return false;
           }
-          this.salesId.forEach((purchaseOrderId) => {
-            if (plan.purchaseOrderId == purchaseOrderId) {
+          this.salesReturnIds.forEach((salesReturnId) => {
+            if (salesReturn.salesReturnId == salesReturnId) {
               //找到不符合的数据 返回 并设置adopt = false
-              if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
+              if (this.table.salesReturnList[index]['salesReturnStateStr'] !== '审核中') {
                 this.$message({
                   message: '请选择审核中的销售单',
                   type: 'warning',
@@ -463,7 +432,7 @@ export default {
       }
       //找不到符合的数据才允许审核
       if (adopt) {
-        this.$api.sales.adoptSalesOrderRequest(this.salesId).then((res) => {
+        this.$api.salesReturn.adoptSalesReturnRequest(this.salesReturnIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
@@ -484,25 +453,25 @@ export default {
         inputErrorMessage: '请输入驳回原因',
       }).then(({ value }) => {
         let adopt = true;
-        if (this.salesId.length == 0) {
+        if (this.salesReturnIds.length == 0) {
           this.$message({
-            message: '请选择要审核的销售单',
+            message: '请选择审核中的销售退货单',
             type: 'warning',
           });
           return false;
         } else {
-          //找出在 销售数据列表ID包含在 salesOrderList 里的数据 判断stateStr的值 是否全部是待审核
-          this.table.salesOrderList.forEach((plan, index) => {
+          //找出在 销售数据列表ID包含在 salesReturnList 里的数据 判断stateStr的值 是否全部是待审核
+          this.table.salesReturnList.forEach((salesReturn, index) => {
             //adopt = false 说明找到符合的数据 函数返回
             if (adopt == false) {
               return false;
             }
-            this.salesId.forEach((purchaseOrderId) => {
-              if (plan.purchaseOrderId == purchaseOrderId) {
+            this.salesReturnIds.forEach((salesReturnId) => {
+              if (salesReturn.salesReturnId == salesReturnId) {
                 //找到不符合的数据 返回 并设置adopt = false
-                if (this.table.salesOrderList[index]['salesStateStr'] !== '审核中') {
+                if (this.table.salesReturnList[index]['salesReturnStateStr'] !== '审核中') {
                   this.$message({
-                    message: '请选择审核中的销售单',
+                    message: '请选择审核中的销售退货单',
                     type: 'warning',
                   });
                   adopt = false;
@@ -514,7 +483,7 @@ export default {
         }
         //找不到符合的数据才允许审核
         if (adopt) {
-          this.$api.sales.rejectSalesOrderRequest(this.salesId, value).then((res) => {
+          this.$api.salesReturn.rejectSalesOrderRequest(this.salesReturnIds, value).then((res) => {
             let { success, message } = res.data;
             if (!success) {
               console.log(message);
@@ -540,13 +509,13 @@ export default {
       });
     },
     //查看审批详情
-    openApprovalDetails(salesId) {
+    openApprovalDetails(salesReturnId) {
       this.approvalDetaildialog.visible = true;
-      this.getApprovalDetails(salesId);
+      this.getApprovalDetails(salesReturnId);
     },
     //新建销售单据
     createSalesNoteBysalesId(row) {
-      this.$api.sales.createSalesNoteBysalesId(row.salesId).then((res) => {
+      this.$api.salesReturn.createSalesNoteBysalesId(row.salesId).then((res) => {
         let { success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -605,7 +574,7 @@ export default {
     },
     //销售单完成
     finishSales(salesId) {
-      this.$api.sales.finishSalesById(salesId).then((res) => {
+      this.$api.salesReturn.finishSalesById(salesId).then((res) => {
         let { success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -628,7 +597,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.purchasOrder {
+.salesReturnList {
   width: 100%;
   height: 100%;
   .editbar {
