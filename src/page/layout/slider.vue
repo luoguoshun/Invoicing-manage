@@ -86,7 +86,7 @@
         <el-menu-item index="/sales/salesOrder/salesOrderList" @click.native="createTab({ tabName: '销售管理', routeName: 'salesOrderList' })">
           销售管理
         </el-menu-item>
-        <el-menu-item index="/sales/salesReturn" @click.native="createTab({ tabName: '销售管理', routeName: 'salesReturn' })">
+        <el-menu-item index="/sales/salesReturn/salesReturnList" @click.native="createTab({ tabName: '销售管理', routeName: 'salesReturn' })">
           销售退货
         </el-menu-item>
       </el-submenu>

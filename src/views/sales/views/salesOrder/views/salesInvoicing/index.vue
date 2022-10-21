@@ -12,7 +12,7 @@
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
           </el-date-picker>
         </div>
-        <div class="edit_query_1">
+        <!-- <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
             <el-option label="待出库" value="2"></el-option>
             <el-option label="已出库" value="3"></el-option>
@@ -20,7 +20,7 @@
             <el-option label="已发货" value="5"></el-option>
             <el-option label="已完成" value="6"></el-option>
           </el-select>
-        </div>
+        </div> -->
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -886,7 +886,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 2fr 1.5fr;
       grid-column-gap: 5px;
       .edit_query_1:last-child {
         display: grid;
