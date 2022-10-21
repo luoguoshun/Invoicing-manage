@@ -17,12 +17,12 @@ export default {
         return ajax.post('/api/Background/Googs/GetGoodsTypeInfo')
     },
     //通过仓库编号获取物品
-    getSKUListByWhId(page, row, warehouseId, goodName, goodsTypeId) {
+    getSKUListByWhId(page, row, warehouseId, conditions, goodsTypeId) {
         return ajax.post('/api/Background/Googs/GetSKUListByWarehouseId', {
             page,
             row,
             warehouseId,
-            goodName,
+            conditions,
             goodsTypeId,
             //warehouseId,
         });
@@ -32,7 +32,7 @@ export default {
         return ajax.post('/api/Background/Googs/GetBrandType');
     },
     //添加SPU
-    addSpu(spu) {
+    addSpu(spu) { 
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
             ...spu,
         })

@@ -38,7 +38,26 @@
       :header-cell-style="{ 'text-align': 'center' }"
       @row-dbclick="showSalesDetailDiolog()"
       v-loading="table.loading"
+      show-summary
     >
+    <el-table-column type="expand" label="展开查看">
+        <template slot-scope="props">
+          <el-form label-position="left" class="demo-table-expand">
+            <el-form-item label="运输费用">
+              <span>{{ props.row.transportPrice }}</span>
+            </el-form-item>
+            <el-form-item label="其他费用">
+              <span>{{ props.row.otherPrice }}</span>
+            </el-form-item>
+            <el-form-item label="销售单总价">
+              <span>{{ props.row.accountTotalPrice }}</span>
+            </el-form-item>
+            <el-form-item label="开单时间">
+              <span>{{ $timeFormat.leaveTime(props.row.createTime) }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
       <el-table-column prop="accountId" label="账目编号" align="center" width="120px">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
@@ -61,11 +80,6 @@
       <el-table-column prop="accountObjectName" label="账单对象名称" align="center"></el-table-column>
       <el-table-column prop="accountTotalPrice" label="应付金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
-      <el-table-column prop="createTime" label="开单时间" width="140px" align="center">
-        <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.createTime) }}
-        </template>
-      </el-table-column>
       <el-table-column prop="completeTime" label="完成时间" width="140px" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.completeTime) }}
@@ -328,7 +342,7 @@
         <el-descriptions-item label="付款时间">{{ $timeFormat.leaveTime(payDetailDialog['payTime']) }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
-    <!-- 添加销售开单对话框 -->
+    <!-- 添加应收开单对话框 -->
     <el-dialog
       id="applicationSalesDiolog"
       title="应收开单"
@@ -760,7 +774,7 @@ export default {
       accountForm.accountTotalPrice = parseInt(accountForm.accountTotalPrice);
       this.$refs['accountForm'].validate((valid) => {
         if (valid) {
-          this.$api.finance.addAccount(this.accountForm).then((res) => {
+          this.$api.finance.addAccount(accountForm).then((res) => {
             const { data, success, message } = res.data;
             if (!success) {
               this.$message.error(message);

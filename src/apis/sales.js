@@ -53,4 +53,12 @@ export default {
     getSalesNoteFileBysalesId(salesId) {
         return ajax.get('/api/Background/Sales/GetSalesNoteFileBysalesId?salesId=' + salesId + '');
     },
+    //销售单完成
+    finishSalesById(salesId) {
+        return ajax.get('/api/Background/Sales/FinishSalesById?salesId=' + salesId + '');
+    },
+    //销售单退货
+    salesOrderReturnRequest(salesIds){
+        return ajax.post('/api/Background/Sales/SalesOrderReturnRequest', salesIds);
+    }
 }

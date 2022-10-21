@@ -391,9 +391,9 @@ export default {
         clientId: '',
         clientName: '',
         postalCode: '', //邮编
-        clientAddress:'',
+        clientAddress: '',
         clientPhone: '',
-        areadata:'',
+        areadata: '',
         clientRemarks: '', //顾客备注
         otherPrice: 0,
         transportPrice: 0,
@@ -482,7 +482,7 @@ export default {
           break;
         }
       }
-      this.salesOrderForm.areadata=this.search.province + this.search.city + this.search.district
+      this.salesOrderForm.areadata = this.search.province + this.search.city + this.search.district;
       console.log(this.salesOrderForm.areadata);
     },
     //获取提交销售订单列表
@@ -763,7 +763,7 @@ export default {
         parseInt(this.salesOrderForm.transportPrice) + parseInt(this.salesOrderForm.otherPrice) - ransportOrotherPrice;
     },
     //申请
-    async addSalesOrder() {
+    addSalesOrder() {
       if (this.salesOrderForm.salesDetails.length == 0) {
         this.$message({
           message: '请选择单品',
@@ -789,16 +789,16 @@ export default {
         //判断采购计划是否含有采购数量为空的数据
         for (let i = 0; i < this.salesOrderForm.salesDetails.length; i++) {
           const item = this.salesOrderForm.salesDetails[i];
-          if (item.goodsCount == 0) {
+          if (item.goodsCount == 0 || item.goodsCount == NaN) {
             this.$message({ message: '销售单中含有数量为0的数据', type: 'warning' });
             success = false;
-            return; //终止所有for循环
+            break; //终止所有for循环
           }
         }
         if (success) {
-          let tempaddress=this.salesOrderForm.clientAddress;
-          this.salesOrderForm.clientAddress="";
-          this.salesOrderForm.clientAddress=this.salesOrderForm.areadata+tempaddress;
+          let tempaddress = this.salesOrderForm.clientAddress;
+          this.salesOrderForm.clientAddress = '';
+          this.salesOrderForm.clientAddress = this.salesOrderForm.areadata + tempaddress;
           this.$api.sales.addSalesOrder([this.salesOrderForm]).then((res) => {
             const { data, success, message } = res.data;
             if (!success) {

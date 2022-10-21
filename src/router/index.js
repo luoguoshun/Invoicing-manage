@@ -330,6 +330,14 @@ const routes = [{
               //   component: () => import('@/views/warehouse/views/putInWarehouse/views/ReceiptDoc'),
               // }
             ],
+          },{
+            path: 'ItemManage',
+            name: 'ItemManage',
+            component: () => import(`@/views/warehouse/views/ItemManage`),
+            meta: {
+              title: '物资管理',
+              isAuth: true
+            },
           }
 
         ]

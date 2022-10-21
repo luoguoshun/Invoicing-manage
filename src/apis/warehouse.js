@@ -39,19 +39,24 @@ export default {
         });
     },
     //物品入库（手动添加）
-    addSkuToWarehouse(warehouseId, skuIds) {
+    addSkuToWarehouse(warehouseId, supplierIdSkuIds) {
         return ajax.post('/api/Background/Warehouse/AddSkuToWarehouse', {
             WarehouseId: warehouseId,
-            SKUIds: skuIds
+            SupplierIdSkuIds: supplierIdSkuIds
         });
     },
     //修改库存 警戒数量
-    updateWarehouseSku(warehouseId, skuId, count, warnCount) {
+    updateWarehouseSku(warehouseId, skuId, count, warnCount, costPrice) {
         return ajax.post('/api/Background/Warehouse/UpdateWarehouseSku', {
             warehouseId,
             skuId,
             count,
-            warnCount
+            warnCount,
+            costPrice
         });
+    },
+    //修改库存 警戒数量
+    deleteSkuFromWarehouse(WarehouseSkus) {
+        return ajax.post('/api/Background/Warehouse/DeleteSkuFromWarehouse', WarehouseSkus);
     },
 };
