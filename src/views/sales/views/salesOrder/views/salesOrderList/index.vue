@@ -18,20 +18,18 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div>
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
-            <el-option label="审核中" value="2"></el-option>
-            <el-option label="已审核" value="4"></el-option>
-            <el-option label="待收货" value="5"></el-option>
-            <el-option label="待结算" value="6"></el-option>
-            <el-option label="结算中" value="7"></el-option>
-            <el-option label="已完成" value="8"></el-option>
-            <el-option label="已取消" value="9"></el-option>
-          </el-select>
-        </div>
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
-        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+        <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
+          <el-option label="审核中" value="2"></el-option>
+          <el-option label="已审核" value="4"></el-option>
+          <el-option label="待收货" value="5"></el-option>
+          <el-option label="待结算" value="6"></el-option>
+          <el-option label="结算中" value="7"></el-option>
+          <el-option label="已完成" value="8"></el-option>
+          <el-option label="已取消" value="9"></el-option>
+        </el-select>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
         </el-select>
         <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
@@ -377,7 +375,7 @@ export default {
       this.getSalesDatailBySalesId(row.salesId);
       this.salesDetailDiolog.show = true;
     },
-    getElTagClass(row) { 
+    getElTagClass(row) {
       if (row.salesStateStr == '待结算') {
         return 'success';
       } else if (row.salesStateStr == '审核中') {
@@ -681,7 +679,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 2fr;
+    grid-template-columns: 1fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;

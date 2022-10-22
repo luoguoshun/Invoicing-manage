@@ -304,7 +304,7 @@
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="brand" label="品牌" align="center"> </el-table-column>
-        <el-table-column prop="typeStr" label="类别" align="center"> </el-table-column>
+        <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
         <el-table-column prop="price" label="销售数量" align="center">
           <template slot-scope="scope">
@@ -326,7 +326,7 @@
             ></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="单品进价" align="center"> </el-table-column>
+        <el-table-column prop="costPrice" label="单品进价" align="center"> </el-table-column>
         <el-table-column prop="count" label="库存" align="center"> </el-table-column>
         <el-table-column prop="warnCount" label="警告库存" align="center"> </el-table-column>
       </el-table>
@@ -674,7 +674,7 @@ export default {
           goodsCount: element['exWarehouseCount'],
           exWarehouseCount: element['exWarehouseCount'],
           totalPrice: element['exWarehouseCount'] * element['salesPrice'],
-          salesDetailProfit: element['exWarehouseCount'] * (element['salesPrice'] - element['price']), //利润
+          salesDetailProfit: element['exWarehouseCount'] * (element['salesPrice'] - element['costPrice']), //利润
           remarks: '',
         };
         salesDetailTotalPrice += salesDetail['totalPrice'];
@@ -706,12 +706,12 @@ export default {
       }
       let salesDetailTotalPrice = 0; //销售单总价
       let salesDetailProfit = 0; //销售单利润
-      let salesDetailgoodsCount = 0;
+      let salesDetailgoodsCount = 0;//物品总数
       //1.获取当前行的数据进行赋值
       this.salesOrderForm.salesDetails.forEach((item, i) => {
         if (index == i) {
           item['totalPrice'] = row['exWarehouseCount'] * row['salesPrice'];
-          item['salesDetailProfit'] = row['exWarehouseCount'] * (row['salesPrice'] - row['price']);
+          item['salesDetailProfit'] = row['exWarehouseCount'] * (row['salesPrice'] - row['costPrice']);
           item['goodsCount'] = row['exWarehouseCount'];
           item['salesPrice'] = row['salesPrice'];
         }
