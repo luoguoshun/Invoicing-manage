@@ -17,8 +17,8 @@ export default {
         return ajax.get('/api/Background/Sales/GetSalesDatailBySalesId?salesId=' + salesId + '');
     },
     //通获取未被付款模块引用销售单数据
-    getNoExecuteSalesList(queryForm) {
-        return ajax.post('/api/Background/Sales/getNoExecuteSalesList', {
+    getSalesListBySalesState(queryForm) {
+        return ajax.post('/api/Background/Sales/GetSalesListBySalesState', {
             ...queryForm
         });
     },

@@ -10,9 +10,6 @@
             <el-dropdown-item @click.native="getNeedRreviewSalesByUserId()">待办事项</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="warning" size="mini" class="el-icon-check" @click="salesOrderReturnRequest()" v-show="IsToBeList == false">
-          退货
-        </el-button>
         <el-button type="primary" size="mini" class="el-icon-check" @click="adoptSalesOrderRequest()" v-show="IsToBeList == true">
           审核
         </el-button>
@@ -21,19 +18,18 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div>
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
-            <el-option label="审核中" value="2"></el-option>
-            <el-option label="待出库" value="4"></el-option>
-            <el-option label="已出库" value="5"></el-option>
-            <el-option label="待发货" value="6"></el-option>
-            <el-option label="已发货" value="7"></el-option>
-            <el-option label="已完成" value="8"></el-option>
-          </el-select>
-        </div>
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
-        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+        <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
+          <el-option label="审核中" value="2"></el-option>
+          <el-option label="已审核" value="4"></el-option>
+          <el-option label="待收货" value="5"></el-option>
+          <el-option label="待结算" value="6"></el-option>
+          <el-option label="结算中" value="7"></el-option>
+          <el-option label="已完成" value="8"></el-option>
+          <el-option label="已取消" value="9"></el-option>
+        </el-select>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
         </el-select>
         <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
@@ -118,9 +114,9 @@
         <template slot-scope="scope">
           <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
           <el-button type="info" size="mini" @click="showSalesDetailDiolog(scope.row)" plain>订单详情</el-button>
-          <el-button v-show="scope.row.salesStateStr == '已出库'" type="primary" size="mini" @click="finishSales(scope.row.salesId)" plain
+          <!-- <el-button v-show="scope.row.salesStateStr == '已出库'" type="primary" size="mini" @click="finishSales(scope.row.salesId)" plain
             >完成</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -380,7 +376,7 @@ export default {
       this.salesDetailDiolog.show = true;
     },
     getElTagClass(row) {
-      if (row.salesStateStr == '已审核') {
+      if (row.salesStateStr == '待结算') {
         return 'success';
       } else if (row.salesStateStr == '审核中') {
         return 'warning';
@@ -683,7 +679,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 2fr;
+    grid-template-columns: 1fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;

@@ -48,8 +48,8 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
+          <!-- <el-button type="warning" size="mini" @click="updatePurchasePlan(scope.row)" plain>修改</el-button> -->
+          <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>编辑详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -136,9 +136,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
-        <el-table-column prop="price" label="单品进价" align="center">
+        <el-table-column prop="costPrice" label="单品进价" align="center">
           <template slot-scope="scope">
-            <el-tag disable-transitions>{{ scope.row.price }}</el-tag>
+            <el-tag disable-transitions>{{ scope.row.costPrice }}</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -480,7 +480,8 @@ export default {
     },
     //获取指定仓库指定货品数据
     async getSKUListByWarehouseId() {
-      await this.$api.goods.getSKUListByWhId(1, 100, this.purchasePlanForm.warehouseId, 'asd', 0).then((res) => {
+      console.log(this.purchasePlanForm.warehouseId);
+      await this.$api.goods.getSKUListByWhId(1, 100, this.purchasePlanForm.warehouseId, null, 0).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -587,7 +588,7 @@ export default {
       this.showDep = false;
       this.updateExdetFrom.exwarehouseDeteilIds = [];
       // 加载数据
-      this.getSupplierList();
+      this.getSKUListByWarehouseId();
       this.getGoodInfoType();
     },
     //打开引入销售单模态框

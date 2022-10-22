@@ -18,7 +18,6 @@
     </div>
 
     <!-- 表格 -->
-    <!-- 当el-table元素中注入data对象数组后，在el-table-column中用prop属性来对应对象中的键名即可填入数据 -->
     <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="spuId" label="货品编码"></el-table-column>

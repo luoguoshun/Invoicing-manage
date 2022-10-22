@@ -3,9 +3,9 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round @click="submitPutinWarehousApply()">确认入库</el-button>
-        <el-button type="danger " size="mini" class="el-icon-check" round @click="deletetPutinWarehousApply()">删除</el-button>
+        <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" @click="submitPutinWarehousApply()">确认入库</el-button>
+        <el-button type="danger " size="mini" class="el-icon-check" @click="deletetPutinWarehousApply()">删除</el-button>
       </div>
       <div class="edit_query">
         <el-select size="mini" placeholder="请选择入库仓库" v-model="queryForm.warehouseId">

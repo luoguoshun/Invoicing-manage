@@ -171,7 +171,7 @@
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
         </el-select>
         <el-input v-model="salesOrderDialog.queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
-        <el-button type="primary" @click="getNoExecuteOrderList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="getSalesListBySalesState()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
       <!-- 表格 -->
@@ -438,7 +438,7 @@ export default {
           publicationDates: [],
           warehouseId: '', //出货仓库
           conditions: '', //综合条件
-          salesType: '', //销售类型
+          salesState: 8, //待结算的销售单
         },
       },
       payDialog: {
@@ -518,9 +518,9 @@ export default {
       });
     },
     //获取已完成销售订单列表
-    async getNoExecuteOrderList() {
+    async getSalesListBySalesState() {
       let queryForm = JSON.parse(JSON.stringify(this.salesOrderDialog.queryForm));
-      await this.$api.sales.getNoExecuteSalesList(queryForm).then((res) => {
+      await this.$api.sales.getSalesListBySalesState(queryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -600,7 +600,7 @@ export default {
         this.salesOrderDialog.queryForm.supplierId = '';
         this.salesOrderDialog.queryForm.conditions = '';
         this.salesOrderDialog.queryForm.publicationDates = [];
-        this.getNoExecuteOrderList();
+        this.getSalesListBySalesState();
       }
     },
     //获取应账目选中行的数据
@@ -635,15 +635,15 @@ export default {
     //Start-----------------引入销售单--------------
     opensalesOrderDialog() {
       this.salesOrderDialog.visible = true;
-      this.getNoExecuteOrderList();
+      this.getSalesListBySalesState();
     },
     salesOrderSizeChange(row) {
       this.salesOrderDialog.queryForm.row = row;
-      this.getNoExecuteOrderList();
+      this.getSalesListBySalesState();
     },
     salesOrderCurrentChange(page) {
       this.salesOrderDialog.queryForm.page = page;
-      this.getNoExecuteOrderList();
+      this.getSalesListBySalesState();
     },
     //引入销售单生成付款单
     importSaelsOrder() {

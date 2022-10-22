@@ -3,9 +3,9 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()"> 引用退换单 </el-button>
-        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round>提交</el-button>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()"> 引用退换单 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
@@ -104,14 +104,109 @@ export default {
       dialogObject: {
         addVisible: false,
       },
+      SourceOrderIds: [],
     };
   },
   methods: {
+    loadData() {
+      this.getPurchaseOrder();
+    },
+
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;
     },
+    //获取引用采购单数据
+    async getPurchaseOrder() {
+      let queryForm = JSON.parse(JSON.stringify(this.queryForm));
+      if (queryForm.orderState == '') {
+        queryForm.orderState = '0';
+      }
+      if (queryForm.supplierId == '') {
+        queryForm.supplierId = '0';
+      }
+      queryForm.orderState = parseInt(queryForm.orderState);
+      queryForm.supplierId = parseInt(queryForm.supplierId);
+      //console.log(queryForm);
+      await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
+        const { data, success, message } = res.data;
+        console.log(data);
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.table.purchaseOrderList = data.purchaseOrders;
+        this.table.total = data.count;
+        this.table.loading = false;
+      });
+    },
+    //获取采购订单详细项目列表
+    async getDetailPlanListByPurchasId(row) {
+      await this.$api.purchase.getDetailPlanListByPurchasId(row).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.PurchaseDetDiolog.purchaseOrderListDetail = data;
+        console.log(this.PurchaseDetDiolog.purchaseOrderListDetail);
+      });
+    },
+
+    async CreatePutinWarehousId() {
+      if (this.SourceOrderIds.length == 0) {
+        this.$message({
+          message: '请选择提交的采购入库单',
+          type: 'warning',
+        });
+      } else {
+        const form = {
+          SourceOrderIds: this.SourceOrderIds,
+          PutInWarehouseType: 1,
+        };
+        await this.$api.Putinwarehous.CreatePutinWarehousId(form).then((res) => {
+          const { success, message } = res.data;
+          if (!success) {
+            console.log(message);
+            this.$message.error('提交失败！');
+          } else {
+            this.$message({ message: '提交成功！', type: 'success' });
+            this.loadData();
+          }
+        });
+      }
+    },
+
+    selectRows(selection) {
+      this.SourceOrderIds = [];
+      selection.forEach((element) => {
+        this.SourceOrderIds.push(element.purchaseOrderId);
+        //this.purchaseIds.push(element.purchaseId);
+      });
+    },
+    async CreatePutinWarehousId() {
+      this.SourceOrderIds;
+      const form = {
+        SourceOrderIds: this.SourceOrderIds,
+        PutInWarehouseType: 1,
+      };
+      await this.$api.Putinwarehous.CreatePutinWarehousId(form).then((res) => {
+        const { success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          this.$message.error('提交失败！');
+        } else {
+          this.$message({ message: '提交成功！', type: 'success' });
+          this.loadData();
+        }
+      });
+    },
+
+    created() {
+      this.loadData();
+    },
   },
+  // },
 };
 </script>
 

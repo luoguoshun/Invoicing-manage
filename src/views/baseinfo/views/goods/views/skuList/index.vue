@@ -108,12 +108,10 @@ export default {
       queryForm: {
         page: 1,
         row: 10,
-        PublicationDates: [],
+        SpuId: '',
         SkuId: '',
         GoodsName: '',
         GoodsTypeId: 0,
-        WarehouseId: '',
-        SpuId: '',
       },
       tableData: {
         goodsList: [],
@@ -295,7 +293,6 @@ export default {
     resetQueryForm() {
       this.queryForm.GoodsName = '';
       this.queryForm.GoodsTypeId = 0;
-      this.queryForm.WarehouseId = '';
       this.queryForm.SpuId = '';
     },
     handleSizeChange(row) {
@@ -356,6 +353,7 @@ export default {
   .edit_query {
     .edit_queryinfo {
       float: right;
+      margin: 5px 0px;
     }
   }
 }

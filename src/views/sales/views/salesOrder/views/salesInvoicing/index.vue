@@ -12,15 +12,6 @@
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
           </el-date-picker>
         </div>
-        <!-- <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
-            <el-option label="待出库" value="2"></el-option>
-            <el-option label="已出库" value="3"></el-option>
-            <el-option label="待发货" value="4"></el-option>
-            <el-option label="已发货" value="5"></el-option>
-            <el-option label="已完成" value="6"></el-option>
-          </el-select>
-        </div> -->
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -258,7 +249,7 @@
           <el-input size="mini" type="text" v-model="salesOrderForm.postalCode" clearable></el-input>
         </el-descriptions-item>
         <el-descriptions-item label="收获地址" :span="1">
-          <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
+          <el-cascader size="mini" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
         </el-descriptions-item>
         <el-descriptions-item label="详细地址" :span="1">
           <el-input size="mini" type="textarea" v-model="salesOrderForm.clientAddress" clearable></el-input>
@@ -313,7 +304,7 @@
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="brand" label="品牌" align="center"> </el-table-column>
-        <el-table-column prop="typeStr" label="类别" align="center"> </el-table-column>
+        <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
         <el-table-column prop="price" label="销售数量" align="center">
           <template slot-scope="scope">
@@ -335,7 +326,7 @@
             ></el-input-number>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="单品进价" align="center"> </el-table-column>
+        <el-table-column prop="costPrice" label="单品进价" align="center"> </el-table-column>
         <el-table-column prop="count" label="库存" align="center"> </el-table-column>
         <el-table-column prop="warnCount" label="警告库存" align="center"> </el-table-column>
       </el-table>
@@ -483,7 +474,6 @@ export default {
         }
       }
       this.salesOrderForm.areadata = this.search.province + this.search.city + this.search.district;
-      console.log(this.salesOrderForm.areadata);
     },
     //获取提交销售订单列表
     async getSalesList() {
@@ -684,7 +674,7 @@ export default {
           goodsCount: element['exWarehouseCount'],
           exWarehouseCount: element['exWarehouseCount'],
           totalPrice: element['exWarehouseCount'] * element['salesPrice'],
-          salesDetailProfit: element['exWarehouseCount'] * (element['salesPrice'] - element['price']), //利润
+          salesDetailProfit: element['exWarehouseCount'] * (element['salesPrice'] - element['costPrice']), //利润
           remarks: '',
         };
         salesDetailTotalPrice += salesDetail['totalPrice'];
@@ -716,12 +706,12 @@ export default {
       }
       let salesDetailTotalPrice = 0; //销售单总价
       let salesDetailProfit = 0; //销售单利润
-      let salesDetailgoodsCount = 0;
+      let salesDetailgoodsCount = 0;//物品总数
       //1.获取当前行的数据进行赋值
       this.salesOrderForm.salesDetails.forEach((item, i) => {
         if (index == i) {
           item['totalPrice'] = row['exWarehouseCount'] * row['salesPrice'];
-          item['salesDetailProfit'] = row['exWarehouseCount'] * (row['salesPrice'] - row['price']);
+          item['salesDetailProfit'] = row['exWarehouseCount'] * (row['salesPrice'] - row['costPrice']);
           item['goodsCount'] = row['exWarehouseCount'];
           item['salesPrice'] = row['salesPrice'];
         }

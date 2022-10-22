@@ -18,30 +18,20 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
-            <el-option label="待审核" value="2"></el-option>
-            <el-option label="已审核" value="3"></el-option>
-            <el-option label="已完成" value="5"></el-option>
-            <el-option label="部分到货" value="6"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getSubmitOrderList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
+          <el-option label="待审核" value="2"></el-option>
+          <el-option label="已审核" value="3"></el-option>
+          <el-option label="已完成" value="5"></el-option>
+          <el-option label="部分到货" value="6"></el-option>
+        </el-select>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.approvalName" size="mini" placeholder="请输入开单人"></el-input>
+        <el-button type="primary" @click="getSubmitOrderList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -472,12 +462,8 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .dialogSelectInput {
