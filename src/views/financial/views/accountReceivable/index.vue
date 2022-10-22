@@ -91,7 +91,7 @@
           <el-button type="primary" size="mini" @click="showSalesDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="编辑" width="100" align="center">
+      <el-table-column label="收款" width="100" align="center">
         <template slot-scope="scope">
           <el-button type="success" size="mini" @click="showPaymentDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待收款'">
             点击收款
@@ -257,7 +257,7 @@
       </div>
     </el-dialog>
     <!-- 付款对话框 -->
-    <el-dialog title="付款" :visible.sync="payDialog.visible" center width="40%">
+    <el-dialog title="收款" :visible.sync="payDialog.visible" center width="40%">
       <el-form ref="form" :model="payForm" label-width="90px" size="mini">
         <el-form-item label="操作人">
           <el-input v-model="payForm.payUserName" disabled></el-input>
@@ -265,10 +265,10 @@
         <el-form-item label="收款方编号">
           <el-input v-model="payForm.accountObjectId" disabled></el-input>
         </el-form-item>
-        <el-form-item label="收款方">
+        <el-form-item label="收款对象">
           <el-input v-model="payForm.accountObjectName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="支付方式">
+        <el-form-item label="收款方式">
           <el-radio-group v-model="payForm.payType" size="medium">
             <!-- <el-radio border label="1">微信</el-radio>
             <el-radio border label="2">支付宝</el-radio> -->
@@ -286,7 +286,7 @@
           </span>
         </el-form-item>
       </el-form>
-      <el-dialog width="50%" title="请选择付款银行卡" :visible.sync="bankCardDialog.visible" append-to-body>
+      <el-dialog width="50%" title="请选择收款银行卡" :visible.sync="bankCardDialog.visible" append-to-body>
         <!-- 银行卡信息表格 -->
         <el-table :data="bankCardDialog.bankCardList" :header-cell-style="{ 'text-align': 'center' }">
           <el-table-column prop="bankCardNo" label="卡号" align="center" width="120px">
