@@ -11,7 +11,7 @@
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
         <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
+        <el-button type="primary" @click="getSKUListBySupplierId()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
@@ -40,7 +40,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button type="success" icon="el-icon-check" circle @click="editSupplierSkuGoodsPrice(scope.row)"></el-button>
+          <el-button size="mini" type="success" icon="el-icon-check" circle @click="editSupplierSkuGoodsPrice(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,15 +60,15 @@
     </div>
     <!-- 添加供应商货品对话框 -->
     <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%" :fullscreen="true">
-      <el-divider></el-divider>
       <div class="selectInput">
+        <div></div>
         <el-input size="mini" v-model="skuForm.spuId" placeholder="请输入SPU编号"></el-input>
         <el-input size="mini" v-model="skuForm.skuId" placeholder="请输入SKU编号"></el-input>
         <el-input size="mini" v-model="skuForm.goodsName" placeholder="请输入物品名称"></el-input>
         <el-select size="mini" v-model="skuForm.goodsTypeId">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
-        <el-button type="primary" @click="GetSKUList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="selectSkulist()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetSkuForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
@@ -127,9 +127,9 @@ export default {
       table: {
         supplierList: [],
         supplierSku: [],
+        selectiongood: [],
         totalBySupplier: 0,
         totalByDialog: 0,
-        selectiongood: [],
       },
       dialogObject: {
         updateVisible: false,
@@ -148,8 +148,7 @@ export default {
   },
   methods: {
     loadData() {
-      this.GetSKUListBySupplierId();
-      this.GetSKUList();
+      this.getSKUListBySupplierId();
       this.getGoodsType();
     },
     //获取选中行的数据--模态框
@@ -208,19 +207,17 @@ export default {
       });
     },
     //获取货品数据选择绑定供应商
-    async GetSKUList() {
+    async getSKUList() {
       let skuForm = JSON.parse(JSON.stringify(this.skuForm));
       skuForm.goodsTypeId = skuForm.goodsTypeId == '' ? 0 : parseInt(skuForm.goodsTypeId);
-      console.log(skuForm);
       await this.$api.goods
-        .getSKUList(skuForm.page, skuForm.row, skuForm.skuId, skuForm.spuId, skuForm.goodsName, skuForm.goodsTypeId)
+        .getSKUList(skuForm.page, skuForm.row, skuForm.spuId, skuForm.skuId, skuForm.goodsName, skuForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
             console.log(message);
             return;
           }
-          console.log(data);
           this.table.supplierSku = data.goods;
           this.table.totalByDialog = data.count;
         });
@@ -240,7 +237,7 @@ export default {
       });
     },
     //根据供应商id获取供应商货品数据
-    async GetSKUListBySupplierId() {
+    async getSKUListBySupplierId() {
       let goodsTypeId = this.queryForm.goodsTypeId == '' ? 0 : parseInt(this.queryForm.goodsTypeId);
       await this.$api.goods
         .GetSKUListBySupplierId(this.queryForm.page, this.queryForm.row, goodsTypeId, this.$route.query.supplierId, this.queryForm.conditions)
@@ -255,10 +252,6 @@ export default {
           this.table.totalBySupplier = data.count;
         });
     },
-    //查找供应商货品
-    selectsupplier() {
-      this.loadData();
-    },
     //重置搜索条件
     resetQueryForm() {
       this.queryForm.goodsTypeId = '';
@@ -271,6 +264,7 @@ export default {
       this.skuForm.goodsTypeId = '';
       this.skuForm.spuId = '';
       this.skuForm.skuId = '';
+      this.getSKUList();
     },
     //条数改变--外面
     handleSizeChangeByOut(row) {
@@ -285,13 +279,17 @@ export default {
     //条数改变--模态框
     handleSizeChangeDialog(row) {
       this.skuForm.row = row;
-      this.loadData();
+      this.getSKUList();
     },
     //页数改变--模态框
     handleCurrentChangeDialog(page) {
-      console.log(page);
       this.skuForm.page = page;
-      this.loadData();
+      this.getSKUList();
+    },
+    selectSkulist(){
+      this.skuForm.page =1;
+      this.skuForm.row =5;
+      this.getSKUList();
     },
     //删除供应商货品
     DeleteSupplierSKU() {
@@ -323,7 +321,7 @@ export default {
       this.supplierForm.supplierName = '';
       this.supplierForm.leadCadre = '';
       this.supplierForm.phone = '';
-      this.GetSKUList();
+      this.getSKUList();
     },
     addSupplierSku() {
       this.$refs['supplierForm'].validate((valid) => {
@@ -383,7 +381,7 @@ export default {
   }
   .selectInput {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-template-columns:2fr 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
 }

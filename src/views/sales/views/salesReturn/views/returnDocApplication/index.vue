@@ -6,7 +6,7 @@
         <el-dropdown>
           <el-button type="primary" size="mini"> 更多菜单<i class="el-icon-arrow-down el-icon--right"></i> </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="opensalesOrderDialog()"> 引入销售退货单 </el-dropdown-item>
+            <el-dropdown-item @click.native="opensalesOrderDialog()"> 引入销售单 </el-dropdown-item>
             <el-dropdown-item> 新建申请 </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -14,22 +14,15 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesReturnRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <div></div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -198,10 +191,10 @@
     </el-dialog>
     <!-- 添加销售开单对话框 -->
     <el-dialog
-      id="applicationSalesDiolog"
+      id="appSalesReturnDiolog"
       title="销售开单"
       center
-      :visible.sync="applicationSalesDiolog.Visible"
+      :visible.sync="appSalesReturnDiolog.Visible"
       :close-on-click-modal="false"
       :fullscreen="true"
     >
@@ -291,20 +284,15 @@
       <el-divider></el-divider>
       <div class="dialogSelectInput">
         <div></div>
-        <el-input size="mini" v-model="applicationSalesDiolog.skuQueryForm.goodsName" placeholder="请输入物品名称"></el-input>
-        <el-select size="mini" v-model="applicationSalesDiolog.skuQueryForm.goodsTypeId" placeholder="物品类型">
+        <el-input size="mini" v-model="appSalesReturnDiolog.skuQueryForm.goodsName" placeholder="请输入物品名称"></el-input>
+        <el-select size="mini" v-model="appSalesReturnDiolog.skuQueryForm.goodsTypeId" placeholder="物品类型">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
         <el-button type="primary" @click="getSKUListByWhId()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetDialogQueryForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
-      <el-table
-        :data="applicationSalesDiolog.skuTabledata"
-        :header-cell-style="{ 'text-align': 'center' }"
-        @selection-change="selectSKURows"
-        border=""
-      >
+      <el-table :data="appSalesReturnDiolog.skuTabledata" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectSKURows" border="">
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
@@ -350,12 +338,12 @@
         </el-pagination>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="applicationSalesDiolog.Visible = false">取 消</el-button>
+        <el-button @click="appSalesReturnDiolog.Visible = false">取 消</el-button>
         <el-button type="success" @click="addSalesOrder()">确定</el-button>
       </div>
     </el-dialog>
     <!-- 引入销售退货单对话框 -->
-    <el-dialog title="引入销售退货单" :visible.sync="salesOrderDialog.visible" center width="70%" :fullscreen="true">
+    <el-dialog id="importSalesOrderDialog" title="引入销售单" :visible.sync="salesOrderDialog.visible" center width="70%" :fullscreen="true">
       <el-button type="primary" size="mini" class="el-icon-check" @click="importSalesOrder()">
         引入
       </el-button>
@@ -613,7 +601,7 @@ export default {
         salesReturnDetails: [],
       },
       //新建采购计划对话框
-      applicationSalesDiolog: {
+      appSalesReturnDiolog: {
         Visible: false,
         skuQueryForm: {
           page: 1,
@@ -753,7 +741,7 @@ export default {
     },
     //获取供应商物品数据
     async getSKUListByWhId() {
-      let queryForm = JSON.parse(JSON.stringify(this.applicationSalesDiolog.skuQueryForm));
+      let queryForm = JSON.parse(JSON.stringify(this.appSalesReturnDiolog.skuQueryForm));
       queryForm.goodsTypeId = queryForm.goodsTypeId == '' ? 0 : parseInt(queryForm.goodsTypeId);
       await this.$api.goods
         .getSKUListByWhId(queryForm.page, queryForm.row, this.salesOrderForm.warehouseId, queryForm.goodsName, queryForm.goodsTypeId)
@@ -763,8 +751,8 @@ export default {
             console.log(message);
             return;
           }
-          this.applicationSalesDiolog.skuTabledata = data.goods;
-          this.applicationSalesDiolog.total = data.count;
+          this.appSalesReturnDiolog.skuTabledata = data.goods;
+          this.appSalesReturnDiolog.total = data.count;
         });
     },
     //获取客户列表数据
@@ -902,8 +890,8 @@ export default {
 
     //-----------------销售开单---------------------
     //打开申请表模态框
-    openApplicationSalesDiolog() {
-      this.applicationSalesDiolog.Visible = true;
+    openappSalesReturnDiolog() {
+      this.appSalesReturnDiolog.Visible = true;
       const userInfo = store.getters['userInfo/getUserInfo'];
       this.salesOrderForm.applicantId = userInfo.userId || '';
       this.salesOrderForm.applicantName = userInfo.name || '';
@@ -914,18 +902,18 @@ export default {
     },
     //对话框表格条数改变
     dialogSizeChange(row) {
-      this.applicationSalesDiolog.skuQueryForm.row = row;
+      this.appSalesReturnDiolog.skuQueryForm.row = row;
       this.getSKUListByWhId();
     },
     //对话框表格页数改变
     dialogCurrentChange(page) {
-      this.applicationSalesDiolog.skuQueryForm = page;
+      this.appSalesReturnDiolog.skuQueryForm = page;
       this.getSKUListByWhId();
     },
     //重置申请采购计划模态框搜索条件
     resetDialogQueryForm() {
-      this.applicationSalesDiolog.skuQueryForm.conditions = '';
-      this.applicationSalesDiolog.skuQueryForm.goodsTypeId = 0;
+      this.appSalesReturnDiolog.skuQueryForm.conditions = '';
+      this.appSalesReturnDiolog.skuQueryForm.goodsTypeId = 0;
       this.getSKUListByWhId();
     },
     //仓库下拉框改变
@@ -1087,7 +1075,7 @@ export default {
                 type: 'success',
               });
               this.loadData();
-              this.applicationSalesDiolog.Visible = false;
+              this.appSalesReturnDiolog.Visible = false;
             }
           });
         }
@@ -1134,7 +1122,7 @@ export default {
               type: 'success',
             });
             this.loadData();
-            this.applicationSalesDiolog.Visible = false;
+            this.appSalesReturnDiolog.Visible = false;
           }
         });
       }
@@ -1155,7 +1143,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 1fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -1164,7 +1152,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 1fr 2fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
       .edit_query_1:last-child {
         display: grid;
@@ -1185,7 +1173,7 @@ export default {
       width: 20%;
     }
   }
-  #applicationSalesDiolog {
+  #appSalesReturnDiolog {
     .add_1 {
       > div {
         display: grid;
@@ -1199,10 +1187,12 @@ export default {
       grid-column-gap: 3px;
     }
   }
-  .dialogSelectInput {
-    display: grid;
-    grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.3fr 0.3fr;
-    grid-column-gap: 3px;
+  #importSalesOrderDialog {
+    .dialogSelectInput {
+      display: grid;
+      grid-template-columns: 3fr 1fr 1fr 1fr 0.3fr 0.3fr;
+      grid-column-gap: 3px;
+    }
   }
 }
 </style>

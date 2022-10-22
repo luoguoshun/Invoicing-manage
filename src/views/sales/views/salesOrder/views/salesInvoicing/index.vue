@@ -12,15 +12,6 @@
           <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
           </el-date-picker>
         </div>
-        <!-- <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态">
-            <el-option label="待出库" value="2"></el-option>
-            <el-option label="已出库" value="3"></el-option>
-            <el-option label="待发货" value="4"></el-option>
-            <el-option label="已发货" value="5"></el-option>
-            <el-option label="已完成" value="6"></el-option>
-          </el-select>
-        </div> -->
         <div class="edit_query_1">
           <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
             <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -258,7 +249,7 @@
           <el-input size="mini" type="text" v-model="salesOrderForm.postalCode" clearable></el-input>
         </el-descriptions-item>
         <el-descriptions-item label="收获地址" :span="1">
-          <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
+          <el-cascader size="mini" :options="options" v-model="selectedOptions" @change="handleChange"> </el-cascader>
         </el-descriptions-item>
         <el-descriptions-item label="详细地址" :span="1">
           <el-input size="mini" type="textarea" v-model="salesOrderForm.clientAddress" clearable></el-input>
@@ -483,7 +474,6 @@ export default {
         }
       }
       this.salesOrderForm.areadata = this.search.province + this.search.city + this.search.district;
-      console.log(this.salesOrderForm.areadata);
     },
     //获取提交销售订单列表
     async getSalesList() {

@@ -377,7 +377,7 @@ export default {
       this.getSalesDatailBySalesId(row.salesId);
       this.salesDetailDiolog.show = true;
     },
-    getElTagClass(row) {
+    getElTagClass(row) { 
       if (row.salesStateStr == '待结算') {
         return 'success';
       } else if (row.salesStateStr == '审核中') {

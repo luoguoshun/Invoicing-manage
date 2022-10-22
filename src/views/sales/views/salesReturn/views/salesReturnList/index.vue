@@ -18,7 +18,6 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div>
           <el-select size="mini" v-model="queryForm.salesReturnState" placeholder="订单状态" v-show="IsToBeList == false">
             <el-option label="审核中" value="2"></el-option>
             <el-option label="待出库" value="4"></el-option>
@@ -27,7 +26,6 @@
             <el-option label="已发货" value="7"></el-option>
             <el-option label="已完成" value="8"></el-option>
           </el-select>
-        </div>
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
         <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
@@ -604,7 +602,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 2fr;
+    grid-template-columns: 1fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;

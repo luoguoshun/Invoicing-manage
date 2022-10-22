@@ -79,7 +79,7 @@
       <el-table-column prop="businessTypeStr" label="业务类型" align="center"> </el-table-column>
       <el-table-column prop="accountObjectId" label="账单对象编号" align="center"> </el-table-column>
       <el-table-column prop="accountObjectName" label="账单对象名称" align="center"></el-table-column>
-      <el-table-column prop="accountTotalPrice" label="应付金额" align="center"></el-table-column>
+      <el-table-column prop="accountTotalPrice" label="应收金额" align="center"></el-table-column>
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="completeTime" label="完成时间" width="140px" align="center">
         <template slot-scope="scope">

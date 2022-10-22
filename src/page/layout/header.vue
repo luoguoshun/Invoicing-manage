@@ -273,6 +273,7 @@ export default {
     display: grid;
     grid-template-columns: 95% 5%;
     padding-right: 15px;
+    margin-bottom: 10px;
     .el-button {
       margin: 10px auto;
       height: 30px;

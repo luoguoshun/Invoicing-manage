@@ -52,7 +52,6 @@
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
       <el-table-column prop="applicantName" label="申请人" align="center"></el-table-column>
-      <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center">
         <template slot-scope="scope">
           <el-input type="number" size="mini" v-model.number="scope.row.transportPrice"></el-input>

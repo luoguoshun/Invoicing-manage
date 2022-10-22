@@ -18,28 +18,18 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
-            <el-option label="待提交" value="1"></el-option>
-            <el-option label="驳回" value="4"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getUnsubmitOrderList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
+          <el-option label="待提交" value="1"></el-option>
+          <el-option label="驳回" value="4"></el-option>
+        </el-select>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
+        <el-button type="primary" @click="getUnsubmitOrderList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -68,7 +58,6 @@
       <el-table-column prop="orderTypeStr" label="开单类型" align="center"> </el-table-column>
       <el-table-column prop="supplierName" label="收款方" align="center"> </el-table-column>
       <el-table-column prop="operationPersonName" label="开单人" align="center"></el-table-column>
-      <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
       <el-table-column prop="transportPrice" label="运输费用" align="center">
         <template slot-scope="scope">
           <el-input type="number" size="mini" v-model.number="scope.row.transportPrice"></el-input>
@@ -95,7 +84,7 @@
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="warning" size="mini" @click="updatePurchaseOrder(scope.row)" plain>修改</el-button>
-          <el-button type="info" size="mini" @click="showorderDetailDialog(scope.row)" plain>订单详情</el-button>
+          <el-button type="info" size="mini" @click="showorderDetailDialog(scope.row)" plain>详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -804,12 +793,8 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr  0.3fr 0.3fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .editPlanItem {
@@ -819,7 +804,7 @@ export default {
   }
   .dialogSelectInput {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
   .editform {
