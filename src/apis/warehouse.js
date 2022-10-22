@@ -59,4 +59,8 @@ export default {
     deleteSkuFromWarehouse(WarehouseSkus) {
         return ajax.post('/api/Background/Warehouse/DeleteSkuFromWarehouse', WarehouseSkus);
     },
+    // 计算仓库的总成本、物资总和
+    calculateWarehouseItems(warehouseId) {
+        return ajax.get("/api/Background/Warehouse/CalculateWarehouseItemsById?warehouseId=" + warehouseId + "");
+    },
 };

@@ -219,9 +219,6 @@ export default {
       this.closeConnection();
       this.$router.push({ name: 'login' });
     },
-    // toHome(){
-    //   this.$router.push({ name: 'home' });
-    // }
   },
   created() {
     //获取路由内的全部信息
@@ -249,10 +246,11 @@ export default {
     height: 60px;
     display: flex;
     flex-direction: row;
-    background-color: rgb(247, 250, 253);
+    background-color: #f5f6f7;
     margin-bottom: 5px;
     .title {
       flex-grow: 30;
+      // text-align: center;
       p {
         margin-top: 10px;
         font-size: 20px;
