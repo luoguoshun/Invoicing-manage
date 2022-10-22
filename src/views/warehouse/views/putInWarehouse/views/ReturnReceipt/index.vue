@@ -69,7 +69,7 @@
       <el-divider></el-divider>
       <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
-<el-table :data="salesReturnDetailDialog.salesReturnDetails" :header-cell-style="{ 'text-align': 'center' }" border>
+      <el-table :data="salesReturnDetailDialog.salesReturnDetails" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="salesReturnDetailId" label="退货明细编号" align="center">
           <template slot-scope="scope">
             <el-tag disable-transitions>{{ scope.row.salesReturnDetailId }}</el-tag>
@@ -114,7 +114,8 @@ export default {
         publicationDates: [],
         warehouseId: '', //出货仓库
         conditions: '', //综合条件
-        salesReturnState: 3, //销售单状态
+        SalesType: '3',
+        salesReturnState: '', //销售单状态
       },
       table: {
         salesReturnList: [],
@@ -147,6 +148,7 @@ export default {
         salesReturnDetails: [],
       },
       SourceOrderIds: [],
+      OrderStates:[],
     };
   },
   methods: {
@@ -200,12 +202,25 @@ export default {
     selectRows(selection) {
       console.log(selection);
       this.SourceOrderIds = [];
+      this.OrderStates=[];
       selection.forEach((element) => {
         this.SourceOrderIds.push(element.salesReturnId);
+        this.OrderStates.push(element.salesReturnStateStr)
         //this.purchaseIds.push(element.purchaseId);
       });
     },
     async CreatePutinWarehousId() {
+      console.log(this.SourceOrderIds);
+      for (let i = 0; i < this.SourceOrderIds.length; i++) {
+        if (this.OrderState[i] != '审核中') {
+          this.$message({
+            message: '只能提交审核中的出库单！',
+            type: 'warning',
+          });
+          this.OrderState = [];
+          return false;
+        }
+      }
       this.SourceOrderIds;
       const form = {
         SourceOrderIds: this.SourceOrderIds,

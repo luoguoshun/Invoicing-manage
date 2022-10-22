@@ -351,9 +351,9 @@ export default {
     //出库单提交
     adoptOrderRequest() {
       for (let i = 0; i < this.OrderState.length; i++) {
-        if (this.OrderState[i] != '编辑中') {
+        if (this.OrderState[i] != '审核中') {
           this.$message({
-            message: '只能提交编辑中的出库单！',
+            message: '只能提交审核中的出库单！',
             type: 'warning',
           });
           this.OrderState = [];

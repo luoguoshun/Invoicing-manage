@@ -4,7 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" @click="submitPutinWarehousApply()">确认入库</el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="submitPutinWarehousApply()">确认入库</el-button>
         <el-button type="danger " size="mini" class="el-icon-check" @click="deletetPutinWarehousApply()">删除</el-button>
       </div>
       <div class="edit_query">
@@ -93,8 +93,7 @@
         <el-table-column prop="purchaseCount" label="采购数量" align="center"> </el-table-column>
         <el-table-column label="入库数量" align="center">
           <template slot-scope="scope">
-            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number
-            ><!--              @change="addGoodsCount(scope.$index, scope.row)"-->
+            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
