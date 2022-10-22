@@ -32,7 +32,7 @@ export default {
         return ajax.post('/api/Background/Googs/GetBrandType');
     },
     //添加SPU
-    addSpu(spu) { 
+    addSpu(spu) {
         return ajax.post('/api/Background/Googs/AddGoodsInfo', {
             ...spu,
         })
@@ -60,7 +60,7 @@ export default {
         );
     },
     //查询SKU
-    getSKUList(page, row, skuId, spuId, goodsName, goodsTypeId) {
+    getSKUList(page, row, spuId, skuId, goodsName, goodsTypeId) {
         return ajax.post("/api/Background/Googs/GetSKUList", {
             Page: page,
             Row: row,

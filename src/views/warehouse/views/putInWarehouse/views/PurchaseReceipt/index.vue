@@ -3,8 +3,8 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round @click="CreatePutinWarehousId()">提交</el-button>
+        <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
@@ -243,9 +243,6 @@ export default {
     .edit_btn {
       display: flex;
       flex-direction: row;
-      div {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;

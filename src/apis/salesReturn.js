@@ -1,25 +1,27 @@
 import ajax from '@/utils/ajax';
 export default {
     //获取所有销售单
-    getSalesRerturnList(queryForm) {
-        return ajax.post('/api/Background/SalesReturn/GetSalesRerturnList', queryForm);
+    getSalesReturnList(queryForm) {
+        return ajax.post('/api/Background/SalesReturn/GetSalesReturnList', queryForm);
     },
-     //获取所有销售单
-     getUnsubmittedSalesReturnList(queryForm) {
+    //获取所有销售单
+    getUnsubmittedSalesReturnList(queryForm) {
         return ajax.post('/api/Background/SalesReturn/GetUnsubmittedSalesReturnList', queryForm);
     },
     //获取登入人需要的审批的销售单
-    getNeedRreviewSalesByUserId(queryForm) {
-        return ajax.post('/api/Background/SalesReturn/GetNeedRreviewSalesByUserId', queryForm);
+    getNeedRreviewSalesReturnByUserId(queryForm) {
+        return ajax.post('/api/Background/SalesReturn/GetNeedRreviewSalesReturnByUserId', queryForm);
     },
     //通过销售单Id获取销售单详情
     getSalesReturnDatailByReturnId(salesReturnId) {
         return ajax.get('/api/Background/SalesReturn/GetSalesReturnDatailByReturnId?salesReturnId=' + salesReturnId + '');
     },
-    //通获取未被付款模块引用销售单数据
-    getNoExecuteSalesList(queryForm) {
-        return ajax.post('/api/Background/SalesReturn/getNoExecuteSalesList', {
-            ...queryForm
+    //引入销售单
+    importSalesOrder(salesOrderIds, userId, name) {
+        return ajax.post('/api/Background/SalesReturn/importSalesOrder', {
+            SalesOrderIds: salesOrderIds,
+            OperationId: userId,
+            OperationName: name,
         });
     },
     //新增销售单
@@ -35,12 +37,12 @@ export default {
         return ajax.post('/api/Background/SalesReturn/CancelSalesReturnRequest', salesRerurnIds);
     },
     //审核销售单
-    adoptSalesOrderRequest(salesIds) {
-        return ajax.post('/api/Background/SalesReturn/AdoptSalesOrderRequest', salesIds);
+    adoptSalesReturnRequest(salesIds) {
+        return ajax.post('/api/Background/SalesReturn/AdoptSalesReturnRequest', salesIds);
     },
     //驳回销售单
-    rejectSalesOrderRequest(salesIds, value) {
-        return ajax.post('/api/Background/SalesReturn/RejectSalesOrderRequest', {
+    rejectSalesReturnRequest(salesIds, value) {
+        return ajax.post('/api/Background/SalesReturn/RejectSalesReturnRequest', {
             ProjectIds: salesIds,
             Reason: value,
         });
@@ -49,16 +51,12 @@ export default {
     createSalesNoteBysalesId(salesId) {
         return ajax.get('/api/Background/SalesReturn/CreateSalesNoteBysalesId?salesId=' + salesId + '');
     },
-    //根据销售Id生成销售出库单PDF
-    getSalesNoteFileBysalesId(salesId) {
-        return ajax.get('/api/Background/SalesReturn/GetSalesNoteFileBysalesId?salesId=' + salesId + '');
-    },
     //销售单完成
     finishSalesById(salesId) {
         return ajax.get('/api/Background/SalesReturn/FinishSalesById?salesId=' + salesId + '');
     },
     //销售单退货
-    salesOrderReturnRequest(salesIds){
+    salesOrderReturnRequest(salesIds) {
         return ajax.post('/api/Background/SalesReturn/SalesOrderReturnRequest', salesIds);
     }
 }

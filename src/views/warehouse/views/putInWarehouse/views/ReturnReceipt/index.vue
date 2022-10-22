@@ -3,9 +3,9 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-folder-add" round @click="openAddDialog()"> 引用退换单 </el-button>
-        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" round @click="CreatePutinWarehousId()">提交</el-button>
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()"> 引用退换单 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
+        <el-button type="success" size="mini" class="el-icon-check" @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
