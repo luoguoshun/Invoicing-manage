@@ -2,13 +2,13 @@
   <div class="goods_container">
     <!-- 操作 -->
     <div class="editbar">
-      <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openDialog('add')">添加</el-button>
-      <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSpu()">删除</el-button>
-    </div>
-    <div class="edit_query">
-      <div class="edit_queryinfo">
-        <el-input v-model="queryForm.SpuId" placeholder="请输入物品编号" size="mini" style="width: 200px; margin-right: 20px"></el-input>
-        <el-input v-model="queryForm.GoodsName" placeholder="请输入物品名称" size="mini" style="width: 200px; margin-right: 20px"></el-input>
+      <div class="editbar_btn">
+        <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openDialog('add')">添加</el-button>
+        <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteSpu()">删除</el-button>
+      </div>
+      <div class="edit_query">
+        <el-input v-model="queryForm.SpuId" placeholder="请输入物品编号" size="mini"></el-input>
+        <el-input v-model="queryForm.GoodsName" placeholder="请输入物品名称" size="mini"></el-input>
         <el-select size="mini" v-model="queryForm.GoodsTypeId" placeholder="请选择" @change="checkType()">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"> </el-option>
         </el-select>
@@ -24,14 +24,14 @@
       <el-table-column prop="spuName" label="物品名称"> </el-table-column>
       <el-table-column prop="typeStr" label="物品类型"></el-table-column>
       <el-table-column prop="brand" label="品牌"> </el-table-column>
+
+      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
+      <el-table-column prop="updateTime" label="修改时间"> </el-table-column>
       <el-table-column label="查看单品详情" align="center">
         <template slot-scope="scope">
           <el-link type="primary" @click="lookSKUList(scope.row.spuId)">查看</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间"> </el-table-column>
-      <el-table-column prop="updateTime" label="修改时间"> </el-table-column>
-
       <!-- 操作 -->
       <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
@@ -39,9 +39,7 @@
         </template>
       </el-table-column>
     </el-table>
-
     <!-- 分页 -->
-
     <div class="block">
       <el-pagination
         @size-change="handleSizeChange"
@@ -55,7 +53,6 @@
       >
       </el-pagination>
     </div>
-
     <!--SPu模态框-->
     <el-dialog
       :title="this.dialogType == 'add' ? '新增SPU' : '修改SPU'"
@@ -284,6 +281,7 @@ export default {
       this.queryForm.GoodsTypeId = 0;
       this.queryForm.WarehouseId = '';
       this.queryForm.SpuId = '';
+      this.getSPUList();
     },
     //查看单品列表
     lookSKUList(spuId) {
@@ -313,16 +311,23 @@ export default {
 
 <style lang="less">
 .goods_container {
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   .editbar {
-    float: left;
+    width: 100%;
     margin: 5px 0px;
-  }
-  .edit_query {
-    .edit_queryinfo {
-      margin: 5px 0px;
-      float: right;
+    padding: 2px 0px;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr;
+    .edit_btn {
+      display: flex;
+      flex-direction: row;
+    }
+    .edit_query {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr 0.3fr 0.3fr;
+      grid-column-gap: 5px;
     }
   }
 }

@@ -69,7 +69,7 @@
       <el-table-column prop="salesReturnId" label="销售退货单编号" width="120" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>销售计划编号: {{ scope.row.salesReturnId }}</p>
+            <p>原销售单号: {{ scope.row.projectId }}</p>
             <div slot="reference" class="name-wrapper">
               <el-tag disable-transitions>{{ scope.row.salesReturnId }}</el-tag>
             </div>
@@ -96,8 +96,8 @@
       <!-- 操作 -->
       <el-table-column width="200px" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesReturnId)" plain>审核详情</el-button>
-          <el-button type="warning" size="mini" @click="showSalesReturnDetailDialog(scope.row)" plain>订单详情</el-button>
+          <el-button type="primary" size="mini" @click="openApprovalDetails(scope.row.salesReturnId)" plain>审核详情</el-button>
+          <el-button type="primary" size="mini" @click="showSalesReturnDetailDialog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -39,6 +39,11 @@
           </el-form>
         </template>
       </el-table-column>
+      <el-table-column label="图片" width="100" align="center">
+        <template slot-scope="scope">
+          <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+        </template>
+      </el-table-column>
       <el-table-column prop="warehouseName" label="仓库" align="center"> </el-table-column>
       <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
       <el-table-column prop="goodsTypeName" label="类型" align="center"> </el-table-column>
@@ -111,6 +116,11 @@
       <el-divider></el-divider>
       <el-table :data="table.warehouseSku" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectSupplierSkuRows" border="">
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column label="图片" width="100" align="center">
+          <template slot-scope="scope">
+            <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="supplierName" label="供应商名称" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>

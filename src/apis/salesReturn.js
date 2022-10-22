@@ -12,6 +12,10 @@ export default {
     getNeedRreviewSalesReturnByUserId(queryForm) {
         return ajax.post('/api/Background/SalesReturn/GetNeedRreviewSalesReturnByUserId', queryForm);
     },
+    //通过销售退货单状态获取退货单
+    getSalesReturnListByState(queryForm) {
+        return ajax.post('/api/Background/SalesReturn/GetSalesReturnListByState', queryForm);
+    },
     //通过销售单Id获取销售单详情
     getSalesReturnDatailByReturnId(salesReturnId) {
         return ajax.get('/api/Background/SalesReturn/GetSalesReturnDatailByReturnId?salesReturnId=' + salesReturnId + '');

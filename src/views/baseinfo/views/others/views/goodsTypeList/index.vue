@@ -12,9 +12,9 @@
         <el-input v-model="queryForm.goodsTypeName" placeholder="请输入物品名称" size="mini"></el-input>
         <el-button type="primary" @click="getgoodsTypeList()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
+        <div></div>
       </div>
     </div>
-
     <!-- 表格 -->
     <el-table :data="table.goodsTypeList" @selection-change="selectRows">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
@@ -158,10 +158,10 @@ export default {
   width: 100%;
   height: 100%;
   .editbar {
-    width: 40%;
+    width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 1fr 8fr;
+    grid-template-columns: 1fr 7fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -169,7 +169,7 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 1fr 0.5fr 0.5fr;
+      grid-template-columns: 1fr 0.5fr 0.5fr 8fr;
       grid-column-gap: 5px;
     }
   }

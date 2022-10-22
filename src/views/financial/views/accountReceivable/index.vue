@@ -17,7 +17,7 @@
           <el-option label="订单销售" :value="3"></el-option>
           <el-option label="售后退换" :value="4"></el-option>
         </el-select>
-        <el-select size="mini" filterable v-model="queryForm.accountObjectType" placeholder="业务对象类型">
+        <el-select size="mini" filterable v-model="queryForm.accountObjectType" placeholder="业务对象">
           <el-option label="供应商" :value="1"></el-option>
           <el-option label="客户" :value="2"></el-option>
         </el-select>
@@ -26,10 +26,8 @@
           <el-option label="已收款" :value="4"></el-option>
         </el-select>
         <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入查询内容"></el-input>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getAccountList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm(1)" size="mini">重置</el-button>
-        </div>
+        <el-button type="primary" @click="getAccountList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm(1)" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -40,7 +38,7 @@
       v-loading="table.loading"
       show-summary
     >
-    <el-table-column type="expand" label="展开查看">
+      <el-table-column type="expand" label="展开查看">
         <template slot-scope="props">
           <el-form label-position="left" class="demo-table-expand">
             <el-form-item label="运输费用">
@@ -820,12 +818,8 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 2fr 1.5fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .dialogSelectInput {

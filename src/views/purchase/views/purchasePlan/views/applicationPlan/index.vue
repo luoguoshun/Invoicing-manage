@@ -139,6 +139,11 @@
         border=""
       >
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column label="图片" width="100" align="center">
+          <template slot-scope="scope">
+            <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
@@ -234,6 +239,7 @@
 
 <script>
 import store from '@/store';
+import { baseUrl } from '@/config/defaultString';
 export default {
   data() {
     return {
@@ -296,6 +302,7 @@ export default {
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
       approvalDetails: {}, //审批详情
+      baseUrl:baseUrl,
     };
   },
   computed: {},
@@ -358,14 +365,8 @@ export default {
     },
     //获取指定供应商指定货品数据
     async getSKUListBySupplierId() {
-      let supplierId = 0;
-      let goodsTypeId = 0;
-      if (this.purchasePlanForm.supplierId != '') {
-        supplierId = parseInt(this.purchasePlanForm.supplierId);
-      }
-      if (this.applicationPlanDiolog.skuQueryForm.goodsTypeId != '') {
-        goodsTypeId = parseInt(this.applicationPlanDiolog.skuQueryForm.goodsTypeId);
-      }
+      let supplierId = this.purchasePlanForm.supplierId == '' ? 0 : parseInt(this.purchasePlanForm.supplierId);
+      let goodsTypeId = this.applicationPlanDiolog.skuQueryForm.goodsTypeId == '' ? 0 : parseInt(this.applicationPlanDiolog.skuQueryForm.goodsTypeId);
       await this.$api.goods
         .GetSKUListBySupplierId(1, 100, goodsTypeId, supplierId, this.applicationPlanDiolog.skuQueryForm.conditions)
         .then((res) => {
@@ -374,7 +375,7 @@ export default {
             console.log(message);
             return;
           }
-          console.log(data);
+          console.log(data.goods);
           this.applicationPlanDiolog.skuTabledata = data.goods;
           this.applicationPlanDiolog.tatol = data.count;
         });

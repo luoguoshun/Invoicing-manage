@@ -8,18 +8,12 @@
         <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getPurchasePlanList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-select size="mini" v-model="queryForm.warehouseId">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
+        <el-button type="primary" @click="getPurchasePlanList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -751,27 +745,16 @@ export default {
     margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: 2fr 1.5fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      .upload {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr 1fr;
+      grid-template-columns: 2fr 2fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-        div {
-          width: 100%;
-          color: rgb(0, 153, 255);
-        }
-      }
     }
   }
   .editform {
