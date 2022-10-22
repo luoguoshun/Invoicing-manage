@@ -2,13 +2,13 @@
   <div class="goods_container">
     <!-- 操作 -->
     <div class="editbar">
-      <el-button type="primary" size="mini" @click="openDialog('add')">添加</el-button>
-      <el-button type="danger" size="mini" @click="deleteSKUListById()">删除</el-button>
-    </div>
-    <div class="edit_query">
-      <div class="edit_queryinfo">
-        <el-input v-model="queryForm.SpuId" placeholder="请输入物品编号" size="mini" style="width: 200px; margin-right: 20px"></el-input>
-        <el-input v-model="queryForm.GoodsName" placeholder="请输入物品名称" size="mini" style="width: 200px; margin-right: 20px"></el-input>
+      <div class="edit_btn">
+        <el-button type="primary" size="mini" @click="openDialog('add')">添加</el-button>
+        <el-button type="danger" size="mini" @click="deleteSKUListById()">删除</el-button>
+      </div>
+      <div class="edit_query">
+        <el-input v-model="queryForm.SkuId" placeholder="请输入物品编号" size="mini"></el-input>
+        <el-input v-model="queryForm.GoodsName" placeholder="请输入物品名称" size="mini"></el-input>
         <el-select size="mini" v-model="queryForm.GoodsTypeId" placeholder="请选择" @change="checkType()">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"> </el-option>
         </el-select>
@@ -16,9 +16,7 @@
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
-
     <!-- 表格 -->
-    <!-- 当el-table元素中注入data对象数组后，在el-table-column中用prop属性来对应对象中的键名即可填入数据 -->
     <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="图片" width="100" align="center">
@@ -41,7 +39,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <!-- 分页 -->
     <div class="block">
       <el-pagination
@@ -215,8 +212,8 @@ export default {
         this.SkuForm.Unit = row.unit;
         this.SkuForm.Specs = row.specs;
         this.SkuForm.GoodsTypeId = row.type;
-        this.SkuForm.Price=row.price;
-        this.SkuForm.LogoSrc=row.skuLogoUrl;
+        this.SkuForm.Price = row.price;
+        this.SkuForm.LogoSrc = row.skuLogoUrl;
         this.dianlogButton.label = '修改';
       }
       this.dialogObject.dialogVisible = true;
@@ -334,7 +331,7 @@ export default {
         });
       }
     },
-  }, 
+  },
   created() {
     this.SkuForm.SpuId = this.$route.query.spuId;
     this.queryForm.SpuId = this.$route.query.spuId;
@@ -348,12 +345,20 @@ export default {
   width: auto;
   height: auto;
   .editbar {
-    float: left;
-  }
-  .edit_query {
-    .edit_queryinfo {
-      float: right;
-      margin: 5px 0px;
+    width: 100%;
+    margin: 5px 0px;
+    padding: 2px 0px;
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    .edit_btn {
+      display: flex;
+      flex-direction: row;
+    }
+    .edit_query {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr 0.3fr 0.3fr;
+      grid-column-gap: 5px;
     }
   }
 }

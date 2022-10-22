@@ -453,7 +453,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 1fr 2fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -462,7 +462,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr 0.3fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
     }
   }

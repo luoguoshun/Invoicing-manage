@@ -8,29 +8,19 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()"> 取消 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.ExwarehouseState" placeholder="订单状态">
-            <el-option label="待编辑" value="2"></el-option>
-            <el-option label="已完成" value="3"></el-option>
-            <el-option label="已取消" value="4"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="getExWarehouseOrderList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.ExwarehouseState" placeholder="订单状态">
+          <el-option label="待编辑" value="2"></el-option>
+          <el-option label="已完成" value="3"></el-option>
+          <el-option label="已取消" value="4"></el-option>
+        </el-select>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.approvalName" size="mini" label-width="80px" placeholder="请输入开单人"></el-input>
+        <el-button type="primary" @click="getExWarehouseOrderList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -151,17 +141,7 @@ export default {
         publicationDates: [],
         warehouseId: '',
         ExwarehouseId: '',
-        ExwarehouseState: 0,
-      },
-      //新建采购订单表
-      purchasPlanForm: {
-        warehouseId: '',
-        supplierId: '',
-        supplierName: '',
-        applicantId: '', //申请人
-        applicanName: '',
-        remarks: '',
-        applicanSKUIds: [],
+        ExwarehouseState: '',
       },
       table: {
         purchaseOrderList: [],
@@ -194,15 +174,9 @@ export default {
     //获取提交采购订单列表
     async getExWarehouseOrderList() {
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      if (queryForm.orderState == '') {
-        queryForm.orderState = '0';
-      }
-      if (queryForm.supplierId == '') {
-        queryForm.supplierId = '0';
-      }
-      queryForm.orderState = parseInt(queryForm.orderState);
-      queryForm.supplierId = parseInt(queryForm.supplierId);
-      console.log(queryForm);
+      queryForm.orderState = queryForm.orderState == '' ? 0 : parseInt(queryForm.orderState);
+      queryForm.supplierId = queryForm.supplierId == '' ? 0 : parseInt(queryForm.supplierId);
+      queryForm.ExwarehouseState = queryForm.ExwarehouseState == '' ? 0 : parseInt(queryForm.ExwarehouseState);
       await this.$api.exwarehouse.getExWareHouseOrder(queryForm).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
@@ -295,7 +269,7 @@ export default {
       this.introducePlanDiolog.planQueryForm.approvalName = '';
       this.getPassPurchasePlanList();
     },
-        //更新采购计划项目
+    //更新采购计划项目
     updatePurchaseDetails() {
       this.planDetailDiolog.detailPlanItems.forEach((item) => {
         this.updateExdetFrom.exwarehouseDeteilIds.push(item.exwarehouseDeteilId);
@@ -411,7 +385,7 @@ export default {
         return 'success';
       } else if (row.exwarehouseStateStr == '待编辑') {
         return 'warning';
-      } else if(row.exwarehouseStateStr=='已取消'){
+      } else if (row.exwarehouseStateStr == '已取消') {
         return 'info';
       }
     },
@@ -441,12 +415,8 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 2fr 2fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .dialogSelectInput {

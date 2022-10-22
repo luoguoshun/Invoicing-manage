@@ -146,7 +146,7 @@
         </el-select>
         <el-input v-model="introducePlanDiolog.planQueryForm.approvalName" size="mini" label-width="80px" placeholder="请输入申请人"></el-input>
         <el-button type="primary" @click="getPassPurchasePlanList()" size="mini">查找</el-button>
-        <el-button type="primary" @click="resetDialogQueryForm()" size="mini">重置</el-button>
+        <el-button type="primary" @click="resetPlanQueryForm()" size="mini">重置</el-button>
       </div>
       <el-divider></el-divider>
       <el-table
@@ -190,7 +190,7 @@
       </div>
     </el-dialog>
     <!-- 采购开单申请对话框 -->
-    <el-dialog title="采购开单" center :visible.sync="appOrderDialog.visible" :close-on-click-modal="false" :fullscreen="true">
+    <el-dialog id="appOrderDialog" title="采购开单" center :visible.sync="appOrderDialog.visible" :close-on-click-modal="false" :fullscreen="true">
       <el-steps :active="1" style="width:50%;margin:0px auto;">
         <el-step title="步骤 1" description="提交采购单"></el-step>
         <el-step title="步骤 2" description="审核采购单"></el-step>
@@ -239,6 +239,11 @@
       </div>
       <el-table :data="appOrderDialog.skuTabledata" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectSKURows" border="">
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column label="图片" width="100" align="center">
+          <template slot-scope="scope">
+            <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
@@ -411,13 +416,9 @@ export default {
     },
     //获取通过
     async getPassPurchasePlanList() {
-      let planQueryForm = this.introducePlanDiolog.planQueryForm;
-      if (planQueryForm.supplierId == '') {
-        planQueryForm.supplierId = 0;
-      } else {
-        planQueryForm.planQueryForm = parseInt(planQueryForm.supplierId);
-      }
-      console.log(planQueryForm);
+      let planQueryForm = JSON.parse(JSON.stringify(this.introducePlanDiolog.planQueryForm));
+      planQueryForm.goodsTypeId = planQueryForm.goodsTypeId == '' ? 0 : parseInt(planQueryForm.goodsTypeId);
+      planQueryForm.supplierId = planQueryForm.supplierId == '' ? 0 : parseInt(planQueryForm.supplierId);
       await this.$api.purchase.getPassPurchasePlanList(planQueryForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -452,6 +453,9 @@ export default {
       if (this.appOrderDialog.skuQueryForm.goodsTypeId != '') {
         goodsTypeId = parseInt(this.appOrderDialog.skuQueryForm.goodsTypeId);
       }
+      // let skuQueryForm=JSON.parse(JSON.stringify(this.appOrderDialog.skuQueryForm));
+      // skuQueryForm.goodsTypeId=skuQueryForm.goodsTypeId==''?0:parseInt(skuQueryForm.goodsTypeId);
+      // skuQueryForm.supplierId=skuQueryForm.supplierId==''?0:parseInt(skuQueryForm.supplierId);
       await this.$api.goods.GetSKUListBySupplierId(1, 100, goodsTypeId, supplierId, this.appOrderDialog.skuQueryForm.conditions).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -494,7 +498,7 @@ export default {
       this.queryForm.publicationDates = [];
       this.loadData();
     },
-    resetDialogQueryForm() {
+    resetPlanQueryForm() {
       this.introducePlanDiolog.planQueryForm.supplierId = '';
       this.introducePlanDiolog.planQueryForm.warehouseId = '';
       this.introducePlanDiolog.planQueryForm.approvalName = '';
@@ -538,7 +542,7 @@ export default {
     //重置申请采购计划模态框搜索条件
     resetDialogQueryForm() {
       this.appOrderDialog.skuQueryForm.conditions = '';
-      this.appOrderDialog.skuQueryForm.goodsTypeId = 0;
+      this.appOrderDialog.skuQueryForm.goodsTypeId = '';
       this.getSKUListBySupplierId();
     },
     //对话框表格条数改变
@@ -793,7 +797,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr  0.3fr 0.3fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr 0.3fr 0.3fr;
       grid-column-gap: 5px;
     }
   }
@@ -807,15 +811,17 @@ export default {
     grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
-  .editform {
-    width: 40%;
-    overflow: hidden;
-  }
-  .appOrderSelectInput {
-    margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.3fr 0.3fr;
-    grid-column-gap: 3px;
+  #appOrderDialog {
+    .editform {
+      width: 40%;
+      overflow: hidden;
+    }
+    .appOrderSelectInput {
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 4fr 1fr 1fr 0.3fr 0.3fr;
+      grid-column-gap: 3px;
+    }
   }
 }
 </style>

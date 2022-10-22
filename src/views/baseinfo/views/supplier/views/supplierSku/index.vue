@@ -18,6 +18,11 @@
     <!-- 表格 -->
     <el-table :data="table.supplierList" :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border ref="supplierSkuTable">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
+      <el-table-column label="图片" width="100" align="center">
+        <template slot-scope="scope">
+          <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+        </template>
+      </el-table-column>
       <el-table-column prop="spuId" label="物品编码" align="center"> </el-table-column>
       <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
       <el-table-column prop="spuName" label="物品名称" align="center"> </el-table-column>

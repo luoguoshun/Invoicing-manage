@@ -8,22 +8,14 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesOrderRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-          </el-date-picker>
-        </div>
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
-            <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker>
+        <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
+          <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        <el-button type="primary" @click="selectSalesList()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -81,13 +73,13 @@
       <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
       <el-table-column prop="createTime" label=" 顾客信息" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
+          <el-button type="warning" size="mini" @click="showClientInfo(scope.row)">查看</el-button>
         </template>
       </el-table-column>
       <!-- 操作 -->
       <el-table-column label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
+          <el-button type="warning" size="mini" @click="showsalesDetailDiolog(scope.row)">订单详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -301,6 +293,11 @@
         border=""
       >
         <el-table-column type="selection" width="50" align="center"> </el-table-column>
+        <el-table-column label="图片" width="100" align="center">
+          <template slot-scope="scope">
+            <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="brand" label="品牌" align="center"> </el-table-column>
@@ -706,7 +703,7 @@ export default {
       }
       let salesDetailTotalPrice = 0; //销售单总价
       let salesDetailProfit = 0; //销售单利润
-      let salesDetailgoodsCount = 0;//物品总数
+      let salesDetailgoodsCount = 0; //物品总数
       //1.获取当前行的数据进行赋值
       this.salesOrderForm.salesDetails.forEach((item, i) => {
         if (index == i) {
@@ -867,7 +864,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 1fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -876,7 +873,7 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
       .edit_query_1:last-child {
         display: grid;
@@ -898,13 +895,6 @@ export default {
     }
   }
   #applicationSalesDiolog {
-    .add_1 {
-      > div {
-        display: grid;
-        grid-template-columns: 3fr 10fr;
-        border: 1px solid red;
-      }
-    }
     .dialogSelectInput {
       display: grid;
       grid-template-columns: 4fr 1fr 1fr 0.3fr 0.3fr;
