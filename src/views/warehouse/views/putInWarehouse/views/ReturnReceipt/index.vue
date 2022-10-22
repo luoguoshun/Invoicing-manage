@@ -5,24 +5,47 @@
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-folder-add" @click="openAddDialog()"> 引用退换单 </el-button>
         <el-button type="warning" size="mini" class="el-icon-edit">返回编辑</el-button>
-        <el-button type="success" size="mini" class="el-icon-check" @click="CreatePutinWarehousId()">提交</el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
 
     <!-- 表格 -->
-    <el-table :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="" ref="supplierSkuTable">
+    <el-table :header-cell-style="{ 'text-align': 'center' }" @selection-change="selectRows" border="" ref="test" :data="table.salesReturnList">
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column label="退换单号" align="center"> </el-table-column>
-      <el-table-column label="来源单号" align="center"> </el-table-column>
-      <el-table-column label="物品编码" align="center"> </el-table-column>
-      <el-table-column label="物品名称" align="center"> </el-table-column>
-      <el-table-column label="物品采购价" align="center" width="120px">
+      <el-table-column label="销售退款单号" align="center" prop="salesReturnId">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.purchasePrice" placeholder="" align="center" />
+          <el-popover trigger="hover" placement="top">
+            <p>销售退库单号: {{ scope.row.salesReturnId }}</p>
+            <div slot="reference" class="name-wrapper">
+              <el-tag disable-transitions>{{ scope.row.salesReturnId }}</el-tag>
+            </div>
+          </el-popover>
         </template>
       </el-table-column>
-      <el-table-column prop="typeStr" label="物品分类" align="center"> </el-table-column>
-      <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
+      <!-- <el-table-column label="销售退货单号" align="center" prop="salesReturnId" v-if="false"> </el-table-column> -->
+      <el-table-column label="状态" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesReturnStateStr }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="销售退货单总价" align="center" width="120px">
+        <template slot-scope="scope">
+          {{ scope.row.returnTotalPrice }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
+      <el-table-column label="订单总价" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.returnTotalPrice + scope.row.otherPrice + scope.row.transportPrice }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="goodsTotalCount" label="采购总数" align="center"> </el-table-column>
+      <el-table-column label="备注" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.remarks || '无' }}
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
@@ -33,66 +56,50 @@
           {{ $timeFormat.leaveTime(scope.row.updateTime) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <!-- 操作 -->
+      <el-table-column fixed="right" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="success" icon="el-icon-check" circle @click="editSupplierSkuGoodsPrice(scope.row)"></el-button>
+          <el-button type="text" size="small" @click="showplanDetailDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 引用采购单 -->
-    <el-dialog title="采购单据信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="70%">
-      <!-- 搜索条件 -->
-      <el-row :gutter="20">
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入采购单号 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入供应商名称 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请输入物品编码 </span>
-            <el-input v-model="input" placeholder="请输入内容"></el-input></div
-        ></el-col>
-        <el-col :span="6"
-          ><div class="grid-content bg-purple">
-            <span>请选择收货仓库 </span>
-            <div class="edit_query_1">
-              <el-select size="mini" placeholder="请选择类别">
-                <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
-              </el-select>
-            </div></div
-        ></el-col>
-      </el-row>
-      <div class="edit_query_1">
-        <el-button type="primary" @click="GetSKUListBySupplierId()" size="mini">查找</el-button>
-        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-      </div>
+    <!-- 操作表格 -->
+    <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
-      <!-- 采购单表格 -->
-      <el-table :header-cell-style="{ 'text-align': 'center' }" border="">
-        <el-table-column type="selection" width="50" align="center"> </el-table-column>
-        <el-table-column label="采购单号" align="center"> </el-table-column>
-        <el-table-column label="供应商" align="center"> </el-table-column>
-        <el-table-column label="采购状态" align="center"> </el-table-column>
-        <el-table-column label="收货仓库" align="center"> </el-table-column>
-        <el-table-column label="采购员" align="center"> </el-table-column>
-        <el-table-column label="其他费用" align="center"> </el-table-column>
-        <el-table-column label="货品价格" align="center"> </el-table-column>
-        <el-table-column label="总价" align="center"> </el-table-column>
-        <el-table-column label="审批时间" align="center"> </el-table-column>
+      <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
+<el-table :data="salesReturnDetailDialog.salesReturnDetails" :header-cell-style="{ 'text-align': 'center' }" border>
+        <el-table-column prop="salesReturnDetailId" label="退货明细编号" align="center">
+          <template slot-scope="scope">
+            <el-tag disable-transitions>{{ scope.row.salesReturnDetailId }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+        <el-table-column prop="costPrice" label="供应商进价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.costPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="salesPrice" label="单品售价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="goodsCount" label="销售数量" align="center"> </el-table-column>
+        <el-table-column prop="totalPrice" label="总价" align="center">
+          <template slot-scope="scope">
+            <el-tag type="success">{{ scope.row.totalPrice }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remarks" label="备注" align="center"></el-table-column>
+        <el-table-column prop="createTime" label="添加时间" align="center">
+          <template slot-scope="scope">
+            {{ $timeFormat.leaveTime(scope.row.createTime) }}
+          </template>
+        </el-table-column>
       </el-table>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="GoodsAddtoSupplier()">确 定</el-button>
-      </div>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 
@@ -101,41 +108,78 @@ export default {
   name: 'InvoicingManageIndex',
   data() {
     return {
+      queryForm: {
+        page: 1,
+        row: 10,
+        publicationDates: [],
+        warehouseId: '', //出货仓库
+        conditions: '', //综合条件
+        salesReturnState: 3, //销售单状态
+      },
+      table: {
+        salesReturnList: [],
+        total: 0,
+        loading: true,
+      },
       dialogObject: {
         addVisible: false,
+      },
+      PurchaseDetailDiolog: {
+        editPurchaseId: '',
+        show: false,
+        detailPlanItems: [],
+      },
+      //新建采购计划对话框
+      PurchaseDetDiolog: {
+        Visible: false,
+        skuQueryForm: {
+          page: 1,
+          row: 10,
+          conditions: '',
+          goodsTypeId: '',
+        },
+        purchaseOrderListDetail: [],
+        tatol: 0,
+      },
+      salesReturnDetailDialog: {
+        editSalesId: '',
+        show: false,
+        salesReturnDetails: [],
       },
       SourceOrderIds: [],
     };
   },
   methods: {
     loadData() {
-      this.getPurchaseOrder();
+      this.getSalesReturnList();
     },
-
+    getElTagClass(row) {
+      console.log(row);
+      if (row.orderStateStr == '已审核') {
+        return 'success';
+      } else if (row.orderStateStr == '审核中') {
+        return 'warning';
+      } else {
+        return '';
+      }
+    },
     //打开添加弹窗
     openAddDialog() {
       this.dialogObject.addVisible = true;
     },
-    //获取引用采购单数据
-    async getPurchaseOrder() {
+    //获取提交销售订单列表
+    async getSalesReturnList() {
+      this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
-      if (queryForm.orderState == '') {
-        queryForm.orderState = '0';
-      }
-      if (queryForm.supplierId == '') {
-        queryForm.supplierId = '0';
-      }
-      queryForm.orderState = parseInt(queryForm.orderState);
-      queryForm.supplierId = parseInt(queryForm.supplierId);
-      //console.log(queryForm);
-      await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
+      queryForm.salesReturnState = queryForm.salesReturnState == '' ? 0 : parseInt(queryForm.salesReturnState);
+      await this.$api.salesReturn.getSalesReturnList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
           console.log(message);
           return;
         }
-        this.table.purchaseOrderList = data.purchaseOrders;
+        this.table.salesReturnList = data.salesReturns;
         this.table.total = data.count;
         this.table.loading = false;
       });
@@ -153,34 +197,11 @@ export default {
       });
     },
 
-    async CreatePutinWarehousId() {
-      if (this.SourceOrderIds.length == 0) {
-        this.$message({
-          message: '请选择提交的采购入库单',
-          type: 'warning',
-        });
-      } else {
-        const form = {
-          SourceOrderIds: this.SourceOrderIds,
-          PutInWarehouseType: 1,
-        };
-        await this.$api.Putinwarehous.CreatePutinWarehousId(form).then((res) => {
-          const { success, message } = res.data;
-          if (!success) {
-            console.log(message);
-            this.$message.error('提交失败！');
-          } else {
-            this.$message({ message: '提交成功！', type: 'success' });
-            this.loadData();
-          }
-        });
-      }
-    },
-
     selectRows(selection) {
+      console.log(selection);
       this.SourceOrderIds = [];
       selection.forEach((element) => {
-        this.SourceOrderIds.push(element.purchaseOrderId);
+        this.SourceOrderIds.push(element.salesReturnId);
         //this.purchaseIds.push(element.purchaseId);
       });
     },
@@ -188,7 +209,7 @@ export default {
       this.SourceOrderIds;
       const form = {
         SourceOrderIds: this.SourceOrderIds,
-        PutInWarehouseType: 1,
+        PutInWarehouseType: 3,
       };
       await this.$api.Putinwarehous.CreatePutinWarehousId(form).then((res) => {
         const { success, message } = res.data;
@@ -201,10 +222,29 @@ export default {
         }
       });
     },
-
-    created() {
-      this.loadData();
+    //获取销售退货单详细项目列表
+    async getSalesReturnDatailByReturnId(salesReturnId) {
+      console.log(salesReturnId);
+      await this.$api.salesReturn.getSalesReturnDatailByReturnId(salesReturnId).then((res) => {
+        const { data, success, message } = res.data;
+        console.log(data);
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.salesReturnDetailDialog.salesReturnDetails = data;
+      });
     },
+    //显示采购单子项目
+    showplanDetailDiolog(row) {
+      console.log(row);
+      this.PurchaseDetailDiolog.editPurchaseId = row.salesReturnId;
+      this.getSalesReturnDatailByReturnId(row.salesReturnId);
+      this.PurchaseDetailDiolog.show = true;
+    },
+  },
+  created() {
+    this.loadData();
   },
   // },
 };
