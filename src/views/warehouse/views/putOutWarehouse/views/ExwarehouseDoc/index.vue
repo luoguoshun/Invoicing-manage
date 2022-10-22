@@ -57,6 +57,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="exwarehouseTypeStr" label="类别" align="center"> </el-table-column>
+      <el-table-column prop="sourceOrderId" label="来源单号" align="center"> </el-table-column>
       <el-table-column prop="operationPersonId" label="开单人" align="center"></el-table-column>
       <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column>
       <el-table-column prop="exwarehouseCout" label="出库总数" align="center"></el-table-column>

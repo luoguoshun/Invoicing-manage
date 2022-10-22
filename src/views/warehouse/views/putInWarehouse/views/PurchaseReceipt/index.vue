@@ -192,7 +192,11 @@ export default {
           type: 'warning',
         });
       } else {
-        await this.$api.Putinwarehous.CreatePutinWarehousId(this.SourceOrderIds).then((res) => {
+      const form={
+        SourceOrderIds:this.SourceOrderIds,
+        PutInWarehouseType:1,
+      }
+        await this.$api.Putinwarehous.CreatePutinWarehousId(form).then((res) => {
           const { success, message } = res.data;
           if (!success) {
             console.log(message);

@@ -28,11 +28,11 @@ export default {
         })
     },
     //生成入库单和入库详情
-    CreatePutinWarehousId(sourceOrderIds,putInWarehouseType) {
-        return ajax.post('/api/Background/Putinwarehous/CreatePutinWarehousId', sourceOrderIds,putInWarehouseType)
-        // {
-            
-        // })
+    CreatePutinWarehousId(from) {
+        console.log(from);
+        return ajax.post('/api/Background/Putinwarehous/CreatePutinWarehousId', {
+            ...from
+        })
     },
 
     //删除入库单
