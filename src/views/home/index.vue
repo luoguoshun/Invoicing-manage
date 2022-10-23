@@ -150,7 +150,7 @@ export default {
         }
       });
     },
-    //处理时间
+    //处理事件
     processEvent(messageParameter) {
       if (messageParameter['targetRouterName']) {
         this.$router.push({

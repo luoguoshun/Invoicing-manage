@@ -4,7 +4,7 @@
     <div class="editbar">
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-edit" @click="openapplicationSalesDiolog()"> 新建申请 </el-button>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesOrderRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">

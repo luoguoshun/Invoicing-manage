@@ -3,8 +3,8 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptOrderRequest()"> 提交 </el-button>
-        <el-button type="info" size="mini" class="el-icon-check" @click="adoptOrderRequest()"> 编辑 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-check" @click="adoptOrderRequest()"> 提交 </el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="adoptOrderRequest()"> 编辑 </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()"> 取消 </el-button>
       </div>
       <div class="edit_query">

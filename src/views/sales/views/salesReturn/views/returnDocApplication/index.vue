@@ -10,7 +10,7 @@
             <el-dropdown-item> 新建申请 </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelSalesReturnRequest()"> 撤销 </el-button>
       </div>
       <div class="edit_query">
