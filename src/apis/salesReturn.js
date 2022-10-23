@@ -22,7 +22,7 @@ export default {
     },
     //引入销售单
     importSalesOrder(salesOrderIds, userId, name) {
-        return ajax.post('/api/Background/SalesReturn/importSalesOrder', {
+        return ajax.post('/api/Background/SalesReturn/ImportSalesOrderList', {
             SalesOrderIds: salesOrderIds,
             OperationId: userId,
             OperationName: name,

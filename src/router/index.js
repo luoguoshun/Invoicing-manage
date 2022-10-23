@@ -14,7 +14,7 @@ VueRouter.prototype.push = function push(to) {
 };
 const auth = true;
 const routes = [{
-    path: '/login',
+    path: '/',
     name: 'login',
     component: () => import(`@/views/login/index`),
   },
@@ -24,7 +24,7 @@ const routes = [{
     component: () => import("@/views/errors/404"),
   },
   {
-    path: '/',
+    path: '/index',
     name: 'index',
     component: () => import(`@/page/layout/index`),
     meta: {

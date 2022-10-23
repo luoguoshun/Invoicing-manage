@@ -16,7 +16,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <el-table :data="table.skuList" @selection-change="selectWarehouseSkuRows" show-summary highlight-current-row border>
+    <el-table :data="table.skuList" @selection-change="selectWarehouseSkuRows" highlight-current-row border>
       <el-table-column type="selection" width="45" align="center"> </el-table-column>
       <el-table-column type="expand">
         <template slot-scope="props">
@@ -91,6 +91,19 @@
       >
       </el-pagination>
     </div>
+    <el-descriptions size="small" :column="4" border>
+      <el-descriptions-item label="仓库名">
+        <el-tag type="warning">{{ calculateWarehouseItems.warehouseName }}</el-tag>
+      </el-descriptions-item>
+      <el-descriptions-item label="物品总数量">
+        <el-tag type="warning">
+          {{ calculateWarehouseItems.goodsCount }}
+        </el-tag>
+      </el-descriptions-item>
+      <el-descriptions-item label="仓库总成本">
+        <el-tag type="warning">{{ calculateWarehouseItems.totalCost }} </el-tag>
+      </el-descriptions-item>
+    </el-descriptions>
     <!-- 添加供应商货品对话框 -->
     <el-dialog title="添加供应商货品信息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="50%">
       <div class="selectInput">
@@ -166,6 +179,7 @@ export default {
       warehouseSkuIds: [],
       goodsTypes: [],
       supplierList: [],
+      calculateWarehouseItems: {},
     };
   },
   methods: {
@@ -230,6 +244,17 @@ export default {
         data.forEach((item) => {
           this.supplierList.push({ supplierId: item.supplierId, supplierName: item.supplierName });
         });
+      });
+    },
+    // 计算仓库的总成本、物资总和
+    async calculateWarehouseItemsById() {
+      await this.$api.warehouse.calculateWarehouseItems(this.$route.query.warehouseId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.calculateWarehouseItems = data;
       });
     },
     selectWarehouseSkuRows(selection) {
@@ -343,6 +368,7 @@ export default {
     this.loadData();
     this.getGoodInfoType();
     this.getSupplierList();
+    this.calculateWarehouseItemsById();
   },
 };
 </script>
