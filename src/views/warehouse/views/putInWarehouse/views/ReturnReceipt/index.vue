@@ -215,7 +215,7 @@ export default {
             message: '只能提交已审核的出库单！',
             type: 'warning',
           });
-          this.OrderState = [];
+          this.OrderStates = [];
           return false;
         }
       }
