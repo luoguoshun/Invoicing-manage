@@ -3,7 +3,6 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="warning" size="mini" class="el-icon-edit" round>返回编辑</el-button>
         <el-button type="primary" size="mini" class="el-icon-check" round @click="CreatePutinWarehousId()">提交</el-button>
       </div>
     </div>
