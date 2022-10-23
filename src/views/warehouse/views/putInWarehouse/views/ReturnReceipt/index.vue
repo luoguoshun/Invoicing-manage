@@ -208,18 +208,17 @@ export default {
       });
     },
     async CreatePutinWarehousId() {
-      console.log(this.OrderStates);
-      for (let i = 0; i < this.OrderStates.length; i++) {
-        if (this.OrderStates[i] != '已审核') {
-          this.$message({
-            message: '只能提交已审核的出库单！',
-            type: 'warning',
-          });
-          this.OrderStates = [];
-          return false;
-        }
-      }
-      //this.SourceOrderIds;
+      // console.log(this.OrderStates);
+      // for (let i = 0; i < this.OrderStates.length; i++) {
+      //   if (this.OrderStates[i] != '已审核') {
+      //     this.$message({
+      //       message: '只能提交已审核的出库单！',
+      //       type: 'warning',
+      //     });
+      //     this.OrderStates = [];
+      //     return false;
+      //   }
+      // }
       const form = {
         SourceOrderIds: this.SourceOrderIds,
         PutInWarehouseType: 3,
