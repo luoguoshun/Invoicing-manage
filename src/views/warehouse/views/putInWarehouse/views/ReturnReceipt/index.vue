@@ -174,7 +174,7 @@ export default {
       this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.salesReturnState = queryForm.salesReturnState == '' ? 0 : parseInt(queryForm.salesReturnState);
-      await this.$api.salesReturn.getSalesReturnList(queryForm).then((res) => {
+      await this.$api.salesReturn.getSalesReturnListByState({Row:100,Page:1,SalesReturnState:3}).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
@@ -221,7 +221,7 @@ export default {
           return false;
         }
       }
-      this.SourceOrderIds;
+      //this.SourceOrderIds;
       const form = {
         SourceOrderIds: this.SourceOrderIds,
         PutInWarehouseType: 3,
