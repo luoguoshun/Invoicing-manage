@@ -208,11 +208,11 @@ export default {
       });
     },
     async CreatePutinWarehousId() {
-      console.log(this.SourceOrderIds);
-      for (let i = 0; i < this.SourceOrderIds.length; i++) {
-        if (this.OrderState[i] != '审核中') {
+      console.log(this.OrderStates);
+      for (let i = 0; i < this.OrderStates.length; i++) {
+        if (this.OrderStates[i] != '已审核') {
           this.$message({
-            message: '只能提交审核中的出库单！',
+            message: '只能提交已审核的出库单！',
             type: 'warning',
           });
           this.OrderState = [];
