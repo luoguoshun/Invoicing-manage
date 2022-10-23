@@ -114,9 +114,9 @@
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
           <el-button type="primary" size="mini" @click="showSalesDetailDiolog(scope.row)" plain>订单详情</el-button>
-          <el-button v-show="scope.row.salesStateStr == '已出库'" type="success" size="mini" @click="finishSales(scope.row.salesId)" plain>
+          <!-- <el-button v-show="scope.row.salesStateStr == '已出库'" type="success" size="mini" @click="finishSales(scope.row.salesId)" plain>
             完成
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
