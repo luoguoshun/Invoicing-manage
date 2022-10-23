@@ -5,7 +5,7 @@
       <div class="edit_btn">
         <el-button type="primary" size="mini" class="el-icon-edit" @click="openApplicationPlanDiolog()"> 新建申请 </el-button>
         <el-button type="primary" size="mini" @click="OpenSalesDiolog()">引入销售单</el-button>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
+        <el-button type="warning" size="mini" class="el-icon-check" @click="submitApplications()"> 提交 </el-button>
       </div>
       <div class="edit_query">
         <el-select size="mini" v-model="queryForm.warehouseId">

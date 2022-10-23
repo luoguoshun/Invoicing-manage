@@ -10,7 +10,7 @@
             <el-dropdown-item @click.native="openAppOrderDialog()">自主开单</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitPurchaseOrder()">
+        <el-button type="warning" size="mini" class="el-icon-check" @click="submitPurchaseOrder()">
           提交
         </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelOrderRequest()">

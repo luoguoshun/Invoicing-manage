@@ -6,7 +6,7 @@
         <el-button type="primary" size="mini" class="el-icon-edit" @click="openApplicationPlanDiolog()">
           新建申请
         </el-button>
-        <el-button type="primary" size="mini" class="el-icon-check" @click="submitApplications()">
+        <el-button type="warning" size="mini" class="el-icon-check" @click="submitApplications()">
           提交
         </el-button>
         <el-button type="danger" size="mini" class="el-icon-delete" @click="cancelPurchaseRequest()">

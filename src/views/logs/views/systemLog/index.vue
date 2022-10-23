@@ -6,9 +6,9 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteLogs()">
           移除
         </el-button>
-        <el-button type="primary" size="mini" @click="exportLog()">
+        <!-- <el-button type="warning" size="mini" @click="exportLog()">
           导出数据
-        </el-button>
+        </el-button> -->
       </div>
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
