@@ -13,7 +13,7 @@
       <el-table-column label="销售退款单号" align="center" prop="salesReturnId">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>销售退库单号: {{ scope.row.salesReturnId }}</p>
+            <p>来源销售单号: {{ scope.row.projectId }}</p>
             <div slot="reference" class="name-wrapper">
               <el-tag disable-transitions>{{ scope.row.salesReturnId }}</el-tag>
             </div>
