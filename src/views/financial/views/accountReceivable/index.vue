@@ -37,8 +37,9 @@
       @row-dbclick="showSalesDetailDiolog()"
       v-loading="table.loading"
       show-summary
+      border
     >
-      <el-table-column type="expand" label="展开查看">
+      <el-table-column type="expand" label="详情" width="50px">
         <template slot-scope="props">
           <el-form label-position="left" class="demo-table-expand">
             <el-form-item label="运输费用">

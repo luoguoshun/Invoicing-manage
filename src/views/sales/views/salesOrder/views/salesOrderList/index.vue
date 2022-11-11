@@ -20,14 +20,20 @@
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
-        <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
+        <!-- <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
           <el-option label="审核中" value="2"></el-option>
-          <el-option label="已审核" value="4"></el-option>
-          <el-option label="待收货" value="5"></el-option>
-          <el-option label="待结算" value="6"></el-option>
-          <el-option label="结算中" value="7"></el-option>
-          <el-option label="已完成" value="8"></el-option>
-          <el-option label="已取消" value="9"></el-option>
+          <el-option label="待出库" value="4"></el-option>
+          <el-option label="已出库" value="5"></el-option>
+          <el-option label="待发货" value="6"></el-option>
+          <el-option label="已发货" value="7"></el-option>
+          <el-option label="待结算" value="8"></el-option>
+          <el-option label="结算中" value="9"></el-option>
+          <el-option label="已完成" value="10"></el-option>
+          <el-option label="退货处理" value="11"></el-option>
+          <el-option label="退货完成" value="11"></el-option>
+        </el-select> -->
+        <el-select size="mini" v-model="queryForm.salesState" placeholder="订单状态" v-show="IsToBeList == false">
+          <el-option v-for="item in salesStateList" :key="item.status" :value="item.status" :label="item.name"></el-option>
         </el-select>
         <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
@@ -46,9 +52,10 @@
       show-summary
       highlight-current-row
       style="width: 100%"
+      border
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
-      <el-table-column type="expand" label="展开查看">
+      <el-table-column type="expand" label="详情" width="50">
         <template slot-scope="props">
           <el-form label-position="left" class="demo-table-expand">
             <el-form-item label="运输费用">
@@ -98,6 +105,7 @@
       </el-table-column>
       <el-table-column prop="createTime" label="销售单据" align="center">
         <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成 </el-button>
           <el-button
             v-if="scope.row.salesNoteSrc == '' || scope.row.salesNoteSrc == null"
             type="primary"
@@ -110,7 +118,7 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="300" align="center">
+      <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
           <el-button type="primary" size="mini" @click="showSalesDetailDiolog(scope.row)" plain>订单详情</el-button>
@@ -254,6 +262,7 @@ let docx = require('docx-preview');
 import axios from 'axios';
 import { baseUrl } from '@/config/defaultString.js';
 import store from '@/store';
+import { salesState } from '@/utils/enum.js';
 export default {
   data() {
     return {
@@ -306,6 +315,7 @@ export default {
       warehouseList: [], //仓库列表
       salesNoteSrc: '',
       IsToBeList: false, //是否为待办事项
+      salesStateList:salesState
     };
   },
   computed: {},
@@ -572,28 +582,11 @@ export default {
             });
           } else {
             this.salesNotedialog.visible = true;
+            debugger;
             docx.renderAsync(res.data, this.$refs.file); //渲染到页面
           }
         });
       }
-    },
-    init(file) {
-      var reader = new FileReader();
-      reader.onload = (e) => {
-        let arr = e.target.result.split(',');
-        let data = window.atob(arr[1]);
-        let mime = arr[0].match(/:(.*?);/)[1];
-        let ia = new Uint8Array(data.length);
-        for (var i = 0; i < data.length; i++) {
-          ia[i] = data.charCodeAt(i);
-        }
-        const blob = new Blob([ia], { type: mime });
-        docx.renderAsync(blob, this.$refs.file).then((x) => {
-          this.salesNotedialog.visible = true;
-        }); // 渲染到页面
-      };
-      // 传入一个参数对象即可得到基于该参数对象的文本内容
-      reader.readAsDataURL(file);
     },
     //下载文件
     downloadsalesNote() {

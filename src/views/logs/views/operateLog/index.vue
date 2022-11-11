@@ -6,9 +6,9 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteOperateRecords()">
           移除
         </el-button>
-        <!-- <el-button type="warning" size="mini" @click="exportOperateRecords()">
+        <el-button type="warning" size="mini" @click="exportOperateRecords()">
           导出数据
-        </el-button> -->
+        </el-button>
       </div>
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
@@ -51,7 +51,7 @@
       <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
       <el-table-column label="时间"  align="center" sortable="true" sort-by>
         <template slot-scope="scope">
-          {{ $timeFormat.leaveTime(scope.row.LogDate) }}
+          {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100" align="center">
@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import { baseUrl } from '@/config/defaultString.js';
 export default {
   data() {
     return {
@@ -143,11 +144,9 @@ export default {
         this.$api.log.exportOperateRecords(this.operateIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
-            console.log(message);
-            this.$message.error('导出失败！');
+            this.$message.error(message);
           } else {
-            this.$message({ message: '导出成功！', type: 'success' });
-            this.loadData();
+            window.open(baseUrl + message, '_self');
           }
         });
       }
@@ -257,7 +256,7 @@ export default {
     margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: 1fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -268,16 +267,8 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr ;
+      grid-template-columns: 1fr 1fr 1fr 0.4fr 0.4fr ;
       grid-column-gap: 5px;
-      .edit_query_1 {
-        width: 100%;
-        text-align: center;
-        div {
-          width: 100%;
-          color: rgb(0, 153, 255);
-        }
-      }
     }
   }
 }

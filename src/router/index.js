@@ -463,6 +463,25 @@ const routes = [{
           },
         }, ],
       },
+      //消息管理
+      {
+        path: '/message',
+        name: 'message',
+        component: () => import(`@/views/message`),
+        meta: {
+          title: '消息管理',
+          isAuth: true
+        },
+        children: [{
+          path: 'notice',
+          name: 'notice',
+          component: () => import('@/views/message/views/notice'),
+          meta: {
+            title: '通知管理',
+            isAuth: true
+          },
+        }],
+      },
     ],
   },
 ];

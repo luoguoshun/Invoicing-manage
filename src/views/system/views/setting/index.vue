@@ -433,7 +433,7 @@ export default {
     margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2.5fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -443,7 +443,7 @@ export default {
       // border: 1px solid red;
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 0.8fr 0.8fr;
+      grid-template-columns: 2fr 0.4fr 0.4fr;
       overflow: hidden;
       grid-column-gap: 5px;
       text-align: center;

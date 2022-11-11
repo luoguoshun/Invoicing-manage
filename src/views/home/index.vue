@@ -1,72 +1,86 @@
 <template>
   <div class="home">
-    <!-- 基础数据统计-->
-    <el-row :gutter="10">
-      <el-col :span="4">
-        <div class="statistics" style="background:#67C23A">
-          <div class="title">
-            <p>系统活跃</p>
-            <el-tag size="mini" type="warning">实时</el-tag>
+    <div class="left">
+      <!-- 基础数据统计-->
+      <el-row :gutter="10">
+        <el-col :span="4">
+          <div class="statistics" style="background:#67C23A">
+            <div class="title">
+              <p>系统活跃</p>
+              <el-tag size="mini" type="warning">实时</el-tag>
+            </div>
+            <div class="num" id="todayLoginTotal">{{ todayLoginTotal }}</div>
+            <div class="tip">今日系统活跃数量</div>
           </div>
-          <div class="num" id="todayLoginTotal">{{ todayLoginTotal }}</div>
-          <div class="tip">今日系统活跃数量</div>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="statistics" style="background:#409eff">
-          <div class="title">
-            <p>用户统计</p>
-            <el-tag size="mini" type="success">实时</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <div class="statistics" style="background:#409eff">
+            <div class="title">
+              <p>用户统计</p>
+              <el-tag size="mini" type="success">实时</el-tag>
+            </div>
+            <div class="num" id="userTotal">{{ userTotal }}</div>
+            <div class="tip">当前总用户数量</div>
           </div>
-          <div class="num" id="userTotal">{{ userTotal }}</div>
-          <div class="tip">当前总用户数量</div>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="statistics" style="background:#E6A23C">
-          <div class="title">
-            <p>商品统计</p>
-            <el-tag size="mini" type="info">实时</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <div class="statistics" style="background:#E6A23C">
+            <div class="title">
+              <p>商品统计</p>
+              <el-tag size="mini" type="info">实时</el-tag>
+            </div>
+            <div class="num" id="skuTotal">{{ skuTotal }}</div>
+            <div class="tip">当前总商品数量</div>
           </div>
-          <div class="num" id="skuTotal">{{ skuTotal }}</div>
-          <div class="tip">当前总商品数量</div>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="statistics" style="background:#909399">
-          <div class="title">
-            <p>销售统计</p>
-            <el-tag size="mini" type="primary">实时</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <div class="statistics" style="background:#909399">
+            <div class="title">
+              <p>销售统计</p>
+              <el-tag size="mini" type="primary">实时</el-tag>
+            </div>
+            <div class="num" id="salesTotalPrice">{{ salesTotalPrice }}</div>
+            <div class="tip">当前总销售(元)</div>
           </div>
-          <div class="num" id="salesTotalPrice">{{ salesTotalPrice }}</div>
-          <div class="tip">当前总销售(元)</div>
-        </div>
-      </el-col>
-      <el-col :span="4">
-        <div class="statistics" style="background:#EA7F7F">
-          <div class="title">
-            <p>采购计划申请统计</p>
-            <el-tag size="mini" type="primary">实时</el-tag>
+        </el-col>
+        <el-col :span="4">
+          <div class="statistics" style="background:#EA7F7F">
+            <div class="title">
+              <p>采购计划申请统计</p>
+              <el-tag size="mini" type="primary">实时</el-tag>
+            </div>
+            <div class="num" id="todayPlanAppTotal">{{ todayPlanAppTotal }}</div>
+            <div class="tip">今日采购计划申请统总数</div>
           </div>
-          <div class="num" id="todayPlanAppTotal">{{ todayPlanAppTotal }}</div>
-          <div class="tip">今日采购计划申请统总数</div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-badge value="new" class="item"> <p class="collapseTip">通知列表</p> </el-badge>
-    <el-collapse v-model="activeMessageId" @change="readMessage" accordion>
-      <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
-        <template slot="title">
-          <i class="el-icon-chat-dot-round"></i>{{ item.title }}
-          <el-badge v-if="item.messageState != 4" is-dot class="item" />
-        </template>
-        <div class="collapseContent">{{ item.content }}</div>
-        <div>
-          <!-- <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button> -->
-          <el-button v-if="item.messageParameter" type="warning" size="mini" @click="processEvent(item.messageParameter)">详情 </el-button>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+        </el-col>
+      </el-row>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="消息中心" name="first">
+          <el-collapse v-model="activeMessageId" @change="readMessage" accordion>
+            <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
+              <template slot="title">
+                <i class="el-icon-chat-dot-round"></i>{{ item.title }}
+                <el-badge v-if="item.messageState != 4" is-dot />
+              </template>
+              <div class="collapseContent">{{ item.content }}</div>
+              <div>
+                <!-- <el-button type="success" size="mini" @click="readMessage(item.messageId, item.messageState)">已读</el-button> -->
+                <el-button v-if="item.messageParameter" type="warning" size="mini" @click="processEvent(item.messageParameter)">详情 </el-button>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </el-tab-pane>
+        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+        <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
+      </el-tabs>
+    </div>
+    <div class="right">
+      <el-tabs v-model="right_activeName">
+        <el-tab-pane label="常用功能" name="often">常用功能</el-tab-pane>
+        <el-tab-pane label="关键数据" name="keyData">关键数据</el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -81,6 +95,8 @@ export default {
       salesTotalPrice: 0,
       activeMessageId: '',
       messageList: [],
+      activeName: 'first', //激活的标签页
+      right_activeName: 'often',
     };
   },
   methods: {
@@ -171,56 +187,73 @@ export default {
 
 <style lang="less" scoped>
 .home {
-  .el-row {
-    padding: 0 9px;
-    margin: 5px 0px 20px 0px;
-    .statistics {
-      color: white;
-      height: 100px;
-      border-radius: 4px;
-      padding: 0 8px;
-      div {
-        padding-bottom: 8px;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  grid-gap: 10px;
+  .left {
+    .el-row {
+      margin: 5px 0px 20px 0px;
+      background-color: rgb(251, 251, 251);
+      border-radius: 5px 5px 5px 5px;
+      .statistics {
+        color: white;
+        height: 100px;
+        border-radius: 4px;
+        padding: 0 8px;
+        div {
+          padding-bottom: 8px;
+        }
+        .title {
+          display: flex; // 弹性布局
+          justify-content: space-between; // 两边对齐
+          align-items: center; // 垂直居中
+        }
+        p {
+          font-size: 13px;
+          font-weight: bold;
+        }
+        .num {
+          font-size: 20px;
+          font-weight: bold;
+          text-align: center;
+        }
+        .tip {
+          font-size: 12px;
+        }
       }
-      .title {
-        display: flex; // 弹性布局
-        justify-content: space-between; // 两边对齐
-        align-items: center; // 垂直居中
-      }
-      p {
-        font-size: 13px;
-        font-weight: bold;
-      }
-      .num {
+    }
+    .el-tabs {
+      border: 1px solid rgb(239, 233, 233);
+      border-radius: 5px 5px 0px 0px;
+      padding-left: 5px;
+      .collapseTip {
         font-size: 20px;
-        font-weight: bold;
-        text-align: center;
+        margin-left: 10px;
       }
-      .tip {
-        font-size: 12px;
+      .el-collapse {
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        width: 50%;
+        height: 400px;
+        overflow: auto;
+        padding-left: 10px;
+        .collapseContent {
+          font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+          font-size: 15px;
+          margin-bottom: 5px;
+        }
       }
     }
   }
-  .collapseTip {
-    font-size: 20px;
-    margin-left: 10px;
-    .item {
-      // margin-top: 30px;
-      // margin-right: 40px;
-    }
-  }
-  .el-collapse {
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    width: 50%;
-    height: 400px;
-    overflow: auto;
-    margin-left: 10px;
-    padding-left: 10px;
-    .collapseContent {
-      font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-      font-size: 15px;
-      margin-bottom: 5px;
+  .right {
+    border: 1px solid rgb(239, 233, 233);
+    border-radius: 5px 5px 0px 0px;
+    overflow: hidden;
+    .el-tabs {
+      padding-left: 10px;
+      // border: 1px solid rgb(209, 178, 178);
     }
   }
 }

@@ -23,6 +23,7 @@
       @row-dblclick="openDiolog('update')"
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
+      border
     >
       <el-table-column type="selection" width="45" align="center"> </el-table-column>
       <el-table-column fixed prop="warehouseId" label="编号" width="90" align="center"> </el-table-column>

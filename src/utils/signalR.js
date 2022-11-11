@@ -26,7 +26,8 @@ connection.on('SendPrivateMessage', function (message) {
   
   Notification.info({
     title: message.Title,
-    message: message.Content
+    message: message.Content,
+    position:'bottom-right'
   });
 })
 connection.on('Abort', function (message) {

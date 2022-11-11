@@ -118,6 +118,16 @@
           系统日志
         </el-menu-item>
       </el-submenu>
+
+      <el-submenu index="message">
+        <template slot="title">
+          <i class="el-icon-chat-line-round"></i>
+          <span>消息管理</span>
+        </template>
+        <el-menu-item index="/message/notice" @click.native="createTab({ tabName: '消息管理', routeName: 'notice' })">
+          通知管理
+        </el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -136,12 +146,11 @@ export default {
 <style lang="less" scoped>
 .slide {
   height: 100%;
+  overflow: hidden;
   .el-menu {
     min-height: 100%;
     background-color: #324157;
     color:#bfcbd9;
-    overflow: hidden;
-    border: 0;
   }
 }
 </style>

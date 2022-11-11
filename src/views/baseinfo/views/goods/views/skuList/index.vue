@@ -17,7 +17,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
+    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)" border>
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="图片" width="100" align="center">
         <template slot-scope="scope">

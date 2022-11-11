@@ -38,6 +38,7 @@
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectPlanRows"
       v-loading="table.loading"
+      border
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column label="采购编号" width="120" align="center">
@@ -99,7 +100,14 @@
       </el-pagination>
     </div>
     <!-- 采购计划申请对话框 -->
-    <el-dialog title="采购计划申请" center :visible.sync="applicationPlanDiolog.Visible" :close-on-click-modal="false" :fullscreen="true">
+    <el-dialog
+      id="applicationPlanDiolog"
+      title="采购计划申请"
+      center
+      :visible.sync="applicationPlanDiolog.Visible"
+      :close-on-click-modal="false"
+      :fullscreen="true"
+    >
       <el-steps :active="1" style="width:50%;margin:0px auto;">
         <el-step title="步骤 1" description="提交采购计划"></el-step>
         <el-step title="步骤 2" description="审核采购计划"></el-step>
@@ -302,7 +310,7 @@ export default {
         applicantId: [{ required: true, message: '请选择申请人', trigger: 'blur' }],
       },
       approvalDetails: {}, //审批详情
-      baseUrl:baseUrl,
+      baseUrl: baseUrl,
     };
   },
   computed: {},
@@ -669,10 +677,12 @@ export default {
     width: 40%;
     overflow: hidden;
   }
-  .selectInput {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 0.3fr 0.3fr;
-    grid-column-gap: 3px;
+  #applicationPlanDiolog {
+    .selectInput {
+      display: grid;
+      grid-template-columns: 4fr 1fr 1fr 0.3fr 0.3fr;
+      grid-column-gap: 3px;
+    }
   }
 }
 </style>

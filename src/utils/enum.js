@@ -1,0 +1,37 @@
+export const salesState = [{
+    status: 1,
+    name: '待提交'
+}, {
+    status: 2,
+    name: '审核中'
+}, {
+    status: 3,
+    name: '驳回'
+}, {
+    status: 4,
+    name: '待出库'
+}, {
+    status: 5,
+    name: '已出库'
+}, {
+    status: 6,
+    name: '待发货'
+}, {
+    status: 7,
+    name: '已发货'
+}, {
+    status: 8,
+    name: '待结算'
+}, {
+    status: 9,
+    name: '结算中'
+}, {
+    status: 10,
+    name: '已完成'
+}, {
+    status: 11,
+    name: '退货处理'
+}, {
+    status: 12,
+    name: '退货完成'
+}, ];

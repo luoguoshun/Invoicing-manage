@@ -25,9 +25,10 @@
       @selection-change="selectOrderRows"
       v-loading="table.loading"
       show-summary
+      border
     >
-      <el-table-column type="selection" width="80" align="center"> </el-table-column>
-      <el-table-column type="expand" label="展开查看">
+      <el-table-column type="selection" width="50" align="center"> </el-table-column>
+      <el-table-column type="expand" label="详情" width="50">
         <template slot-scope="props">
           <el-form label-position="left" class="demo-table-expand">
             <el-form-item label="运输费用">

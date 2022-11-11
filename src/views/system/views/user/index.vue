@@ -7,18 +7,12 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="deleteUsers()"> 移除 </el-button>
       </div>
       <div class="edit_query">
-        <div class="edit_query_1">
-          <el-select size="mini" v-model="queryForm.roleId" placeholder="请选择类别">
-            <el-option v-for="item in roleTypes" :key="item.roleId" :label="item.name" :value="item.roleId"></el-option>
-          </el-select>
-        </div>
-        <div class="edit_query_1">
-          <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
-        </div>
-        <div class="edit_query_1">
-          <el-button type="primary" @click="loadData()" size="mini">查找</el-button>
-          <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
-        </div>
+        <el-select size="mini" v-model="queryForm.roleId" placeholder="请选择角色类别">
+          <el-option v-for="item in roleTypes" :key="item.roleId" :label="item.name" :value="item.roleId"></el-option>
+        </el-select>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-button type="primary" @click="loadData()" size="mini">查找</el-button>
+        <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
     </div>
     <!-- 表格 -->
@@ -233,7 +227,7 @@ export default {
         page: 1,
         row: 10,
         conditions: '',
-        roleId: 0,
+        roleId: '',
       },
       table: {
         userList: [],
@@ -258,7 +252,7 @@ export default {
       },
       roleIds: [],
       userIds: [],
-      roleTypes: [{ roleId: 0, name: '请选择类型' }],
+      roleTypes: [],
       rules: {
         name: [
           //^[\u4e00-\u9fa5]{0,}$ 纯汉字
@@ -314,7 +308,8 @@ export default {
     },
     //获取用户数据
     async getUserList() {
-      await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.roleId).then((res) => {
+      let roleId=this.queryForm.roleId==''?0:parseInt(this.queryForm.roleId);
+      await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, roleId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -339,7 +334,6 @@ export default {
     async getDepartmentList() {
       await this.$api.department.GetDepartmentList().then((res) => {
         const { data, success, message } = res.data;
-        console.log(data);
         if (!success) {
           console.log(message);
           return;
@@ -570,7 +564,7 @@ export default {
       width: 100%;
       display: grid;
       // border: 1px solid red;
-      grid-template-columns: 2fr 2fr 1.5fr;
+      grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }
   }

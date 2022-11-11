@@ -163,7 +163,6 @@ export default {
       } else {
         this.$api.role.exportRoleDataToExcel(this.roleIds).then((res) => {
           const { data, success, message } = res.data;
-          console.log(data);
           if (!success) {
             this.$message({ message: message, type: 'error' });
           } else {

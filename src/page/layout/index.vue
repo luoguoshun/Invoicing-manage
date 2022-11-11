@@ -1,32 +1,28 @@
 <template>
   <div class="container">
     <!-- 导航栏 -->
-    <div class="slider">
-      <Slider />
-    </div>
+    <header>
+      <Header />
+    </header>
     <!-- 主内容区 -->
-    <div class="main">
+    <main>
       <!-- 头部 -->
-      <div class=" header">
-        <Header />
-      </div>
+      <Slider class="slider" />
       <!-- 动态组件内容区 -->
-      <div class="content">
-        <RouterView />
-      </div>
-    </div>
+      <Content class="content" />
+    </main>
   </div>
 </template>
 
 <script>
 import Header from './header.vue';
 import Slider from './slider.vue';
-import Footer from './footer.vue';
+import Content from './content.vue';
 export default {
   components: {
     Header,
     Slider,
-    Footer,
+    Content,
   },
   data() {
     return {
@@ -40,17 +36,19 @@ export default {
 .container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  .main {
+  header {
+    height: 60px;
+    width: 100%;
+  }
+  main {
     width: 100%;
     height: 100%;
-    .header {
-      height: 140px;
-    }
+    display: grid;
+    grid-template-columns: 205px 1fr;
     .content {
       border: 1px solid whitesmoke;
       border-radius: 5px;
+      padding: 5px 5px;
     }
   }
 }

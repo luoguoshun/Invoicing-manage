@@ -14,7 +14,7 @@ export default {
   methods: {
     //连接SignalR
     connectionSignalR() {
-      if (this.$signalR.connection['_connectionState'] !== 'Connected' && (this.accessToken != null || this.accessToken != undefined)) {
+      if (this.$signalR.connection['_connectionState'] !== 'Connected' && this.accessToken.length  != 0) {
         try {
           this.$signalR.connection.start();
         } catch (err) {
@@ -34,7 +34,7 @@ html,
 body,
 #app {
   height: 100%;
-  width: 99.9%;
+  width: 99.99%;
   font-weight: 350;
   color: #343a40;
   font-family: 'Microsoft Yahei', OpenSans, Avenir, Arial, -apple-system, PingFang SC, Arial, Microsoft YaHei, sans-serif;

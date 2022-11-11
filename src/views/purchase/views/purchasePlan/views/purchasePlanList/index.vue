@@ -51,6 +51,7 @@
       @selection-change="selectPlanRows"
       :row-style="tableRowClassName"
       v-loading="table.loading"
+      border
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column label="采购编号" width="120" align="center">
@@ -65,7 +66,7 @@
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
       <el-table-column prop="applicantName" label="申请人" align="center"></el-table-column>
-      <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column>
+      <!-- <el-table-column prop="approvalName" label="审批人" align="center"></el-table-column> -->
       <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="purchaseTotalPrice" label="订单总价" align="center"></el-table-column>

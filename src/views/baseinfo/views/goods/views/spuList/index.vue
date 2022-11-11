@@ -18,7 +18,7 @@
     </div>
 
     <!-- 表格 -->
-    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)">
+    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)" border>
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="spuId" label="货品编码"></el-table-column>
       <el-table-column prop="spuName" label="物品名称"> </el-table-column>

@@ -24,17 +24,17 @@
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="名称">
+            <el-form-item label="SPU编号">
               <span>{{ props.row.spuName }}</span>
             </el-form-item>
-            <el-form-item label="名称">
-              <span>{{ props.row.spuName }}</span>
+            <el-form-item label="物品名称">
+              <span>{{ props.row.skuName }}</span>
             </el-form-item>
             <el-form-item label="品牌">
               <span>{{ props.row.brand }}</span>
             </el-form-item>
             <el-form-item label="位置">
-              <span>{{ props.row.Area }}</span>
+              <span>{{ props.row.area }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -44,13 +44,14 @@
           <el-image style="width: 60px; height: 50px" :src="scope.row.skuLogoUrl" :preview-src-list="[scope.row.skuLogoUrl]"></el-image>
         </template>
       </el-table-column>
-      <el-table-column prop="warehouseName" label="仓库" align="center"> </el-table-column>
+      <el-table-column prop="warehouseName" label="仓库" align="center">
+        <template slot-scope="scope">
+          <el-tag disable-transitions>{{ scope.row.warehouseName }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
       <el-table-column prop="goodsTypeName" label="类型" align="center"> </el-table-column>
-      <el-table-column label="物品名称" align="center">
-        <template slot-scope="scope">
-          <el-tag disable-transitions>{{ scope.row.skuName }}</el-tag>
-        </template>
+      <el-table-column prop="skuName" label="物品名称" align="center">
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
       <el-table-column prop="unit" label="单位" align="center"> </el-table-column>

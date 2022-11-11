@@ -36,8 +36,7 @@
       <el-table-column prop="source" label="错误来源" align="center"> </el-table-column>
       <el-table-column prop="level" label="等级" width="60" w align="center"> </el-table-column>
       <el-table-column prop="message" label="错误信息" align="center"></el-table-column>
-      <!-- <el-table-column prop="detail" label="详细信息" align="center"></el-table-column> -->
-      <el-table-column label="时间" align="center" sortable="true" sort-by>
+      <el-table-column label="时间" align="center" sortable="true" width="150" sort-by>
         <template slot-scope="scope">
           {{ $timeFormat.leaveTime(scope.row.LogDate) }}
         </template>
@@ -234,25 +233,22 @@ export default {
 </script>
 <style lang="less" scoped>
 .log_container {
-  width: 100%;
+  width: 99.99%;
   height: 100%;
   .editbar {
     width: 100%;
     margin: 5px 0px;
     padding: 2px 0px;
     display: grid;
-    grid-template-columns: 1fr 1.5fr;
+    grid-template-columns: 1fr 1fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
-      .upload {
-        margin-left: 10px;
-      }
     }
     .edit_query {
       width: 100%;
       display: grid;
-      grid-template-columns: 2fr 1fr 1.5fr 0.5fr 0.5fr;
+      grid-template-columns: 1fr 1fr 1fr 0.4fr 0.4fr ;
       grid-column-gap: 5px;
     }
   }
