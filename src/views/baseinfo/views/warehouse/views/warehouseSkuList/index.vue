@@ -31,7 +31,7 @@
               <span>{{ props.row.brand }}</span>
             </el-form-item>
             <el-form-item label="位置">
-              <span>{{ props.row.Area }}</span>
+              <span>{{ props.row.area }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -49,6 +49,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
+      <el-table-column prop="area" label="货位" align="center"> </el-table-column>
       <el-table-column prop="unit" label="单位" align="center"> </el-table-column>
       <el-table-column prop="specs" label="规格" align="center"> </el-table-column>
       <el-table-column label="供应商进价" align="center">

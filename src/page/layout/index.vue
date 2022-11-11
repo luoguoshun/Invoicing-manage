@@ -41,14 +41,15 @@ export default {
     width: 100%;
   }
   main {
-    width: 100%;
-    height: 100%;
+    // width: 100%;
+    // height: 100%;
     display: grid;
     grid-template-columns: 205px 1fr;
     .content {
       border: 1px solid whitesmoke;
       border-radius: 5px;
       padding: 5px 5px;
+      margin-bottom: 0px;
     }
   }
 }

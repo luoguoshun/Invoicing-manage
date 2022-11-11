@@ -16,7 +16,7 @@ export default {
 
 <style lang="less" scoped>
 .system {
-  height: 100%;
+  // height: 100%;
   width: 100%;
 }
 </style>

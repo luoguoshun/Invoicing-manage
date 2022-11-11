@@ -50,12 +50,12 @@
               <el-tag size="mini" type="primary">实时</el-tag>
             </div>
             <div class="num" id="todayPlanAppTotal">{{ todayPlanAppTotal }}</div>
-            <div class="tip">今日采购计划申请统总数</div>
+            <div class="tip">今日采购计划申请</div>
           </div>
         </el-col>
       </el-row>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="消息中心" name="first">
+      <el-tabs v-model="left_activeName" @tab-click="leftTabClick()">
+        <el-tab-pane label="消息中心" name="message">
           <el-collapse v-model="activeMessageId" @change="readMessage" accordion>
             <el-collapse-item v-for="item in messageList" :key="item.messageId" :name="item.messageId">
               <template slot="title">
@@ -70,8 +70,20 @@
             </el-collapse-item>
           </el-collapse>
         </el-tab-pane>
-        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
-        <el-tab-pane label="角色管理" name="third">角色管理</el-tab-pane>
+        <el-tab-pane label="销售统计" name="sales" class="sales">
+          <div>
+            <el-radio-group v-model="salesDateType" size="small" @change="salesDateTypeChange">
+              <el-radio-button label="year">年</el-radio-button>
+              <el-radio-button label="month">月</el-radio-button>
+              <el-radio-button label="day">日</el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="chart">
+            <div id="salesStatistics" :style="{ width: '550px', height: '400px' }"></div>
+            <div id="salesTotalCount" :style="{ width: '550px', height: '400px' }"></div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="仓库统计" name="warahouse">角色管理</el-tab-pane>
         <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
       </el-tabs>
     </div>
@@ -85,6 +97,9 @@
 </template>
 
 <script>
+var salesStatisticsChart; //全局变量:销售额统计
+var salesTotalCountChart; //全局变量:销售数量统计
+import * as echarts from 'echarts';
 export default {
   data() {
     return {
@@ -95,8 +110,9 @@ export default {
       salesTotalPrice: 0,
       activeMessageId: '',
       messageList: [],
-      activeName: 'first', //激活的标签页
+      left_activeName: 'message', //激活的标签页
       right_activeName: 'often',
+      salesDateType: 'year',
     };
   },
   methods: {
@@ -177,6 +193,123 @@ export default {
         });
       }
     },
+    //左边Tab栏点击触发事件
+    leftTabClick(tab) {
+      switch (this.left_activeName) {
+        case 'message':
+          salesStatisticsChart.dispose(); //销毁
+          salesTotalCountChart.dispose();//销毁
+          break;
+        case 'sales':
+          setTimeout(() => {
+            this.initSalesStatistics(); //初始化销售额统计数据
+          }, 100);
+          break;
+        default:
+          break;
+      }
+    },
+    //销售年月日改变
+    salesDateTypeChange() {
+      salesStatisticsChart.dispose(); //销毁
+      salesTotalCountChart.dispose();//销毁
+      this.initSalesStatistics();//初始化数据
+    },
+    //初始化 销售额统计 销售数量数据
+    initSalesStatistics() {
+      var chartDom1 = document.getElementById('salesStatistics');
+      salesStatisticsChart = echarts.init(chartDom1);
+      var chartDom2 = document.getElementById('salesTotalCount');
+      salesTotalCountChart = echarts.init(chartDom2);
+      this.$api.sales.salesStatistics(this.salesDateType).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        //数组反转
+        let xAxisData = data.timeInterval.reverse();
+        salesStatisticsChart.setOption({
+          title: {
+            text: '销售额统计/元',
+          },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow',
+            },
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true,
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: xAxisData,
+              axisTick: {
+                alignWithLabel: true,
+              },
+            },
+          ],
+          yAxis: [
+            {
+              type: 'value',
+            },
+          ],
+          series: [
+            {
+              name: 'Direct',
+              type: 'bar',
+              barWidth: '50%',
+              color: '#67C23A',
+              data: data.salesTotalPriceData.reverse(),
+            },
+          ],
+        });
+        salesTotalCountChart.setOption({
+        title: {
+          text: '销售数量统计',
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: xAxisData,
+            axisTick: {
+              alignWithLabel: true,
+            },
+          },
+        ],
+        yAxis: [
+          {
+            type: 'value',
+          },
+        ],
+        series: [
+          {
+            name: 'Direct',
+            type: 'bar',
+            barWidth: '50%',
+            data: data.goodsTotalCountData.reverse(),
+          },
+        ],
+      });
+      });
+    },
   },
   created() {
     this.dataStatistics();
@@ -188,7 +321,7 @@ export default {
 <style lang="less" scoped>
 .home {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   display: grid;
   grid-template-columns: 1fr 190px;
   grid-gap: 10px;
@@ -243,6 +376,16 @@ export default {
           font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
           font-size: 15px;
           margin-bottom: 5px;
+        }
+      }
+      .sales {
+        > :first-child {
+          margin-bottom: 5px;
+        }
+        > :last-child {
+          display: flex;
+          flex-direction: row;
+          grid-gap: 10px;
         }
       }
     }

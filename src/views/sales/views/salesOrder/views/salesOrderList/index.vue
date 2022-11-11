@@ -105,7 +105,6 @@
       </el-table-column>
       <el-table-column prop="createTime" label="销售单据" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成 </el-button>
           <el-button
             v-if="scope.row.salesNoteSrc == '' || scope.row.salesNoteSrc == null"
             type="primary"
@@ -339,7 +338,7 @@ export default {
         this.table.loading = false;
       });
     },
-    //获取提交销售订单列表
+    //获取需要审批de销售订单列表
     async getNeedRreviewSalesByUserId() {
       this.IsToBeList = true;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));

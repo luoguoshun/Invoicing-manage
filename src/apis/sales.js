@@ -60,5 +60,9 @@ export default {
     //销售单退货
     salesOrderReturnRequest(salesIds){
         return ajax.post('/api/Background/Sales/SalesOrderReturnRequest', salesIds);
-    }
+    },
+    //按照时间统计销售额
+    salesStatistics(salesDateType) {
+        return ajax.get('/api/Background/Sales/SalesStatistics?salesDateType=' + salesDateType + '');
+    },
 }

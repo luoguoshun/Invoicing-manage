@@ -95,6 +95,7 @@ export default {
     ...mapMutations({
       clearToken: 'token/clearToken',
       clearRouters: 'routers/clearRouters',
+      closeAllTags: 'tagsView/closeAllTags',
     }),
     //获取我的消息列表
     async getMessageListByUserId() {

@@ -549,7 +549,7 @@ export default {
 <style lang="less" scoped>
 .user_container {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   .editbar {
     width: 100%;
     margin: 5px 0px;

@@ -146,7 +146,6 @@ export default {
 <style lang="less" scoped>
 .slide {
   height: 100%;
-  overflow: hidden;
   .el-menu {
     min-height: 100%;
     background-color: #324157;
