@@ -35,7 +35,7 @@
       <!-- 操作 -->
       <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="openDialog('edit', scope.row)">修改</el-button>
+          <el-button type="text" size="small" @click="openDialog('edit', scope.row)" icon="el-icon-edit">修改信息</el-button>
         </template>
       </el-table-column>
     </el-table>

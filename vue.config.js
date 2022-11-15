@@ -31,7 +31,7 @@ function addStyleResource(rule) {
 module.exports = {
   // baseURl: process.env.NODE_ENV === 'production' ?'/src/' :'/',
   devServer: {
-    port: 8001
+    port: 8080
   }, //设置端口
   lintOnSave: false,
   chainWebpack: config => {

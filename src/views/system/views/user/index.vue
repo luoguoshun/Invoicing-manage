@@ -308,7 +308,7 @@ export default {
     },
     //获取用户数据
     async getUserList() {
-      let roleId=this.queryForm.roleId==''?0:parseInt(this.queryForm.roleId);
+      let roleId = this.queryForm.roleId == '' ? 0 : parseInt(this.queryForm.roleId);
       await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, roleId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
@@ -563,7 +563,7 @@ export default {
     .edit_query {
       width: 100%;
       display: grid;
-      // border: 1px solid red;
+      //  border: 1px solid red;
       grid-template-columns: 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
     }

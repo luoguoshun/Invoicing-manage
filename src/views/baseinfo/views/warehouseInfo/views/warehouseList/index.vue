@@ -44,7 +44,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="编辑" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="openDiolog('update', scope.row)" icon="el-icon-edit">修改</el-button>
+          <el-button type="text" size="small" @click="openDiolog('update', scope.row)" icon="el-icon-edit">修改信息</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -1,5 +1,5 @@
 <template>
-  <div class="slide">
+  <div class="mySlide">
     <el-menu default-active="this.$route.name" :router="true" background-color="#324157" text-color="#bfcbd9" active-text-color="#049eff">
       <el-menu-item index="/home">
         <i class="el-icon-menu"></i>
@@ -33,7 +33,7 @@
         <el-menu-item index="/baseInfo/goods/spuList" @click.native="createTab({ tabName: '货品档案', routeName: 'spuList' })">
           货品档案
         </el-menu-item>
-        <el-menu-item index="/baseInfo/warehouse/warehouseList" @click.native="createTab({ tabName: '仓库信息', routeName: 'warehouseList' })">
+        <el-menu-item index="/baseInfo/warehouseInfo/warehouseList" @click.native="createTab({ tabName: '仓库信息', routeName: 'warehouseList' })">
           仓库信息
         </el-menu-item>
         <el-menu-item index="/baseInfo/others/goodsTypeList" @click.native="createTab({ tabName: '其他信息', routeName: 'goodsTypeList' })">
@@ -144,8 +144,10 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.slide {
+.mySlide {
   height: 100%;
+  width: 100%;
+  overflow: hidden;
   .el-menu {
     min-height: 100%;
     background-color: #324157;

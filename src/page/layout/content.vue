@@ -7,10 +7,12 @@
         <el-tab-pane v-for="tab in getDynamicTags.tabs" :key="tab.routeName" :label="tab.tabName" :name="tab.routeName" :closable="true">
         </el-tab-pane>
       </el-tabs>
-      <el-button type="danger" size="mini" @click="closeTags()">
-        <i class="el-icon-close"></i>
-        关闭
-      </el-button>
+      <div>
+        <el-button type="danger" size="mini" @click="closeTags()">
+          <i class="el-icon-close"></i>
+          关闭
+        </el-button>
+      </div>
     </div>
     <!-- 面包屑 -->
     <el-breadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
@@ -102,8 +104,9 @@ export default {
   .header_tab {
     height: 45px;
     display: grid;
-    grid-template-columns: 96% 4%;
+    grid-template-columns: 1fr 70px;
     .el-button {
+      width: 100%;
       margin-top: 10px;
       height: 30px;
     }

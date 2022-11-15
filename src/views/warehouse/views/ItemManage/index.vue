@@ -33,7 +33,7 @@
             <el-form-item label="品牌">
               <span>{{ props.row.brand }}</span>
             </el-form-item>
-            <el-form-item label="位置">
+            <el-form-item label="货位">
               <span>{{ props.row.area }}</span>
             </el-form-item>
           </el-form>
@@ -69,6 +69,11 @@
       <el-table-column label="警告库存" align="center">
         <template slot-scope="scope">
           <el-input type="number" size="mini" v-model.number="scope.row.warnCount"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column prop="area" label="货位" align="center"> 
+        <template slot-scope="scope">
+          <el-input type="text" size="mini" v-model="scope.row.area"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" width="150" align="center">
@@ -347,7 +352,7 @@ export default {
     },
     //修改信息
     updateWarehouseSku(row) {
-      this.$api.warehouse.updateWarehouseSku(row.warehouseId, row.skuId, row.count, row.warnCount, row.costPrice).then((res) => {
+      this.$api.warehouse.updateWarehouseSku(row).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message({ message: '修改失败！', type: 'error' });

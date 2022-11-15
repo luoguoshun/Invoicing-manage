@@ -83,14 +83,29 @@
             <div id="salesTotalCount" :style="{ width: '550px', height: '400px' }"></div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="仓库统计" name="warahouse">角色管理</el-tab-pane>
+        <el-tab-pane label="仓库统计" name="warahouse" class="warehouse">
+          <div></div>
+          <div class="chart">
+            <div id="wHmaterialStatistics" :style="{ width: '550px', height: '400px' }"></div>
+            <div id="wHCostStatistics" :style="{ width: '550px', height: '400px' }"></div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="定时任务补偿" name="fourth">定时任务补偿</el-tab-pane>
       </el-tabs>
     </div>
     <div class="right">
       <el-tabs v-model="right_activeName">
-        <el-tab-pane label="常用功能" name="often">常用功能</el-tab-pane>
-        <el-tab-pane label="关键数据" name="keyData">关键数据</el-tab-pane>
+        <el-tab-pane label="常用功能" name="often" class="often">
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'applicationPlan' })">采购计划申请</el-link></p>
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'applyForBilling' })">采购单申请</el-link></p>
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'ReturnReceipt' })">物品入库</el-link></p>
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'ExwarehouseReceipt' })">物品出库</el-link></p>
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'systemLog' })">系统日志</el-link></p>
+        </el-tab-pane>
+        <el-tab-pane label="关键数据" name="keyData">
+          <p><i class="el-icon-s-data"></i>物资总数:{{goodsCount}}</p>
+          <p><i class="el-icon-s-data"></i>仓库总成本:{{totalCost}}</p>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -99,6 +114,8 @@
 <script>
 var salesStatisticsChart; //全局变量:销售额统计
 var salesTotalCountChart; //全局变量:销售数量统计
+var wHMaterialStatistics; //全局变量:仓库物资统计
+var wHCostStatistics; //全局变量:仓库数据数量统计
 import * as echarts from 'echarts';
 export default {
   data() {
@@ -113,6 +130,8 @@ export default {
       left_activeName: 'message', //激活的标签页
       right_activeName: 'often',
       salesDateType: 'year',
+      goodsCount: 0,//物资总数
+      totalCost: 0,//仓库总成本
     };
   },
   methods: {
@@ -197,23 +216,51 @@ export default {
     leftTabClick(tab) {
       switch (this.left_activeName) {
         case 'message':
-          salesStatisticsChart.dispose(); //销毁
-          salesTotalCountChart.dispose();//销毁
+          if (salesStatisticsChart != undefined) {
+            salesStatisticsChart.dispose(); //销毁销售额数据统计
+          }
+          if (salesTotalCountChart != undefined) {
+            salesTotalCountChart.dispose(); //销毁销售额数据统计
+          }
+          if (wHMaterialStatistics != undefined) {
+            wHMaterialStatistics.dispose(); //销毁销售额数据统计
+          }
+          if (wHCostStatistics != undefined) {
+            wHCostStatistics.dispose(); //销毁销售额数据统计
+          }
           break;
         case 'sales':
+          if (wHMaterialStatistics != undefined) {
+            wHMaterialStatistics.dispose(); //销毁销售额数据统计
+          }
+          if (wHCostStatistics != undefined) {
+            wHCostStatistics.dispose(); //销毁销售额数据统计
+          }
           setTimeout(() => {
             this.initSalesStatistics(); //初始化销售额统计数据
+          }, 100);
+          break;
+        case 'warahouse':
+          if (salesStatisticsChart != undefined) {
+            salesStatisticsChart.dispose(); //销毁销售额数据统计
+          }
+          if (salesTotalCountChart != undefined) {
+            salesTotalCountChart.dispose(); //销毁销售额数据统计
+          }
+          setTimeout(() => {
+            this.initWHStatistics(); //初始化销售额统计数据
           }, 100);
           break;
         default:
           break;
       }
     },
+    //---数据统计---start
     //销售年月日改变
     salesDateTypeChange() {
       salesStatisticsChart.dispose(); //销毁
-      salesTotalCountChart.dispose();//销毁
-      this.initSalesStatistics();//初始化数据
+      salesTotalCountChart.dispose(); //销毁
+      this.initSalesStatistics(); //初始化数据
     },
     //初始化 销售额统计 销售数量数据
     initSalesStatistics() {
@@ -270,50 +317,135 @@ export default {
           ],
         });
         salesTotalCountChart.setOption({
-        title: {
-          text: '销售数量统计',
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow',
+          title: {
+            text: '销售数量统计',
           },
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true,
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: xAxisData,
-            axisTick: {
-              alignWithLabel: true,
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow',
             },
           },
-        ],
-        yAxis: [
-          {
-            type: 'value',
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true,
           },
-        ],
-        series: [
-          {
-            name: 'Direct',
-            type: 'bar',
-            barWidth: '50%',
-            data: data.goodsTotalCountData.reverse(),
-          },
-        ],
+          xAxis: [
+            {
+              type: 'category',
+              data: xAxisData,
+              axisTick: {
+                alignWithLabel: true,
+              },
+            },
+          ],
+          yAxis: [
+            {
+              type: 'value',
+            },
+          ],
+          series: [
+            {
+              name: 'Direct',
+              type: 'bar',
+              barWidth: '50%',
+              data: data.goodsTotalCountData.reverse(),
+            },
+          ],
+        });
       });
+    },
+    //初始化 仓库物资 成本统计
+    initWHStatistics() {
+      var chartDom1 = document.getElementById('wHmaterialStatistics');
+      wHMaterialStatistics = echarts.init(chartDom1);
+      var chartDom2 = document.getElementById('wHCostStatistics');
+      wHCostStatistics = echarts.init(chartDom2);
+      this.$api.warehouse.warehouseStatistics().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        console.log(data);
+        wHMaterialStatistics.setOption({
+          title: {
+            text: '仓库物资统计',
+            left: 'center',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+          },
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: '50%',
+              data: data.goodsCountStatistics,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)',
+                },
+              },
+            },
+          ],
+        });
+        wHCostStatistics.setOption({
+          title: {
+            text: '仓库成本统计',
+            left: 'center',
+          },
+          tooltip: {
+            trigger: 'item',
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left',
+          },
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: '50%',
+              data: data.totalCostStatistics,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)',
+                },
+              },
+            },
+          ],
+        });
+      });
+    },
+    //---数据统计---end
+    //计算所有仓库的总成本、物资总和
+    calculateAllWarehouseItems() {
+      this.$api.warehouse.calculateAllWarehouseItems().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.goodsCount = data.goodsCount;
+        this.totalCost = data.totalCost;
       });
     },
   },
   created() {
     this.dataStatistics();
     this.getMessageListByUserId();
+    this.calculateAllWarehouseItems();
   },
 };
 </script>
@@ -388,6 +520,13 @@ export default {
           grid-gap: 10px;
         }
       }
+      .warehouse {
+        > :last-child {
+          display: flex;
+          flex-direction: row;
+          grid-gap: 10px;
+        }
+      }
     }
   }
   .right {
@@ -396,7 +535,16 @@ export default {
     overflow: hidden;
     .el-tabs {
       padding-left: 10px;
-      // border: 1px solid rgb(209, 178, 178);
+      .often {
+        > p {
+          margin-bottom: 5px;
+          font-size: 20px;
+          line-height: 20px;
+        }
+        > p:hover {
+          background-color: rgb(250, 255, 253);
+        }
+      }
     }
   }
 }

@@ -46,21 +46,26 @@ export default {
         });
     },
     //修改库存 警戒数量
-    updateWarehouseSku(warehouseId, skuId, count, warnCount, costPrice) {
+    updateWarehouseSku(row) {
         return ajax.post('/api/Background/Warehouse/UpdateWarehouseSku', {
-            warehouseId,
-            skuId,
-            count,
-            warnCount,
-            costPrice
+            ...row
         });
     },
     //修改库存 警戒数量
     deleteSkuFromWarehouse(WarehouseSkus) {
         return ajax.post('/api/Background/Warehouse/DeleteSkuFromWarehouse', WarehouseSkus);
     },
-    // 计算仓库的总成本、物资总和
+    // 计算某仓库的总成本、物资总和
     calculateWarehouseItems(warehouseId) {
         return ajax.get("/api/Background/Warehouse/CalculateWarehouseItemsById?warehouseId=" + warehouseId + "");
     },
+    // 计算所有仓库的总成本、物资总和
+    calculateAllWarehouseItems(warehouseId) {
+        return ajax.get("/api/Background/Warehouse/CalculateAllWarehouseItems");
+    },
+    // 仓库数据统计
+    warehouseStatistics(warehouseId) {
+        return ajax.get("/api/Background/Warehouse/WarehouseStatistics");
+    },
+
 };

@@ -437,7 +437,7 @@ export default {
           publicationDates: [],
           warehouseId: '', //出货仓库
           conditions: '', //综合条件
-          salesState: 8, //待结算的销售单
+          salesState: 10, //待结算的销售单
         },
       },
       payDialog: {
@@ -825,7 +825,7 @@ export default {
   }
   .dialogSelectInput {
     display: grid;
-    grid-template-columns: 2fr 1fr 0.5fr 0.5fr 0.3fr 0.3fr;
+    grid-template-columns: 3fr 1fr 1fr 1fr 0.3fr 0.3fr;
     grid-column-gap: 3px;
   }
 }

@@ -153,9 +153,9 @@ const routes = [{
             }]
           },
           {
-            path: 'warehouse',
-            name: 'warehouse',
-            component: () => import('@/views/baseInfo/views/warehouse'),
+            path: 'warehouseInfo',
+            name: 'warehouseInfo',
+            component: () => import('@/views/baseInfo/views/warehouseInfo'),
             meta: {
               title: '仓库管理',
               isAuth: true
@@ -163,7 +163,7 @@ const routes = [{
             children: [{
               path: 'warehouseList',
               name: 'warehouseList',
-              component: () => import('@/views/baseInfo/views/warehouse/views/warehouseList'),
+              component: () => import('@/views/baseInfo/views/warehouseInfo/views/warehouseList'),
               meta: {
                 title: '仓库列表',
                 isAuth: true
@@ -171,7 +171,7 @@ const routes = [{
             }, {
               path: 'warehouseSkuList',
               name: 'warehouseSkuList',
-              component: () => import('@/views/baseInfo/views/warehouse/views/warehouseSkuList'),
+              component: () => import('@/views/baseInfo/views/warehouseInfo/views/warehouseSkuList'),
               meta: {
                 title: '仓库物资',
                 isAuth: true
