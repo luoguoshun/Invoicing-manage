@@ -318,11 +318,19 @@ const routes = [{
                 path: 'ExwarehouseDoc',
                 name: 'ExwarehouseDoc',
                 component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseDoc'),
+                meta: {
+                  title: '出库单管理',
+                  isAuth: true
+                },
               },
               {
                 path: 'ExwarehouseReceipt',
                 name: 'ExwarehouseReceipt',
                 component: () => import('@/views/warehouse/views/putOutWarehouse/views/ExwarehouseReceipt'),
+                meta: {
+                  title: '出库开单',
+                  isAuth: true
+                },
               },
               //{
               //   path: 'ReceiptDoc',

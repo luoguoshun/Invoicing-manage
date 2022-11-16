@@ -4,7 +4,7 @@ export default {
         dynamicRouters:[],
     },
     getters: {
-        routers(state) {
+        getDynamicRouters(state) {
             return state.dynamicRouters
         },
     },

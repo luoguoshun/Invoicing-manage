@@ -119,7 +119,7 @@
         </el-menu-item>
       </el-submenu>
 
-      <el-submenu index="message">
+      <el-submenu index="">
         <template slot="title">
           <i class="el-icon-chat-line-round"></i>
           <span>消息管理</span>
@@ -147,7 +147,6 @@ export default {
 .mySlide {
   height: 100%;
   width: 100%;
-  overflow: hidden;
   .el-menu {
     min-height: 100%;
     background-color: #324157;

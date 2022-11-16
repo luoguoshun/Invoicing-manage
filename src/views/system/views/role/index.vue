@@ -296,7 +296,7 @@ export default {
       //获取所有选中的节点 getCheckedNodes()
       // 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
       let res = this.$refs.routerTree.getCheckedNodes(false, true); //子节点+父节点
-      this.routerIds = [];
+      this.routerIds = ['index'];
       res.forEach((item) => {
         this.routerIds.push(item.id);
       });

@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <div class="left">
+  <div class="home"  >
+    <div class="left" v-loading="fullscreenLoading">
       <!-- 基础数据统计-->
       <el-row :gutter="10">
         <el-col :span="4">
@@ -132,6 +132,7 @@ export default {
       salesDateType: 'year',
       goodsCount: 0,//物资总数
       totalCost: 0,//仓库总成本
+      fullscreenLoading: false
     };
   },
   methods: {

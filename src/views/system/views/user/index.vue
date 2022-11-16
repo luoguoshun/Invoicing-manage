@@ -164,7 +164,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="addUser()">修 改</el-button>
+        <el-button type="success" @click="addUser()">添 加</el-button>
       </div>
     </el-dialog>
   </div>

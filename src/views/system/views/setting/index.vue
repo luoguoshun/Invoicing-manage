@@ -9,7 +9,7 @@
         </el-button>
       </div>
       <div class="edit_query">
-        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-input v-model.trim="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
         <el-button type="primary" @click="selectrouter()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
@@ -26,9 +26,9 @@
       <el-table-column fixed label="标题" align="center">
         <template slot-scope="scope">
           <el-popover trigger="hover" placement="top">
-            <p>图标样式: {{ scope.row.mate.icon }}</p>
+            <p>图标样式: {{ scope.row.meta.icon }}</p>
             <div slot="reference" class="name-wrapper">
-              <el-tag disable-transitions>{{ scope.row.mate.title }}</el-tag>
+              <el-tag disable-transitions>{{ scope.row.meta.title }}</el-tag>
             </div>
           </el-popover>
         </template>
@@ -91,6 +91,9 @@
         </el-form-item>
         <el-form-item label="组件路径" prop="component">
           <el-input type="text" v-model="routerForm.component"></el-input>
+        </el-form-item>
+        <el-form-item label="排序" prop="component">
+          <el-input type="number" v-model.number="routerForm.sort"></el-input>
         </el-form-item>
         <el-form-item label="权限设置">
           <el-select v-model="routerForm.isAuth" placeholder="请选择">
@@ -176,6 +179,7 @@ export default {
         parentId: '',
         name: '',
         path: '',
+        sort:0,
         component: '',
         isAuth: '1',
         icon: '',
@@ -202,7 +206,7 @@ export default {
         title: [{ required: true, message: '请设置标题', trigger: 'blur' }],
         component: [{ required: true, message: '请设置组件路径', trigger: 'blur' }],
       },
-      routerOptions: [],
+      routerOptions: [],//路由级联数据
       editName: '',
     };
   },
@@ -214,7 +218,7 @@ export default {
   },
   methods: {
     ...mapMutations({ setRouters: 'routers/setRouters' }),
-    //获取动态路由表
+    //设置动态路由表
     setDynamicRouter() {
       this.$api.vueRouter.getDynamicRouter().then((res) => {
         const { data, success, message } = res.data;
@@ -222,7 +226,6 @@ export default {
           console.log(message);
           return false;
         }
-        console.log(data);
         this.setRouters(data);
       });
     },
@@ -309,6 +312,7 @@ export default {
         this.editName = 'add';
         this.routerForm.parentIdArray = [];
         this.routerForm.routerId = '';
+        this.routerForm.sort = 0;
         this.routerForm.name = '';
         this.routerForm.path = '';
         this.routerForm.component = '';
@@ -321,12 +325,13 @@ export default {
         parentIds.splice(0, 1);
         this.routerForm.parentIdArray = parentIds;
         this.routerForm.routerId = row.routerId;
+        this.routerForm.sort = row.sort;
         this.routerForm.name = row.name;
         this.routerForm.path = row.path;
         this.routerForm.component = row.component;
         this.routerForm.description = row.description;
-        this.routerForm.title = row.mate.title;
-        this.routerForm.icon = row.mate.icon;
+        this.routerForm.title = row.meta.title;
+        this.routerForm.icon = row.meta.icon;
       }
       this.dialogObject.EditVisible = true;
     },
@@ -376,6 +381,7 @@ export default {
           const router = {
             routerId: this.routerForm.routerId,
             parentId: this.parentId,
+            sort:this.routerForm.sort,
             name: this.routerForm.name,
             path: this.routerForm.path,
             component: this.routerForm.component,
