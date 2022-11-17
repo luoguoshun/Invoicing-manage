@@ -143,15 +143,12 @@ export default {
         show: false,
         detailPlanItems: [],
       },
-
-      //PutinWarhouseDetDiolog:[]
     };
   },
   methods: {
     loadData() {
       this.getPutinWarehouseOrder();
       this.getWarehouseList();
-      this.getPutinWarehouseOrderDetail();
     },
     getElTagClass(row) {
       console.log(row);
@@ -178,6 +175,7 @@ export default {
           console.log(message);
           return;
         }
+        console.log(data);
         this.table.PutinWareOrderList = data.data;
         this.table.PutinWareOrdertotal = data.count;
       });
@@ -193,7 +191,6 @@ export default {
         }
         this.table.PutinWarehousDetailList = data.data;
         this.PurchaseDetailDiolog.detailPlanItems = data.data;
-        //this.table.PutinWarehousDetailtotal = data.count;
       });
     },
     //提交入库单申请
@@ -281,7 +278,6 @@ export default {
     },
     //显示采购单子项目
     showplanDetailDiolog(row) {
-      console.log(row);
       this.PurchaseDetailDiolog.editPurchaseId = row.putinWarehousId;
       this.getPutinWarehouseOrderDetail(row.putinWarehousId);
       this.PurchaseDetailDiolog.show = true;

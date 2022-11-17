@@ -297,7 +297,7 @@ export default {
           let { success, message } = res.data;
           if (!success) {
             console.log(message);
-            this.$message.error('删除失败！');
+            this.$message.error(message);
           } else {
             this.$message({ message: '删除成功！', type: 'success' });
             this.setDynamicRouter();
