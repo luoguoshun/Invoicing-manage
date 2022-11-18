@@ -24,7 +24,7 @@
           <el-option value="7" label="付款"></el-option>
           <el-option value="8" label="登入"></el-option>
         </el-select>
-        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入"></el-input>
+        <el-input v-model="queryForm.conditions" size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
         <el-button type="primary" @click="selectLog()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>
@@ -54,11 +54,11 @@
           {{ $timeFormat.leaveTime(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100" align="center">
+      <!-- <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button @click="openUpdateDiolog(scope.row)" type="text" size="small">查看</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <!-- 分页 -->
     <div class="block">

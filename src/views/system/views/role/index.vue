@@ -146,7 +146,6 @@ export default {
         formdata.append('tableId', 'Role');
         this.$api.role.importRolesByExcel(formdata).then((res) => {
           const { data, success, message } = res.data;
-          console.log(data);
           if (!success) {
             this.$message({ message: message, type: 'error' });
           } else {
@@ -185,11 +184,9 @@ export default {
         this.table.roleList = data;
       });
     },
-    async getAllPermissionsByRoleId() {},
     //获取路由树数据
     constructRouteTreeData() {
       this.$api.vueRouter.constructRouteTreeData().then((res) => {
-        console.log(res);
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -259,7 +256,6 @@ export default {
     },
     //删除角色
     deleteRoleIdById() {
-      console.log('asd');
       if (this.roleIds.length == 0) {
         this.$message({
           message: '请选择要删除的数据',
@@ -280,11 +276,14 @@ export default {
     },
     openAllocationDiolog(row) {
       this.dialogObject.allocationDiolog = true;
+      //在弹出dialogDOM元素未加载完成之前执行$nextTick回调函数，确保el-tree已经渲染
+      this.$nextTick(() => {
+        this.$refs.routerTree.setCheckedKeys([]);
+      });
       this.roleForm.roleId = row.roleId;
       this.$api.role.getAllPermissionsByRoleId(row['roleId']).then((res) => {
         const { data, success, message } = res.data;
         //清空选中节点
-        this.$refs.routerTree.setCheckedKeys([]);
         if (success) {
           //设置默认选中节点
           this.defaultCheckedKeys = data;
@@ -296,7 +295,7 @@ export default {
       //获取所有选中的节点 getCheckedNodes()
       // 接收两个 boolean 类型的参数，1. 是否只是叶子节点，默认值为 false 2. 是否包含半选节点，默认值为 false
       let res = this.$refs.routerTree.getCheckedNodes(false, true); //子节点+父节点
-      this.routerIds = [];
+      this.routerIds = ['index'];
       res.forEach((item) => {
         this.routerIds.push(item.id);
       });
@@ -317,8 +316,8 @@ export default {
           this.$message({ message: '分配失败！', type: 'error' });
         } else {
           this.$message({ message: '分配成功！', type: 'success' });
-          this.$refs.routerTree.setCheckedKeys([]);
           this.dialogObject.allocationDiolog = false;
+          this.$refs.routerTree.setCheckedKeys([]);
         }
       });
     },

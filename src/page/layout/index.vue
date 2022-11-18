@@ -9,7 +9,7 @@
       <!-- 头部 -->
       <Slider class="slider" />
       <!-- 动态组件内容区 -->
-      <Content class="content" />
+      <Content class="myContent" />
     </main>
   </div>
 </template>
@@ -36,16 +36,17 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+  overflow: auto;
   header {
     height: 60px;
     width: 100%;
   }
   main {
-    // width: 100%;
-    // height: 100%;
+    width: 100%;
+    height: 96%;
     display: grid;
     grid-template-columns: 205px 1fr;
-    .content {
+    .myContent {
       border: 1px solid whitesmoke;
       border-radius: 5px;
       padding: 5px 5px;

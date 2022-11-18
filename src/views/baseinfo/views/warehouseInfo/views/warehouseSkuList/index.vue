@@ -30,7 +30,7 @@
             <el-form-item label="品牌">
               <span>{{ props.row.brand }}</span>
             </el-form-item>
-            <el-form-item label="位置">
+            <el-form-item label="货位">
               <span>{{ props.row.area }}</span>
             </el-form-item>
           </el-form>
@@ -49,7 +49,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
-      <el-table-column prop="area" label="货位" align="center"> </el-table-column>
+      <el-table-column prop="area" label="货位" align="center"> 
+        <template slot-scope="scope">
+          <el-input type="text" size="mini" v-model="scope.row.area"></el-input>
+        </template>
+      </el-table-column>
       <el-table-column prop="unit" label="单位" align="center"> </el-table-column>
       <el-table-column prop="specs" label="规格" align="center"> </el-table-column>
       <el-table-column label="供应商进价" align="center">
@@ -93,6 +97,9 @@
       </el-pagination>
     </div>
     <el-descriptions size="small" :column="4" border>
+      <el-descriptions-item label="仓库编号">
+        <el-tag type="warning">{{ calculateWarehouseItems.warehouseId }}</el-tag>
+      </el-descriptions-item>
       <el-descriptions-item label="仓库名">
         <el-tag type="warning">{{ calculateWarehouseItems.warehouseName }}</el-tag>
       </el-descriptions-item>
@@ -340,7 +347,7 @@ export default {
     },
     //修改信息
     updateWarehouseSku(row) {
-      this.$api.warehouse.updateWarehouseSku(this.queryForm.warehouseId, row.skuId, row.count, row.warnCount, row.costPrice).then((res) => {
+      this.$api.warehouse.updateWarehouseSku(row).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           this.$message({ message: '修改失败！', type: 'error' });

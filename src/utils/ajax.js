@@ -9,12 +9,15 @@ import {
   createThrottle
 } from './throttle';
 import router from '@/router';
+import {
+  baseUrl
+} from '@/config/defaultString.js'
 
-const baseurl = 'http://127.0.0.1:36559';
+// const baseurl = 'http://127.0.0.1:36559';
 //创建axios实例
 const ajax = new axios.create({
   withCredentials: false, //跨域请求是否允许携带cookie资源凭证
-  baseURL: baseurl,
+  baseURL: baseUrl,
   time: 10000, //请求超时时间
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
@@ -63,7 +66,7 @@ ajax.interceptors.response.use(
   (response) => {
     // 后端返回字符串表示需要解密操作
     if (isEncrypt && typeof response.data.data == 'string' && funs.strTrim(response.data.data) !== '') {
-      let data = encrypt.DecryptData(response.data.data);  
+      let data = encrypt.DecryptData(response.data.data);
       try {
         response.data.data = JSON.parse(data);
       } catch (e) {

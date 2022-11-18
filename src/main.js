@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import apis from './apis/index';
 import router from './router';
+// import router from './router/oldRouter';
 import store from './store';
 import elementUI from 'element-ui';
 import signalR from './utils/signalR.js';

@@ -41,11 +41,11 @@
           {{ $timeFormat.leaveTime(scope.row.LogDate) }}
         </template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100" align="center">
+      <!-- <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
           <el-button @click="openUpdateDiolog(scope.row)" type="text" size="small">查看</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <!-- 分页 -->
     <div class="block">
