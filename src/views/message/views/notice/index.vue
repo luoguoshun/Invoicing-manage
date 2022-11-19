@@ -75,7 +75,7 @@
           <el-input v-model="addMessageForm.senderId" disabled></el-input>
         </el-form-item>
         <el-form-item label="消息类型">
-          <el-select size="mini" v-model="addMessageForm.messageType" placeholder="消息类型">
+          <el-select size="mini" v-model="addMessageForm.messageType" placeholder="消息类型" disabled>
             <el-option value="通知" label="通知"></el-option>
             <el-option value="消息发送" label="消息发送"></el-option>
             <el-option value="数据统计" label="数据统计"></el-option>
@@ -91,7 +91,7 @@
           <el-input v-model="addMessageForm.title"></el-input>
         </el-form-item>
         <el-form-item label="接收人" prop="receiverId">
-          <el-select v-model="addMessageForm.receiverId" filterable placeholder="请选择用户">
+          <el-select v-model="addMessageForm.receiverId" filterable placeholder="请选择接收人">
             <el-option v-for="item in userInfo" :key="item.userId" :label="item.name" :value="item.userId"> </el-option>
           </el-select>
         </el-form-item>
@@ -133,7 +133,7 @@ export default {
         senderName: '', //发送人
         title: '',
         receiverId: '', //接收人
-        messageType: '',
+        messageType: '通知',
         content: '',
       },
       table: {
@@ -145,7 +145,7 @@ export default {
         addVisible: false,
         updateVisible: false,
       },
-      userInfo: [{ UserName: [], UserId: [] }],
+      userInfo: [],
       MessageParameterDialog: {
         visible: false,
         instanceId: '',
@@ -309,10 +309,6 @@ export default {
       display: grid;
       grid-template-columns: 4fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
 }

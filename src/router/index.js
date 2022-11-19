@@ -29,7 +29,7 @@ const staticRoutes = [{
     component: () => import("@/views/errors/404"),
   },
 ]
-const asyncRoutes = filterAsyncRouter(JSON.parse(JSON.stringify(store.getters['routers/getDynamicRouters'])));
+const asyncRoutes = filterAsyncRouter(JSON.parse(JSON.stringify(store.getters['routers/getDynamicRouters'])))||[];
 //遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap) {
   const accessedRouters = asyncRouterMap.filter(route => {
