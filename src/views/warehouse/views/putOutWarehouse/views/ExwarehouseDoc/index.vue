@@ -29,6 +29,7 @@
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectOrderRows"
       v-loading="table.loading"
+      border
     >
       <el-table-column type="selection" width="50" align="center"> </el-table-column>
       <el-table-column label="出库单号" width="120" align="center">
