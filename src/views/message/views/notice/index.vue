@@ -2,7 +2,7 @@
   <div class="notice">
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" class="el-icon-check" @click="OpenAddMessageDiolog()">新增消息</el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="OpenAddMessageDiolog()">新建消息</el-button>
         <el-button type="danger " size="mini" class="el-icon-check" @click="deletetMessage()">删除</el-button>
       </div>
       <div class="edit_query">
@@ -66,7 +66,7 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="新增消息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog title="新建消息" center :visible.sync="dialogObject.addVisible" :close-on-click-modal="false" width="40%">
       <el-form ref="updateform" :model="addMessageForm" label-width="100px">
         <el-form-item label="发送人">
           <el-input v-model="addMessageForm.senderName" disabled></el-input>
@@ -77,14 +77,14 @@
         <el-form-item label="消息类型">
           <el-select size="mini" v-model="addMessageForm.messageType" placeholder="消息类型">
             <el-option value="通知" label="通知"></el-option>
-            <el-option value="消息发送" label="消息发送"></el-option>
-            <el-option value="数据统计" label="数据统计"></el-option>
-            <el-option value="采购计划审批" label="采购计划审批"></el-option>
-            <el-option value="采购开单审批" label="采购开单审批"></el-option>
-            <el-option value="销售开单审批" label="销售开单审批"></el-option>
-            <el-option value="物品入库审批" label="物品入库审批"></el-option>
-            <el-option value="物品出库审批" label="物品出库审批"></el-option>
-            <el-option value="销售退货审批" label="销售退货审批"></el-option>
+            <el-option value="消息发送" label="消息发送" disabled></el-option>
+            <el-option value="数据统计" label="数据统计" disabled></el-option>
+            <el-option value="采购计划审批" label="采购计划审批" disabled></el-option>
+            <el-option value="采购开单审批" label="采购开单审批" disabled></el-option>
+            <el-option value="销售开单审批" label="销售开单审批" disabled></el-option>
+            <el-option value="物品入库审批" label="物品入库审批" disabled></el-option>
+            <el-option value="物品出库审批" label="物品出库审批" disabled></el-option>
+            <el-option value="销售退货审批" label="销售退货审批" disabled></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="标题" prop="title">
@@ -101,17 +101,17 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogObject.addVisible = false">取 消</el-button>
-        <el-button type="success" @click="addMessage()">新增消息</el-button>
+        <el-button type="success" @click="addMessage()">新建消息</el-button>
       </div>
     </el-dialog>
 
     <!-- 消息参数对话框 -->
     <el-dialog title="消息参数" :visible.sync="MessageParameterDialog.visible" center width="40%">
       <el-descriptions class="margin-top" title="详细信息" :column="1">
-        <el-descriptions-item label="付款编号">{{ MessageParameterDialog.instanceId }}</el-descriptions-item>
-        <el-descriptions-item label="付款编号">{{ MessageParameterDialog.isHandle }}</el-descriptions-item>
-        <el-descriptions-item label="付款编号">{{ MessageParameterDialog.targetRouterName }}</el-descriptions-item>
-        <el-descriptions-item label="付款编号">{{ MessageParameterDialog.text }}</el-descriptions-item>
+        <el-descriptions-item label="处理编号">{{ MessageParameterDialog.instanceId }}</el-descriptions-item>
+        <el-descriptions-item label="是否处理">{{ MessageParameterDialog.isHandle }}</el-descriptions-item>
+        <el-descriptions-item label="目标路由">{{ MessageParameterDialog.targetRouterName }}</el-descriptions-item>
+        <el-descriptions-item label="文本提示">{{ MessageParameterDialog.text }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
   </div>
@@ -119,7 +119,6 @@
   
   <script>
 import store from '@/store';
-// import sliderVue from '../../../../page/layout/slider.vue';
 export default {
   data() {
     return {
@@ -177,7 +176,7 @@ export default {
         console.log(this.table);
       });
     },
-    //新增消息
+    //新建消息
     async addMessage() {
       const from = {
         Title: this.addMessageForm.title,
