@@ -3,7 +3,7 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="warning" size="mini" class="el-icon-check" @click="submitPutinWarehousApply()">确认入库</el-button>
+        <el-button type="primary" size="mini" class="el-icon-check" @click="submitPutinWarehousApply()">一键入库</el-button>
         <el-button type="danger " size="mini" class="el-icon-check" @click="deletetPutinWarehousApply()">删除</el-button>
       </div>
       <div class="edit_query">
@@ -60,6 +60,7 @@
       <el-table-column prop="transportCost" label="运输费用" align="center"> </el-table-column>
       <el-table-column prop="orderTotalPrice" label="订单总价" align="center"> </el-table-column>
       <el-table-column prop="putTotalNum" label="入库总量" align="center"> </el-table-column>
+      <el-table-column prop="actualWarehousing" label="实际入库" align="center"> </el-table-column>
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
@@ -83,7 +84,7 @@
     <!-- 入库单明细表格 -->
     <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="80%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="updatePutinWarehousOrder()" plain>保存</el-button>
+      <el-button size="mini" type="primary" @click="updatePutinWarehousOrder()" plain>部分入库</el-button>
       <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
       <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="table.PutinWarehousDetailList">
         <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center"> </el-table-column>
@@ -92,7 +93,7 @@
         <el-table-column prop="purchaseCount" label="采购数量" align="center"> </el-table-column>
         <el-table-column label="入库数量" align="center">
           <template slot-scope="scope">
-            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number>
+            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount" max="10"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
