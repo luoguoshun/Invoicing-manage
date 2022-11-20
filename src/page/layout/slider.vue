@@ -40,15 +40,15 @@ export default {
   created() {
     let dynamicRouters = JSON.parse(JSON.stringify(this.getDynamicRouters[0].children));
     console.log(dynamicRouters);
-    // for (let index = 0; index < dynamicRouters.length; index++) {
-    //   console.log("-----------------------");
-    //   const element = dynamicRouters[index];
-    //   console.log("routerId:"+element.routerId+"  menuIndex:"+element.menuIndex);
-    //   for (let j = 0; j < element.children.length; j++) {
-    //     const children = element.children[j];
-    //     console.log("routerId:"+children.routerId+"  menuIndex:"+children.menuIndex);
-    //   }
-    // }
+  //   for (let index = 0; index < dynamicRouters.length; index++) {
+  //     console.log("-----------------------");
+  //     const element = dynamicRouters[index];
+  //     console.log("routerId:"+element.routerId+"  menuIndex:"+element.menuIndex);
+  //     for (let j = 0; j < element.children.length; j++) {
+  //       const children = element.children[j];
+  //       console.log("routerId:"+children.routerId+"  menuIndex:"+children.menuIndex);
+  //     }
+  //   }
   },
 };
 </script>

@@ -39,7 +39,7 @@ export default {
     DeletetPutinWarehousApply(putinWarehousIds) {
         return ajax.post('/api/Background/Putinwarehous/DdeletePutinWarehousApply', putinWarehousIds)
     },
-
+    
     EditPutinWarhouseOrder(PutinWarehousId,PutinWarehousDetails) {
         return ajax.post('/api/Background/Putinwarehous/EditPutinWarehous', {
             PutinWarehousId,
