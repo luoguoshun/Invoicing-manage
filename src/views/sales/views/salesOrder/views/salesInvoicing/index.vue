@@ -109,6 +109,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" width="200px" align="center"> </el-table-column>
+        <el-table-column prop="supplierName" label="物品供应商" width="200px" align="center"> </el-table-column>
         <el-table-column label="销售单价" align="center">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
@@ -279,7 +280,16 @@
       <el-divider></el-divider>
       <div class="dialogSelectInput">
         <div></div>
-        <el-input size="mini" v-model="applicationSalesDiolog.skuQueryForm.goodsName" placeholder="请输入物品名称"></el-input>
+        <el-select
+          size="mini"
+          v-model="applicationSalesDiolog.skuQueryForm.conditions"
+          @change="supplierOnChange"
+          placeholder="物品供应商"
+          filterable
+        >
+          <el-option v-for="item in supplierList" :key="item.supplierId" :label="item.supplierName" :value="item.supplierId"> </el-option>
+        </el-select>
+        <!-- <el-input size="mini" v-model="applicationSalesDiolog.skuQueryForm.conditions" placeholder="请输入关键字"></el-input> -->
         <el-select size="mini" v-model="applicationSalesDiolog.skuQueryForm.goodsTypeId" placeholder="物品类型">
           <el-option v-for="item in goodsTypes" :key="item.goodsTypeId" :label="item.goodsTypeName" :value="item.goodsTypeId"></el-option>
         </el-select>
@@ -302,6 +312,7 @@
         <el-table-column prop="skuId" label="物品编码" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="brand" label="品牌" align="center"> </el-table-column>
+        <el-table-column prop="supplierName" label="供应商" align="center"> </el-table-column>
         <el-table-column prop="goodsTypeName" label="类别" align="center"> </el-table-column>
         <el-table-column prop="unit" label="物品规格" align="center"> </el-table-column>
         <el-table-column prop="price" label="销售数量" align="center">
@@ -390,6 +401,8 @@ export default {
         arrivalCount: 0,
         salesTotalPrice: 0, //订单总价
         salesProfit: 0, //利润
+        supplierId: 0,
+        supplierName: '',
         salesDetails: [], //销售单详情
       },
       table: {
@@ -419,7 +432,6 @@ export default {
           row: 10,
           conditions: '',
           goodsTypeId: '',
-          goodsName: '',
           warehouseId: '',
         },
         skuTabledata: [],
@@ -434,6 +446,7 @@ export default {
       options: regionDataPlus,
       selectedOptions: [],
       provinceAndCity,
+      supplierList: [],
       search: { current: 1, size: 6 },
     };
   },
@@ -496,6 +509,8 @@ export default {
           console.log(message);
           return;
         }
+      debugger;
+
         this.salesDetailDiolog.salesDetails = data;
       });
     },
@@ -513,12 +528,26 @@ export default {
         });
       });
     },
-    //获取供应商物品数据
+    //构造供应商下拉数据
+    async getSupplierList() {
+      this.supplierList = [];
+      await this.$api.supplier.constructDropDownData().then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        data.forEach((item) => {
+          this.supplierList.push({ supplierId: item.supplierId, supplierName: item.supplierName });
+        });
+      });
+    },
+    //获取仓库物品数据
     async getSKUListByWhId() {
       let queryForm = JSON.parse(JSON.stringify(this.applicationSalesDiolog.skuQueryForm));
       queryForm.goodsTypeId = queryForm.goodsTypeId == '' ? 0 : parseInt(queryForm.goodsTypeId);
       await this.$api.goods
-        .getSKUListByWhId(queryForm.page, queryForm.row, this.salesOrderForm.warehouseId, queryForm.goodsName, queryForm.goodsTypeId)
+        .getSKUListByWhId(queryForm.page, queryForm.row, this.salesOrderForm.warehouseId, queryForm.conditions, queryForm.goodsTypeId)
         .then((res) => {
           const { data, success, message } = res.data;
           if (!success) {
@@ -621,6 +650,7 @@ export default {
       this.getWarehouseList();
       this.getGoodInfoType();
       this.getClientList();
+      this.getSupplierList();
     },
     //对话框表格条数改变
     dialogSizeChange(row) {
@@ -649,6 +679,19 @@ export default {
       });
       this.getSKUListByWhId();
     },
+    supplierOnChange(supplierId) {
+      //根据供应商Id值修改供应商名称的值
+      this.supplierList.forEach((item, index) => {
+        if (item.supplierId == supplierId) {
+          this.salesOrderForm.supplierName = item['supplierName'];
+          this.applicationSalesDiolog.skuQueryForm.conditions = this.salesOrderForm.supplierName;
+          return true;
+        }
+      });
+      if (this.salesOrderForm.warehouseId !== '') {
+        this.getSKUListByWhId();
+      }
+    },
     clientOnChange(value) {
       //根据供应商Id值修改供应商名称的值
       this.clientList.forEach((item, index) => {
@@ -667,6 +710,8 @@ export default {
       selection.forEach((element) => {
         const salesDetail = {
           skuId: element.skuId,
+          supplierId: element.supplierId,
+          supplierName: element.supplierName,
           salesPrice: element.salesPrice,
           costPrice: element.price,
           goodsCount: element['exWarehouseCount'],
@@ -876,10 +921,6 @@ export default {
       display: grid;
       grid-template-columns: 2fr 2fr 2fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
-      .edit_query_1:last-child {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-      }
     }
   }
   .demo-table-expand {

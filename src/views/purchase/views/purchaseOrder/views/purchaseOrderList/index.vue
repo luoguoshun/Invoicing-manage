@@ -20,11 +20,13 @@
       <div class="edit_query">
         <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
         </el-date-picker>
-        <el-select size="mini" v-model="queryForm.orderState" placeholder="订单状态">
+        <el-select size="mini" v-model="queryForm.orderState" placeholder="采购单状态">
           <el-option label="待审核" value="2"></el-option>
           <el-option label="已审核" value="3"></el-option>
           <el-option label="已完成" value="5"></el-option>
           <el-option label="部分到货" value="6"></el-option>
+          <el-option label="待结算" value="7"></el-option>
+          <el-option label="结算中" value="8"></el-option>
         </el-select>
         <el-select size="mini" v-model="queryForm.warehouseId" placeholder="开单仓库">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>

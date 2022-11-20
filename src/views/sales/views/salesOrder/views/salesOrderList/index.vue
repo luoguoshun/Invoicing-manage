@@ -149,6 +149,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" width="200px" align="center"> </el-table-column>
+        <el-table-column prop="supplierName" label="物品供应商" width="200px" align="center"> </el-table-column>
         <el-table-column label="销售单价" align="center">
           <template slot-scope="scope">
             <el-tag type="success">{{ scope.row.salesPrice }}</el-tag>
