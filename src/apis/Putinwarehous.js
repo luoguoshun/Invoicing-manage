@@ -13,10 +13,11 @@ export default {
 
     //获取入库单详情
     GetPutinWarehousDetail(page, row, putinWarehousId) {
+        console.log(putinWarehousId);
         return ajax.post('/api/Background/Putinwarehous/GetPutinWarehousDetail', {
-            page,
-            row,
-            putinWarehousId
+            Page: page,
+            Row: row,
+            PutinWarehousId: putinWarehousId
         });
     },
     //提交入库申请
@@ -38,8 +39,8 @@ export default {
     DeletetPutinWarehousApply(putinWarehousIds) {
         return ajax.post('/api/Background/Putinwarehous/DdeletePutinWarehousApply', putinWarehousIds)
     },
-    
-    EditPutinWarhouseOrder(PutinWarehousId,PutinWarehousDetails) {
+
+    EditPutinWarhouseOrder(PutinWarehousId, PutinWarehousDetails) {
         return ajax.post('/api/Background/Putinwarehous/EditPutinWarehous', {
             PutinWarehousId,
             PutinWarehousDetails

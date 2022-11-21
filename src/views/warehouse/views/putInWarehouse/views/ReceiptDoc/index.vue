@@ -17,8 +17,9 @@
     </div>
 
     <!-- 表格 -->
+     <!-- @row-click="getPutinWarehouseOrderDetail" -->
     <el-table
-      @row-click="getPutinWarehouseOrderDetail"
+     
       :header-cell-style="{ 'text-align': 'center' }"
       @selection-change="selectRows"
       border=""
@@ -184,8 +185,9 @@ export default {
     },
     //获取入库单详情信息
     async getPutinWarehouseOrderDetail(row) {
+      console.log(row);
       this.table.PutinWarehousDetailList=[];
-      await this.$api.Putinwarehous.GetPutinWarehousDetail(1, 100, row.putinWarehousId).then((res) => {
+      await this.$api.Putinwarehous.GetPutinWarehousDetail(1, 100, row).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
