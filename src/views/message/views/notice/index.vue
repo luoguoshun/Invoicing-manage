@@ -190,9 +190,9 @@ export default {
         const { success, message } = res.data;
         if (!success) {
           console.log(message);
-          this.$message.error('删除失败');
+          this.$message.error('新建失败');
         } else {
-          this.$message({ message: '删除成功', type: 'success' });
+          this.$message({ message: '新建成功', type: 'success' });
           this.loadData();
         }
       });

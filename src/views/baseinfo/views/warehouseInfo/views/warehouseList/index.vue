@@ -221,8 +221,9 @@ export default {
     },
     //获取所有角色为仓库管理员的仓库
     async getUsersByRoleId() {
-      await this.$api.user.getUsersByRoleId('4').then((res) => {
+      await this.$api.user.getUsersByRoleId('Storeman').then((res) => {
         const { data, success, message } = res.data;
+        console.log(data);
         if (!success) {
           console.log(message);
           return;
