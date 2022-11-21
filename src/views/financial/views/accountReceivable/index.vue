@@ -437,7 +437,7 @@ export default {
           publicationDates: [],
           warehouseId: '', //出货仓库
           conditions: '', //综合条件
-          salesState: 10, //待结算的销售单
+          salesState: 8, //待结算的销售单
         },
       },
       payDialog: {
@@ -516,7 +516,7 @@ export default {
         this.table.loading = false;
       });
     },
-    //获取已完成销售订单列表
+    //获取待结算的销售单
     async getSalesListBySalesState() {
       let queryForm = JSON.parse(JSON.stringify(this.salesOrderDialog.queryForm));
       await this.$api.sales.getSalesListBySalesState(queryForm).then((res) => {
