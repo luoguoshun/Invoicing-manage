@@ -3,7 +3,7 @@
     <!-- 操作 -->
     <div class="editbar">
       <div class="edit_btn">
-        <el-button type="primary" size="mini" @click="openDialog('add')">添加</el-button>
+        <el-button type="primary" size="mini" @click="openAddDialog()">添加</el-button>
         <el-button type="danger" size="mini" @click="deleteSKUListById()">删除</el-button>
       </div>
       <div class="edit_query">
@@ -17,7 +17,7 @@
       </div>
     </div>
     <!-- 表格 -->
-    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openDialog('edit', scope.row)" border>
+    <el-table style="width: 100%" :data="tableData.goodsList" @selection-change="selectRows" @row-dblclick="openUpdateDialog(scope.row)" border>
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column label="图片" width="100" align="center">
         <template slot-scope="scope">
@@ -35,7 +35,7 @@
       <!-- 操作 -->
       <el-table-column fixed="right" label="操作" width="100" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="openDialog('edit', scope.row)">修改</el-button>
+          <el-button type="text" size="small" @click="openUpdateDialog(scope.row)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -55,7 +55,50 @@
     </div>
     <!--Sku模态框-->
     <el-dialog
-      :title="this.dialogType == 'add' ? '新增SKU' : '修改SKU'"
+      title="新增SKU"
+      center
+      :visible.sync="dialogObject.AdddialogVisible"
+      :close-on-click-modal="false"
+      width="50%"
+    >
+      <el-form :model="SkuForm" ref="SkuFormModel" label-width="80px">
+        <el-form-item label="头像" v-if="dialogType == 'edit'">
+          <img :src="SkuForm.LogoSrc" width="100" height="100" />
+          <el-upload ref="upload" action="" :http-request="uploadSKULogoImg" :auto-upload="false" :limit="1">
+            <el-button slot="trigger" size="small" type="primary">
+              选取文件
+            </el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="$refs.upload.submit()">上传到服务器</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="货品编码" prop="SpuId">
+          <el-input v-model="SkuForm.SpuId" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="单品编码" prop="SkuId">
+          <el-input v-model="SkuForm.SkuId"></el-input>
+        </el-form-item>
+        <el-form-item label="名称" prop="Name">
+          <el-input v-model="SkuForm.Name"></el-input>
+        </el-form-item>
+        <el-form-item label="单位" prop="Unit">
+          <el-input v-model="SkuForm.Unit"></el-input>
+        </el-form-item>
+        <el-form-item label="单品售价" prop="Price">
+          <el-input type="number" v-model="SkuForm.Price"></el-input>
+        </el-form-item>
+        <el-form-item label="规格" prop="Specs">
+          <el-input v-model="SkuForm.Specs"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogObject.AdddialogVisible = false">取 消</el-button>
+        <el-button type="success" @click="addSku()">新 增</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改 -->
+        <el-dialog
+      title="修改SKU"
       center
       :visible.sync="dialogObject.dialogVisible"
       :close-on-click-modal="false"
@@ -74,8 +117,8 @@
         <el-form-item label="货品编码" prop="SpuId">
           <el-input v-model="SkuForm.SpuId" disabled></el-input>
         </el-form-item>
-        <el-form-item label="单品编码" prop="SpuId">
-          <el-input v-model="SkuForm.SkuId"></el-input>
+        <el-form-item label="单品编码" prop="SkuId">
+          <el-input v-model="SkuForm.SkuId" disabled></el-input>
         </el-form-item>
         <el-form-item label="名称" prop="Name">
           <el-input v-model="SkuForm.Name"></el-input>
@@ -132,6 +175,7 @@ export default {
       dialogType: 'add',
       dialogObject: {
         dialogVisible: false,
+        AdddialogVisible:false,
       },
       dianlogButton: { label: '新增' },
     };
@@ -197,15 +241,7 @@ export default {
       if (this.SkuForm.GoodsTypeId == 0) this.SkuForm.GoodsTypeId == '';
     },
     //打开复用模态框
-    openDialog(addType, row) {
-      if (addType == 'add') {
-        this.dianlogButton.label = '新增';
-        this.dialogType = 'add';
-        this.SkuForm.Name = '';
-        this.SkuForm.Brand = '';
-        this.SkuForm.GoodsTypeId = '';
-      } else {
-        this.dialogType = 'edit';
+    openUpdateDialog(row) {
         this.SkuForm.SpuId = row.spuId;
         this.SkuForm.SkuId = row.skuId;
         this.SkuForm.Name = row.skuName;
@@ -215,8 +251,19 @@ export default {
         this.SkuForm.Price = row.price;
         this.SkuForm.LogoSrc = row.skuLogoUrl;
         this.dianlogButton.label = '修改';
-      }
       this.dialogObject.dialogVisible = true;
+    },
+    //添加模态框
+    openAddDialog(row) {
+        this.dianlogButton.label = '新增';
+        this.SkuForm.SkuId='';
+        this.SkuForm.Unit='';
+        this.SkuForm.price=0;
+        this.SkuForm.specs='';
+        this.SkuForm.Name = '';
+        this.SkuForm.Brand = '';
+        this.SkuForm.GoodsTypeId = '';
+      this.dialogObject.AdddialogVisible = true;
     },
     selectRows(selection) {
       console.log('asd');
@@ -255,6 +302,7 @@ export default {
       });
     },
     updateSKUById() {
+      console.log(this.SkuForm);
       this.$api.goods.updateSKUById(this.SkuForm).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
