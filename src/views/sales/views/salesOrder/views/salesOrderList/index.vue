@@ -228,14 +228,14 @@
     <!-- 审核记录对话框 -->
     <el-dialog title="审批记录" center :visible.sync="approvalDetaildialog.visible" width="30%">
       <el-timeline>
-        <el-timeline-item :timestamp="approvalDetaildialog.approvalDetails.createTime" type="primary" icon="el-icon-more">
+        <el-timeline-item :timestamp="$timeFormat.leaveTime(approvalDetaildialog.approvalDetails.createTime)" type="primary" icon="el-icon-more">
           <p>提交人</p>
           {{ approvalDetaildialog.approvalDetails.applicantName }}
         </el-timeline-item>
         <el-timeline-item
           v-for="(Step, index) in approvalDetaildialog.approvalDetails.workFlowSteps"
           :key="index"
-          :timestamp="Step.completeTime"
+          :timestamp="$timeFormat.leaveTime(Step.completeTime)"
           :type="Step.approvalStateStr == '已通过' ? 'success ' : 'danger '"
         >
           <p>审核人:{{ Step.reviewerName }}</p>
