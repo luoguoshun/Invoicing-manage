@@ -72,8 +72,8 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :total="table.total"
-        :page-sizes="[5, 10, 15, 20]"
+        :total="table.PutinWareOrdertotal"
+        :page-sizes="[10, 15, 20, 25]"
         :current-page="queryForm.page"
         :page-size="queryForm.row"
         layout="total, sizes, prev, pager, next, jumper"
@@ -181,6 +181,7 @@ export default {
         console.log(data);
         this.table.PutinWareOrderList = data.data;
         this.table.PutinWareOrdertotal = data.count;
+        console.log(this.table.PutinWareOrdertotal);
       });
     },
     //获取入库单详情信息
