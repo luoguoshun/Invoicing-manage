@@ -196,23 +196,17 @@
         <el-table-column prop="warehouseName" label="出货仓库" align="center"></el-table-column>
         <el-table-column prop="remarks" label="备注" align="center"> </el-table-column>
         <el-table-column prop="createTime" label=" 顾客信息" width="120px" align="center">
-          <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="销售单据" align="center">
-          <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="createSalesNoteBysalesId(scope.row)" plain>点击生成</el-button>
-            <el-button type="success" size="mini" @click="lookCreateSalesNote(scope.row)" plain>查看</el-button>
-          </template>
+          <!-- <template slot-scope="scope"> -->
+            <!-- <el-button type="primary" size="mini" @click="showClientInfo(scope.row)" plain>查看</el-button> -->
+          <!-- </template> -->
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column label="编辑" width="200" align="center">
-          <template slot-scope="scope">
-            <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button>
-            <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button>
-          </template>
-        </el-table-column>
+        <!-- <el-table-column label="编辑" width="200" align="center"> -->
+          <!-- <template slot-scope="scope"> -->
+            <!-- <el-button type="info" size="mini" @click="openApprovalDetails(scope.row.salesId)" plain>审核详情</el-button> -->
+            <!-- <el-button type="info" size="mini" @click="showsalesDetailDiolog(scope.row)" plain>订单详情</el-button> -->
+          <!-- </template> -->
+        <!-- </el-table-column> -->
       </el-table>
       <!-- 分页 -->
       <div class="block">
@@ -288,7 +282,7 @@ export default {
       },
       SalequeryForm: {
         page: 1,
-        row: 10,
+        row: 100,
         publicationDates: [],
         warehouseId: '', //出货仓库
         conditions: '', //综合条件

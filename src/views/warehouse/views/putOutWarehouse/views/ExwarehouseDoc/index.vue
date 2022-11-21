@@ -50,7 +50,7 @@
       <el-table-column prop="exwarehouseTypeStr" label="类别" align="center"> </el-table-column>
       <el-table-column prop="sourceOrderId" label="来源单号" align="center"> </el-table-column>
       <el-table-column prop="operationPersonId" label="开单人" align="center"></el-table-column>
-      <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column>
+      <!-- <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column> -->
       <el-table-column prop="exwarehouseCout" label="出库总数" align="center"></el-table-column>
       <el-table-column prop="exGoodsTypeNum" label="货品种类数" align="center"></el-table-column>
       <el-table-column prop="nn" label="物流公司" align="center"> </el-table-column>
@@ -72,7 +72,7 @@
       <!-- 操作 -->
       <el-table-column label="编辑" width="200" align="center">
         <template slot-scope="scope">
-          <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>审批详情</el-button>
+          <!-- <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>审批详情</el-button> -->
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>订单详情</el-button>
         </template>
       </el-table-column>
@@ -102,6 +102,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
+        <el-table-column prop="supplierName" label="物品供应商" align="center"> </el-table-column>
         <el-table-column prop="brand" label="品牌" width="120" align="center"> </el-table-column>
         <el-table-column prop="unit" label="单位" width="120" align="center"> </el-table-column>
         <el-table-column prop="wCount" label="库存数量" align="center"></el-table-column>
@@ -326,9 +327,9 @@ export default {
     //出库单提交
     adoptOrderRequest() {
       for (let i = 0; i < this.OrderState.length; i++) {
-        if (this.OrderState[i] != '审核中') {
+        if (this.OrderState[i] != '待出库') {
           this.$message({
-            message: '只能提交审核中的出库单！',
+            message: '只能提交待出库的出库单！',
             type: 'warning',
           });
           this.OrderState = [];

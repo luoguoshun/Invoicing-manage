@@ -13,7 +13,6 @@ export default {
 
     //获取入库单详情
     GetPutinWarehousDetail(page, row, putinWarehousId) {
-        console.log(putinWarehousId);
         return ajax.post('/api/Background/Putinwarehous/GetPutinWarehousDetail', {
             page,
             row,

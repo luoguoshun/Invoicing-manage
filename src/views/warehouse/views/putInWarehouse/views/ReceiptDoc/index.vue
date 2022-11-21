@@ -84,16 +84,17 @@
     <!-- 入库单明细表格 -->
     <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="80%">
       <el-divider></el-divider>
-      <el-button size="mini" type="primary" @click="updatePutinWarehousOrder()" plain>部分入库</el-button>
-      <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button>
+      <!-- <el-button size="mini" type="primary" @click="updatePutinWarehousOrder()" plain>部分入库</el-button> -->
+      <!-- <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
       <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="table.PutinWarehousDetailList">
         <el-table-column prop="putinWarehousDetailId" label="入库明细编号" width="120" align="center"> </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
+        <el-table-column prop="supplierName" label="物品供应商" align="center"> </el-table-column>
         <el-table-column prop="purchaseCount" label="采购数量" align="center"> </el-table-column>
         <el-table-column label="入库数量" align="center">
           <template slot-scope="scope">
-            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount" max="10"></el-input-number>
+            <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number>
           </template>
         </el-table-column>
         <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
@@ -183,7 +184,8 @@ export default {
     },
     //获取入库单详情信息
     async getPutinWarehouseOrderDetail(row) {
-      await this.$api.Putinwarehous.GetPutinWarehousDetail(this.queryForm.page, this.queryForm.row, row.putinWarehousId).then((res) => {
+      this.table.PutinWarehousDetailList=[];
+      await this.$api.Putinwarehous.GetPutinWarehousDetail(1, 100, row.putinWarehousId).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
