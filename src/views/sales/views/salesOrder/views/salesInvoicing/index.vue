@@ -713,7 +713,7 @@ export default {
           supplierId: element.supplierId,
           supplierName: element.supplierName,
           salesPrice: element.salesPrice,
-          costPrice: element.price,
+          costPrice: element.costPrice,
           goodsCount: element['exWarehouseCount'],
           exWarehouseCount: element['exWarehouseCount'],
           totalPrice: element['exWarehouseCount'] * element['salesPrice'],

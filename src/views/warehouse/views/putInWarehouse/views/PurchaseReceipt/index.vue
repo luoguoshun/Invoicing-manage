@@ -57,29 +57,28 @@
       <!-- 操作 -->
       <el-table-column fixed="right" label="编辑" align="center">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="showplanDetailDiolog(scope.row)" icon="el-icon-edit">详细信息</el-button>
+          <el-button type="text" size="small" @click="showorderDetailDialog(scope.row.purchaseOrderId)" icon="el-icon-edit">详细信息</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 操作表格 -->
-    <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="70%">
+    <el-drawer class="editPlanItem" :visible.sync="orderDetailDialog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
       <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
       <el-button size="mini" type="primary" @click="editTable.show = false" plain>关闭</el-button> -->
-      <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="PurchaseDetDiolog.purchaseOrderListDetail">
-        <el-table-column prop="purchaseDetailId" label="采购明细编号" width="120" align="center">
+      <el-table :header-cell-style="{ 'text-align': 'center' }" border :data="orderDetailDialog.orderDetailItems">
+        <el-table-column prop="purchaseOrderDetailId" label="采购明细编号" width="120" align="center">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="top">
-              <p>采购计划编号: {{ scope.row.purchaseId }}</p>
+              <p>采购计划编号: {{ scope.row.purchaseOrderId }}</p>
               <div slot="reference" class="name-wrapper">
-                <el-tag disable-transitions>{{ scope.row.purchaseDetailId }}</el-tag>
+                <el-tag disable-transitions>{{ scope.row.purchaseOrderDetailId }}</el-tag>
               </div>
             </el-popover>
           </template>
         </el-table-column>
         <el-table-column prop="skuId" label="物品编号" align="center"> </el-table-column>
-        <el-table-column prop="skuId" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="count" label="采购数量" align="center"> </el-table-column>
         <el-table-column prop="totalPrice" label="物品采购价" align="center">
           <template slot-scope="scope">
@@ -111,22 +110,10 @@ export default {
         purchaseOrderList: [],
         total: 0,
       },
-      PurchaseDetailDiolog: {
+      orderDetailDialog: {
         editPurchaseId: '',
         show: false,
-        detailPlanItems: [],
-      },
-      //新建采购计划对话框
-      PurchaseDetDiolog: {
-        Visible: false,
-        skuQueryForm: {
-          page: 1,
-          row: 10,
-          conditions: '',
-          goodsTypeId: '',
-        },
-        purchaseOrderListDetail: [],
-        tatol: 0,
+        orderDetailItems: [],
       },
       SourceOrderIds: [],
     };
@@ -137,7 +124,6 @@ export default {
     },
 
     getElTagClass(row) {
-      console.log(row);
       if (row.orderStateStr == '已审核') {
         return 'success';
       } else if (row.orderStateStr == '审核中') {
@@ -158,7 +144,6 @@ export default {
       }
       queryForm.orderState = parseInt(queryForm.orderState);
       queryForm.supplierId = parseInt(queryForm.supplierId);
-      //console.log(queryForm);
       await this.$api.purchaseOrder.getSubmitOrderList(queryForm).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
@@ -169,18 +154,6 @@ export default {
         this.table.purchaseOrderList = data.purchaseOrders;
         this.table.total = data.count;
         this.table.loading = false;
-      });
-    },
-    //获取采购订单详细项目列表
-    async getDetailPlanListByPurchasId(row) {
-      await this.$api.purchase.getDetailPlanListByPurchasId(row).then((res) => {
-        const { data, success, message } = res.data;
-        if (!success) {
-          console.log(message);
-          return;
-        }
-        this.PurchaseDetDiolog.purchaseOrderListDetail = data;
-        console.log(this.PurchaseDetDiolog.purchaseOrderListDetail);
       });
     },
 
@@ -216,11 +189,21 @@ export default {
       });
     },
     //显示采购单子项目
-    showplanDetailDiolog(row) {
-      console.log(row);
-      this.PurchaseDetailDiolog.editPurchaseId = row.purchaseId;
-      this.getDetailPlanListByPurchasId(row.purchaseId);
-      this.PurchaseDetailDiolog.show = true;
+    showorderDetailDialog(purchaseOrderId) {
+      this.getOrderDetailByPurchaseOrderId(purchaseOrderId);
+      this.orderDetailDialog.show = true;
+    },
+    //获取采购订单详细项目列表
+    async getOrderDetailByPurchaseOrderId(purchaseOrderId) {
+      console.log(purchaseOrderId);
+      await this.$api.purchaseOrder.getOrderDetailByPurchaseOrderId(purchaseOrderId).then((res) => {
+        const { data, success, message } = res.data;
+        if (!success) {
+          console.log(message);
+          return;
+        }
+        this.orderDetailDialog.orderDetailItems = data;
+      });
     },
   },
   created() {
