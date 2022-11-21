@@ -277,10 +277,7 @@ export default {
     },
     //重置搜索条件
     resetQueryForm() {
-      this.queryForm.state = 1;
-      this.queryForm.approvalName = '';
-      this.queryForm.warehouseId = '';
-      this.queryForm.publicationDates = [];
+      this.queryForm.conditions = '';
       this.loadData();
     },
   },
