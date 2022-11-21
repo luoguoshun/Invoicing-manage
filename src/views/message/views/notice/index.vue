@@ -193,6 +193,7 @@ export default {
           this.$message.error('新建失败');
         } else {
           this.$message({ message: '新建成功', type: 'success' });
+          this.dialogObject.addVisible=false;
           this.loadData();
         }
       });
@@ -250,7 +251,7 @@ export default {
 
     selectRows(selection) {
       console.log(selection);
-      alert(selection[0].messageParameter.InstanceId);
+      // alert(selection[0].messageParameter.InstanceId);
       this.MessageIds = [];
       selection.forEach((element) => {
         this.MessageIds.push(element.messageId);
