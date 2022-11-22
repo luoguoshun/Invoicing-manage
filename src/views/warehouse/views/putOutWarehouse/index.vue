@@ -1,8 +1,8 @@
 <<template>
   <div class="warehouse_container">
-    <el-menu :default-active="this.$route.name" :router="true" class="el-menu-demo" mode="horizontal">
-      <el-menu-item index="ExwarehouseReceipt" >出库开单</el-menu-item>
-      <el-menu-item index="ExwarehouseDoc">出库单管理</el-menu-item>
+    <el-menu :default-active="this.$route.path" :router="true" class="el-menu-demo" mode="horizontal">
+      <el-menu-item index="/warehouse/putOutWarehouse/ExwarehouseReceipt" >出库开单</el-menu-item>
+      <el-menu-item index="/warehouse/putOutWarehouse/ExwarehouseDoc">出库单管理</el-menu-item>
     </el-menu>
     <RouterView></RouterView>
   </div>

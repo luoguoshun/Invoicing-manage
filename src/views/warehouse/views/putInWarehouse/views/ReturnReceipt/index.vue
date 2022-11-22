@@ -26,16 +26,12 @@
           <el-tag disable-transitions :type="getElTagClass(scope.row)" effect="plain">{{ scope.row.salesReturnStateStr }}</el-tag>
         </template>
       </el-table-column>
+     
+      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
+      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
       <el-table-column label="销售退货单总价" align="center" width="120px">
         <template slot-scope="scope">
           {{ scope.row.returnTotalPrice }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="otherPrice" label="其他费用" align="center"> </el-table-column>
-      <el-table-column prop="transportPrice" label="运输费用" align="center"> </el-table-column>
-      <el-table-column label="订单总价" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.returnTotalPrice + scope.row.otherPrice + scope.row.transportPrice }}
         </template>
       </el-table-column>
       <el-table-column prop="goodsTotalCount" label="采购总数" align="center"> </el-table-column>

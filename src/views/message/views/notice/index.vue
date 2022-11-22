@@ -47,9 +47,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="content" label="内容" align="center"> </el-table-column>
+      <!-- <el-table-column prop="messageParameter" label="内容" align="center"> </el-table-column> -->
       <el-table-column prop="messageParameter" label="消息参数" align="center" v-if="true">
         <template slot-scope="scope">
-          <el-tag disable-transitions @click="openMessageParameter(scope.row.messageParameter)">查看详情</el-tag>
+          <el-button type="primary" size="mini" @click="openMessageParameter(scope.row.messageParameter)" plain>查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,8 +117,8 @@
     </el-dialog>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import store from '@/store';
 export default {
   data() {
@@ -169,11 +170,6 @@ export default {
         }
         this.table.MessageList = data.message;
         this.table.total = data.count;
-        this.table.MessageList.forEach((element) => {
-          element.messageParameter = JSON.parse(element.messageParameter);
-        });
-        //console.log(JSON.parse(data.message[0].messageParameter));
-        console.log(this.table);
       });
     },
     //新建消息
@@ -193,7 +189,7 @@ export default {
           this.$message.error('新建失败');
         } else {
           this.$message({ message: '新建成功', type: 'success' });
-          this.dialogObject.addVisible=false;
+          this.dialogObject.addVisible = false;
           this.loadData();
         }
       });
@@ -231,13 +227,15 @@ export default {
         this.userInfo = data.users;
       });
     },
-    openMessageParameter(row)
-    {
-        this.MessageParameterDialog.instanceId=row.InstanceId;
-        this.MessageParameterDialog.isHandle=row.IsHandle;
-        this.MessageParameterDialog.targetRouterName=row.TargetRouterName;
-        this.MessageParameterDialog.text=row.Text;
-        this.MessageParameterDialog.visible=true;
+    openMessageParameter(row) {
+      if (row.messageParameter != '' && row.messageParameter != undefined) {
+        const messageParameter = JSON.parse(row.messageParameter);
+        this.MessageParameterDialog.instanceId = messageParameter.InstanceId;
+        this.MessageParameterDialog.isHandle = messageParameter.IsHandle;
+        this.MessageParameterDialog.targetRouterName = messageParameter.TargetRouterName;
+        this.MessageParameterDialog.text = messageParameter.Text;
+      }
+      this.MessageParameterDialog.visible = true;
     },
     getElTagClass(row) {
       if (row.orderStateStr == '待编辑') {
@@ -286,8 +284,8 @@ export default {
   },
 };
 </script>
-  
-  <style lang="less" scoped>
+
+<style lang="less" scoped>
 .notice {
   height: 100%;
   width: 100%;

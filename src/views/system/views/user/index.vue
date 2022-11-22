@@ -432,10 +432,10 @@ export default {
           title: '警告',
           message: '请上传格式为.png .gif .jpg .jpeg的图片',
         });
-      } else if (param.file.size / 1024 / 1024 / 2 > 2) {
+      } else if (param.file.size / 1024 / 1024 / 2 > 10) {
         this.$notify.warning({
           title: '警告',
-          message: '图片大小必须小于2M',
+          message: '图片大小必须小于10M',
         });
       } else {
         //创建FormData对象(键值对集合) 将模型存在FormData中

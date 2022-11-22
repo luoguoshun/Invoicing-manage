@@ -32,6 +32,9 @@ const staticRoutes = [{
 const asyncRoutes = filterAsyncRouter(JSON.parse(JSON.stringify(store.getters['routers/getDynamicRouters'])))||[];
 //遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap) {
+  if(asyncRouterMap==""||asyncRouterMap==[]){
+    return [];
+  }
   const accessedRouters = asyncRouterMap.filter(route => {
     if (route.component) {
       route.component = loadView(route.component)

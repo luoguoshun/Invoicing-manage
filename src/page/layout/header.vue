@@ -93,6 +93,7 @@ export default {
   },
   methods: {
     ...mapMutations({
+      clearUserInfo:'userInfo/clearUserInfo',
       clearToken: 'token/clearToken',
       clearRouters: 'routers/clearRouters',
       closeAllTags: 'tagsView/closeAllTags',
@@ -154,6 +155,7 @@ export default {
     },
     //退出登入(清除Token、断开signalR连接、清除所有标签页、跳转登入页)
     exitLogin() {
+      this.clearUserInfo();
       this.closeAllTags();
       this.clearToken();
       this.clearRouters();

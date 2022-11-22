@@ -98,7 +98,7 @@
         <el-tab-pane label="常用功能" name="often" class="often">
           <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'applicationPlan' })">采购计划申请</el-link></p>
           <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'applyForBilling' })">采购单申请</el-link></p>
-          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'ReturnReceipt' })">物品入库</el-link></p>
+          <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'returnReceipt' })">物品入库</el-link></p>
           <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'ExwarehouseReceipt' })">物品出库</el-link></p>
           <p><el-link :underline="false" type="warning" @click="$router.push({ name: 'systemLog' })">系统日志</el-link></p>
         </el-tab-pane>

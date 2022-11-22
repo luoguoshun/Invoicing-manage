@@ -55,7 +55,6 @@
       </el-table-column>
       <el-table-column prop="operationPerson" label="提交人" align="center"> </el-table-column>
       <el-table-column prop="warehouseName" label="仓库名称" align="center"> </el-table-column>
-      <el-table-column prop="orderTotalPrice" label="采购总价" align="center"> </el-table-column>
       <el-table-column prop="goodsCost" label="物品总成本" align="center"> </el-table-column>
       <el-table-column prop="otherCost" label="其他费用" align="center"> </el-table-column>
       <el-table-column prop="transportCost" label="运输费用" align="center"> </el-table-column>

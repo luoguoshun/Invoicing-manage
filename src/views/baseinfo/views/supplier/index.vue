@@ -1,8 +1,8 @@
 <<template>
   <div class="warehouse_container">
-    <el-menu :default-active="this.$route.name" :router="true" class="el-menu-demo" mode="horizontal">
-      <el-menu-item index="supplierList" >供应商信息</el-menu-item>
-      <el-menu-item index="supplierSku" disabled>供应商货品</el-menu-item>
+    <el-menu :default-active="this.$route.path" :router="true" class="el-menu-demo" mode="horizontal">
+      <el-menu-item index="/baseInfo/supplier/supplierList" >供应商信息</el-menu-item>
+      <el-menu-item index="/baseInfo/supplier/supplierSku" disabled>供应商货品</el-menu-item>
     </el-menu>
     <RouterView></RouterView>
   </div>

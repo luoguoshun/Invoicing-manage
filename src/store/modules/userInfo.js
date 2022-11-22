@@ -17,7 +17,8 @@ export default {
       state.userInfo=userInfo;
     },
     clearUserInfo(state) {
-      localStorage.removeItem('userInfo');
+      state.userInfo={};
+      // localStorage.removeItem('UserData');
     },
   },
   actions: {},

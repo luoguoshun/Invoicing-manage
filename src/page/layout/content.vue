@@ -18,7 +18,6 @@
     <el-breadcrumb class="breadcrumb" separator-class="el-icon-arrow-right">
       <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="item.path">
         <span v-if="index !== 0"> {{ item.meta.title }}</span>
-        <!-- <router-link v-if="index!==0" :to="item.path">{{item.meta.title}}</router-link> -->
       </el-breadcrumb-item>
     </el-breadcrumb>
     <RouterView />

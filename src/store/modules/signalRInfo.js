@@ -17,7 +17,6 @@ export default {
   // 操作state成员
   mutations: {
     setStatisticsSubscribe(state, data) {
-      debugger;
       state.staSubscribe = data;
     },
   },

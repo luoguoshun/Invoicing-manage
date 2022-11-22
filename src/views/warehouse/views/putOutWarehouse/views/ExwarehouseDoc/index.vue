@@ -291,7 +291,6 @@ export default {
     },
     //获取采购订单选中行的数据
     selectOrderRows(selection) {
-      console.log(selection);
       this.purchaseOrderIds = [];
       this.OrderState = [];
       selection.forEach((element) => {
@@ -300,14 +299,12 @@ export default {
       });
     },
     showplanDetailDiolog(row) {
-      console.log(row);
       this.planDetailDiolog.editPurchaseId = row.exwarehouseId;
       this.getExWareHouseDet(row.exwarehouseId);
       this.planDetailDiolog.show = true;
     },
     //获取出库详情信息
     getExWareHouseDet(row) {
-      console.log(row);
       const from = {
         ExwarehouseId: row,
         Page: this.queryForm.page,

@@ -1,8 +1,8 @@
 <template>
   <div class="purchasOrder">
-    <el-menu :default-active="this.$route.name" :router="true" class="el-menu-demo" mode="horizontal">
-      <el-menu-item index="purchaseOrderList">采购单管理</el-menu-item>
-      <el-menu-item index="applyForBilling">采购开单</el-menu-item>
+    <el-menu :default-active="this.$route.path" :router="true" class="el-menu-demo" mode="horizontal">
+      <el-menu-item index="/purchase/purchaseOrder/purchaseOrderList">采购单管理</el-menu-item>
+      <el-menu-item index="/purchase/purchaseOrder/applyForBilling">采购开单</el-menu-item>
     </el-menu>
     <RouterView></RouterView>
   </div>

@@ -277,12 +277,15 @@ export default {
     openAllocationDiolog(row) {
       this.dialogObject.allocationDiolog = true;
       //在弹出dialogDOM元素未加载完成之前执行$nextTick回调函数，确保el-tree已经渲染
-      this.$nextTick(() => {
-        this.$refs.routerTree.setCheckedKeys([]);
-      });
+      // this.$nextTick(() => {
+      //   this.$refs.routerTree.setCheckedKeys([]);
+      // });
       this.roleForm.roleId = row.roleId;
       this.$api.role.getAllPermissionsByRoleId(row['roleId']).then((res) => {
+        this.$refs.routerTree.setCheckedKeys([]);
+
         const { data, success, message } = res.data;
+        debugger;
         //清空选中节点
         if (success) {
           //设置默认选中节点

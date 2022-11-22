@@ -13,10 +13,44 @@ export default {
   },
   mutations: {
     createTab(state, tab) {
+      switch (tab.routeName) {
+        case 'others':
+          tab.routeName = 'goodsTypeList';
+          break;
+        case 'goods':
+          tab.routeName = 'spuList';
+          break;
+        case 'supplier':
+          tab.routeName = 'supplierList';
+          break;
+        case 'warehouseInfo':
+          tab.routeName = 'warehouseList';
+          break;
+        case 'purchasePlan':
+          tab.routeName = 'purchasePlanList';
+          break;
+        case 'purchaseOrder':
+          tab.routeName = 'purchaseOrderList';
+          break;
+        case 'putInWarehouse':
+          tab.routeName = 'purchaseReceipt';
+          break;
+        case 'putOutWarehouse':
+          tab.routeName = 'ExwarehouseReceipt';
+          break;
+        case 'salesOrder':
+          tab.routeName = 'salesOrderList';
+          break;
+        case 'salesReturn':
+          tab.routeName = 'salesReturnList';
+          break;
+        default:
+          break;
+      }
       state.dynamicTag.activeRoute = tab.routeName; //保存当前激活的路由
       //标签组不存在当前点击的菜单则添加到标签组
       if (JSON.stringify(state.dynamicTag.tabs).indexOf(JSON.stringify(tab)) == -1) {
-        if (state.dynamicTag.tabs.length>=10) {
+        if (state.dynamicTag.tabs.length >= 10) {
           state.dynamicTag.tabs.shift();
         }
         state.dynamicTag.tabs.push(tab);
@@ -26,7 +60,7 @@ export default {
       var tabs = state.dynamicTag.tabs;
       tabs.forEach((element, index) => {
         if (element.routeName == routeName) {
-          tabs.splice(index, 1); 
+          tabs.splice(index, 1);
           //如果为数组最后一个元素 则直接激活首页路由
           if (tabs.length === 0) {
             state.dynamicTag.activeRoute = 'home';
