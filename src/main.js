@@ -9,7 +9,7 @@ import signalR from './utils/signalR.js';
 import * as timeFormat from './utils/timeFormat.js';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'default-passive-events'
-// import * from CommonFun
+
 Vue.use(elementUI);
 Object.defineProperty(Vue.prototype, '$api', {
   value: apis,

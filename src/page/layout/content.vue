@@ -55,7 +55,7 @@ export default {
     //删除tag标签并跳转路由
     removeTab(routeName) {
       this.delTagFromArray(routeName);
-      if (this.routeName != '') {
+      if (this.routeName == this.$route.name) {
         this.$router.push({ name: this.getDynamicTags.activeRoute });
       }
     },

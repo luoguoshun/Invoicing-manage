@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      clearUserInfo:'userInfo/clearUserInfo',
+      clearUserInfo: 'userInfo/clearUserInfo',
       clearToken: 'token/clearToken',
       clearRouters: 'routers/clearRouters',
       closeAllTags: 'tagsView/closeAllTags',

@@ -24,6 +24,9 @@ export default {
     },
   },
   created() {
+    if (this.$router.options.routes.length==0) {
+      // location.reload();
+    }
     this.connectionSignalR();
   },
 };

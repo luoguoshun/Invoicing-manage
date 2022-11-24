@@ -12,7 +12,7 @@
               <el-input placeholder="请输入账号" prefix-icon="el-icon-user-solid" style="width: 70%" v-model="loginInfo.account"> </el-input>
 
               <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" show-password style="width: 70%" v-model="loginInfo.password"> </el-input>
-              <el-button @click="login" class="btn" v-loading="logining">登 录 </el-button>
+              <el-button @click="login" class="btn">登 录 </el-button>
             </div>
             <!-- 登录信息 -->
           </div>
@@ -31,7 +31,6 @@ export default {
         account: '',
         password: '',
       },
-      logining: false,
     };
   },
   methods: {
@@ -85,7 +84,7 @@ export default {
       return true;
     },
     connectionSignalR() {
-      if (this.$signalR.connection['_connectionState'] == 'Disconnected') {     
+      if (this.$signalR.connection['_connectionState'] == 'Disconnected') {
         this.$signalR.connection.start();
       }
     },

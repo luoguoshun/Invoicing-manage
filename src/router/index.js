@@ -13,8 +13,12 @@ const VueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(to) {
   return VueRouterPush.call(this, to).catch((err) => err);
 };
+const VueRouterReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(to) {
+  return VueRouterReplace.call(this, to).catch((err) => err);
+};
 const router = new VueRouter({
-  mode: "history",
+  mode: "hash",
   routes: [],
 });
 // 配置静态路由
@@ -29,12 +33,9 @@ const staticRoutes = [{
     component: () => import("@/views/errors/404"),
   },
 ]
-const asyncRoutes = filterAsyncRouter(JSON.parse(JSON.stringify(store.getters['routers/getDynamicRouters'])))||[];
+
 //遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap) {
-  if(asyncRouterMap==""||asyncRouterMap==[]){
-    return [];
-  }
   const accessedRouters = asyncRouterMap.filter(route => {
     if (route.component) {
       route.component = loadView(route.component)
@@ -54,14 +55,24 @@ function loadView(view) {
     return () => import(`@/views${view}`);
   }
 }
+
 /* 加载可以直接访问的路由 */
 router.addRoutes(staticRoutes);
 /* 加载后端路由 */
-router.addRoutes(asyncRoutes);
+router.addRoutes(filterAsyncRouter(store.getters['routers/getDynamicRouters']));
 
 //全局前置守卫
 // 当一个导航触发时，全局前置守卫按照创建的顺序调用。守卫可以是异步解析执行，此时导航在所有守卫解析完之前一直处于挂起状态
 router.beforeEach(async (to, from, next) => {
+  const asyncRouter = store.getters['routers/getDynamicRouters'];
+  // 判断路由表是否添加了动态路由
+  if (router.getRoutes().length == staticRoutes.length && asyncRouter.length != 0) {
+    /* 重新加载后端路由 */
+    router.addRoutes(filterAsyncRouter(asyncRouter));
+    next({
+      path: to.fullPath
+    })
+  }
   // 路由对象的matched属性是一个数组，包含了当前路由的所有嵌套路径片段的路由记录。
   // 只需要给较高一级的路由添加isAuth即可，其下的所有子路由不必添加。
   // 函数执行次数 !== 数组长度

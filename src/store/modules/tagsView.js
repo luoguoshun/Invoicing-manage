@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     dynamicTag: {
-      tabs: [],
+      tabs:[],
       activeRoute: 'home',
     },
   },
@@ -61,14 +61,12 @@ export default {
       tabs.forEach((element, index) => {
         if (element.routeName == routeName) {
           tabs.splice(index, 1);
-          //如果为数组最后一个元素 则直接激活首页路由
-          if (tabs.length === 0) {
+          //如果为数组第一个元素 则直接激活首页路由
+          if (index == 0) {
             state.dynamicTag.activeRoute = 'home';
-          } else {
+          } else if (element.routeName == state.dynamicTag.activeRoute) {
             //判断删掉的标签是否为当前打开的路由 如果是 则激活上一个tab路由
-            if (element.routeName === state.dynamicTag.activeRoute) {
-              state.dynamicTag.activeRoute = tabs[index - 1].routeName;
-            }
+            state.dynamicTag.activeRoute = tabs[index - 1].routeName;
           }
           return true;
         }

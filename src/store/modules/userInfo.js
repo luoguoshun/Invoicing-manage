@@ -14,11 +14,10 @@ export default {
   //mutations是唯一一种方式来修改state中的状态的；
   mutations: {
     setUserInfo(state, userInfo) {
-      state.userInfo=userInfo;
+      state.userInfo = userInfo;
     },
     clearUserInfo(state) {
-      state.userInfo={};
-      // localStorage.removeItem('UserData');
+      localStorage.removeItem('userData');
     },
   },
   actions: {},

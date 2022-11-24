@@ -27,13 +27,16 @@ function addStyleResource(rule) {
     })
 }
 //module变量代表当前模块，它的exports属性是对外的接口
-//通过exports可以将模块从模块中导出，其他文件加载该模块实际上就是读取module.exports变量，他们可以是变量、函数、对象等。
 module.exports = {
-  // baseURl: process.env.NODE_ENV === 'production' ?'/src/' :'/',
+  // outputDir: '../dist',// 输出文件目录
+  publicPath: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
   devServer: {
-    port: 8080
-  }, //设置端口
-  lintOnSave: false,
+    open: true,
+    port: 8080, //设置端口
+    // host: '43.139.151.208',
+    host: 'localhost',
+  },
+  lintOnSave: false, //关闭ESlint校验
   chainWebpack: config => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
     types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))

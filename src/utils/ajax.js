@@ -13,19 +13,17 @@ import {
   baseUrl
 } from '@/config/defaultString.js'
 
-// const baseurl = 'http://127.0.0.1:36559';
 //创建axios实例
 const ajax = new axios.create({
   withCredentials: false, //跨域请求是否允许携带cookie资源凭证
   baseURL: baseUrl,
   time: 10000, //请求超时时间
   headers: {
-    'Content-Type': 'application/json;charset=UTF-8',
+    // 'Content-Type': 'application/json;charset=UTF-8'
   },
 });
 const unauthorizedHandler = createThrottle(() => {
   const nowRouteName = router.history.current.name;
-  console.log(nowRouteName);
   if (nowRouteName != 'login') {
     Message.warning('登录失效，请重新登录!');
     router.push({
@@ -36,12 +34,10 @@ const unauthorizedHandler = createThrottle(() => {
     });
   }
 }, 1000);
+//判断是否是开发环境，
+//如果是将对传输的参数进行加密操作,返回来的数据进行解密操作
 const isEncrypt = (() => {
-  if (process.env.NODE_ENV == 'development') {
-    return false;
-  } else {
-    return true;
-  }
+  return process.env.NODE_ENV == 'development' ? false : true
 })();
 //请求拦截器
 ajax.interceptors.request.use(
@@ -50,10 +46,11 @@ ajax.interceptors.request.use(
     if (access_token != null) {
       config.headers['Authorization'] = 'Bearer ' + access_token;
     }
+    //生产环境加密操作
     if (isEncrypt) {
-      config.data = {
-        ciphertext: encrypt.EncryptData(config.data),
-      };
+      // config.data = {
+      //   ciphertext: encrypt.EncryptData(config.data),
+      // };
     }
     return config;
   },
@@ -61,7 +58,7 @@ ajax.interceptors.request.use(
     return Promise.reject(error);
   },
 );
-// 响应拦截器
+//响应拦截器
 ajax.interceptors.response.use(
   (response) => {
     // 后端返回字符串表示需要解密操作

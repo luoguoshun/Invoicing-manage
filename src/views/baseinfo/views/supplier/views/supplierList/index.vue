@@ -118,7 +118,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.addVisible = false">取 消</el-button>
+        <el-button @click="closeAddDialog()">取 消</el-button>
         <el-button type="success" @click="addSupplier()">添 加</el-button>
       </div>
     </el-dialog>
@@ -196,7 +196,6 @@ export default {
           console.log(message);
           return;
         }
-        console.log(data);
         this.supplierTypes = data;
         this.supplierForm.supplierTypes = data;
       });
@@ -290,6 +289,10 @@ export default {
       this.supplierForm.supplierName = '';
       this.supplierForm.leadCadre = '';
       this.supplierForm.phone = '';
+    },
+    closeAddDialog(){
+      this.dialogObject.addVisible = false;
+      this.$refs['supplierForm'].resetFields();
     },
     addSupplier() {
       this.$refs['supplierForm'].validate((valid) => {

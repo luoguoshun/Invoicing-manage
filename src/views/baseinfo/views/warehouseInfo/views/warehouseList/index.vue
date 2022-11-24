@@ -88,7 +88,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogObject.editVisible = false">取 消</el-button>
+        <el-button @click="closeAddDialog()">取 消</el-button>
         <el-button type="success" @click="submitInfo()">提 交</el-button>
       </div>
     </el-dialog>
@@ -322,6 +322,10 @@ export default {
       }
       this.dialogObject.editName = editName;
       this.dialogObject.editVisible = true;
+    },
+    closeAddDialog() {
+      this.dialogObject.editVisible = false;
+      this.$refs['warehouseForm'].resetFields();
     },
     //修改仓库数据
     updateWarehouseInfo() {
