@@ -494,7 +494,7 @@ const routes = [{
   },
 ];
 const router = new VueRouter({
-  mode: "history",
+  mode: "hash",
   routes,
 });
 //全局前置守卫
@@ -512,9 +512,9 @@ router.beforeEach(async (to, from, next) => {
     // 否则判Token时间是否失效
     const accessToken = store.getters['token/accessToken'];
     const expiresTime = store.getters['token/expiresTime'];
-    let isExpires = true;
-    if (accessToken !== null) isExpires = new Date().getTime() > expiresTime;
-    if (isExpires) {
+    let isExpires = new Date().getTime() > expiresTime;
+    // if (accessToken !== null) isExpires = new Date().getTime() > expiresTime;
+    if (accessToken !== null && isExpires) {
       Message.warning("凭证过期，请重新登录!");
       next({
         name: "login",

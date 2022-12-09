@@ -29,7 +29,7 @@ function addStyleResource(rule) {
 //module变量代表当前模块，它的exports属性是对外的接口
 module.exports = {
   // outputDir: '../dist',// 输出文件目录
-  publicPath: process.env.NODE_ENV === 'production' ? '/dist/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
   devServer: {
     open: true,
     port: 8080, //设置端口
