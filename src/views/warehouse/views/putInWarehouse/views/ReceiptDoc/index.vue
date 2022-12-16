@@ -10,7 +10,7 @@
         <el-select size="mini" placeholder="请选择入库仓库" v-model="queryForm.warehouseId">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
         </el-select>
-        <el-input size="mini" label-width="80px" placeholder="请输入关键字"></el-input>
+        <el-input size="mini" label-width="80px" placeholder="请输入关键字" v-model="queryForm.conditions"></el-input>
         <el-button type="primary" @click="getPutinWarehouseOrder()" size="mini">查找</el-button>
         <el-button type="primary" @click="resetQueryForm()" size="mini">重置</el-button>
       </div>

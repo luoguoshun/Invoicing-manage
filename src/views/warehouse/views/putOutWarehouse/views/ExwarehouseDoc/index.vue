@@ -8,13 +8,13 @@
         <el-button type="danger" size="mini" class="el-icon-delete" @click="rejectOrderRequest()"> 取消 </el-button>
       </div>
       <div class="edit_query">
-        <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
-        </el-date-picker>
-        <el-select size="mini" v-model="queryForm.ExwarehouseState" placeholder="订单状态">
+        <!-- <el-date-picker v-model="queryForm.publicationDates" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" size="mini">
+        </el-date-picker> -->
+        <!-- <el-select size="mini" v-model="queryForm.ExwarehouseState" placeholder="订单状态">
           <el-option label="待编辑" value="2"></el-option>
           <el-option label="已完成" value="3"></el-option>
           <el-option label="已取消" value="4"></el-option>
-        </el-select>
+        </el-select> -->
         <el-select size="mini" v-model="queryForm.warehouseId" placeholder="请输入开单仓库">
           <el-option v-for="item in warehouseList" :key="item.warehouseId" :label="item.warehouseName" :value="item.warehouseId"></el-option>
         </el-select>
@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column prop="exwarehouseTypeStr" label="类别" align="center"> </el-table-column>
       <el-table-column prop="sourceOrderId" label="来源单号" align="center"> </el-table-column>
-      <el-table-column prop="operationPersonId" label="开单人" align="center"></el-table-column>
+      <el-table-column prop="name" label="开单人" align="center"></el-table-column>
       <!-- <el-table-column prop="approvalPersonId" label="审批人" align="center"></el-table-column> -->
       <el-table-column prop="exwarehouseCout" label="出库总数" align="center"></el-table-column>
       <el-table-column prop="exGoodsTypeNum" label="货品种类数" align="center"></el-table-column>
@@ -423,7 +423,7 @@ export default {
     width: 100%;
     margin: 5px 0px;
     display: grid;
-    grid-template-columns: 0.5fr 1fr;
+    grid-template-columns: 1fr 0.5fr;
     .edit_btn {
       display: flex;
       flex-direction: row;
@@ -432,8 +432,12 @@ export default {
     }
     .edit_query {
       display: grid;
-      grid-template-columns: 2fr 2fr 2fr 2fr 0.3fr 0.3fr;
+      grid-template-columns: 1fr 1fr 0.5fr 0.5fr;
       grid-column-gap: 5px;
+      //       display: flex;
+      // flex-direction: row;
+      // grid-gap: 5px;
+      // justify-content: flex-start; //左对齐lex-end：右对齐 space-between：两端对齐，项目之间的间隔都相等
     }
   }
   .dialogSelectInput {
