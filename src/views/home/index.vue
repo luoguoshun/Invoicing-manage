@@ -204,6 +204,7 @@ export default {
     },
     //处理事件
     processEvent(messageParameter) {
+      debugger;
       if (messageParameter['targetRouterName']) {
         this.$router.push({
           name: messageParameter['targetRouterName'],

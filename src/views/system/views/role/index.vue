@@ -53,7 +53,9 @@
     </el-dialog>
 
     <!-- 权限分配信息对话框 -->
-    <el-dialog title="权限分配" center :visible.sync="dialogObject.allocationDiolog" :close-on-click-modal="false" width="40%" :append-to-body="true">
+    <el-dialog title="权限分配" center :visible.sync="dialogObject.allocationDiolog" :close-on-click-modal="false" width="45%" :append-to-body="true">
+      角色：<el-tag>{{ roleForm.name }}</el-tag>
+      <el-divider></el-divider>
       <el-tree
         :data="permissionData"
         ref="routerTree"
@@ -61,6 +63,7 @@
         auto-expand-parent
         show-checkbox
         node-key="id"
+        :check-strictly="true"
         :default-checked-keys="defaultCheckedKeys"
         :default-expanded-keys="defaultCheckedKeys"
         :props="defaultProps"
@@ -276,18 +279,15 @@ export default {
     },
     openAllocationDiolog(row) {
       this.dialogObject.allocationDiolog = true;
-      //在弹出dialogDOM元素未加载完成之前执行$nextTick回调函数，确保el-tree已经渲染
-      // this.$nextTick(() => {
-      //   this.$refs.routerTree.setCheckedKeys([]);
-      // });
       this.roleForm.roleId = row.roleId;
+      this.roleForm.name = row.name;
       this.$api.role.getAllPermissionsByRoleId(row['roleId']).then((res) => {
+        console.log(res.data);
         this.$refs.routerTree.setCheckedKeys([]);
-
         const { data, success, message } = res.data;
-        debugger;
         //清空选中节点
         if (success) {
+          console.log(data);
           //设置默认选中节点
           this.defaultCheckedKeys = data;
         }
@@ -302,6 +302,7 @@ export default {
       res.forEach((item) => {
         this.routerIds.push(item.id);
       });
+      console.log(this.routerIds);
     },
     //分配权限
     assignPermissions() {

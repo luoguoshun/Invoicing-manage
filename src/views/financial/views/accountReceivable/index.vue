@@ -95,7 +95,7 @@
           <el-button type="success" size="mini" @click="showPaymentDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待收款'">
             点击收款
           </el-button>
-          <el-button v-else-if="scope.row.accountStateStr == '已收款'" type="primary" size="mini" @click="showPaymentDetailDialog(scope.row)" plain
+          <el-button v-else-if="scope.row.accountStateStr == '已收款'" type="success" size="mini" @click="showPaymentDetailDialog(scope.row)" plain
             >收款详情</el-button
           >
         </template>
@@ -236,7 +236,7 @@
         <!-- 操作 -->
         <el-table-column label="编辑" align="center">
           <template slot-scope="scope">
-            <el-button type="warning" size="mini" @click="showSalesDetailDiolog(scope.row, 'sales')" plain>订单详情</el-button>
+            <el-button type="primary" size="mini" @click="showSalesDetailDiolog(scope.row, 'sales')" plain>订单详情</el-button>
           </template>
         </el-table-column>
       </el-table>

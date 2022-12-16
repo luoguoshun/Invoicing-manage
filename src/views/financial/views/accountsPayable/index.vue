@@ -97,17 +97,18 @@
       </el-table-column>
       <el-table-column label="付款" align="center">
         <template slot-scope="scope">
-          <el-button type="warning" size="mini" @click="showPayDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待付款'">
+          <el-button type="primary" size="mini" @click="showPayDialog(scope.row)" plain v-if="scope.row.accountStateStr == '待付款'">
             点击付款
           </el-button>
           <el-button
             v-else-if="scope.row.accountStateStr == '已付款'"
-            type="warning"
+            type="success"
             size="mini"
             @click="showPayDetailDialog(scope.row, 'accountInfo')"
             plain
-            >付款详情</el-button
           >
+            付款详情
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -536,7 +537,7 @@ export default {
           publicationDates: [],
           warehouseId: '', //出货仓库
           conditions: '', //综合条件
-          salesReturnState: 6, //退货单状态（待结算）
+          salesReturnState: 3, //退货单状态（已审核）
         },
       },
       payDialog: {
