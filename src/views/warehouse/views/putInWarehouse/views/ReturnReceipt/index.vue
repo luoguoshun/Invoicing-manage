@@ -57,7 +57,20 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <!-- 分页 -->
+    <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="table.total"
+        :page-sizes="[5, 10, 15, 20]"
+        :current-page="queryForm.page"
+        :page-size="queryForm.row"
+        layout="total, sizes, prev, pager, next, jumper"
+        background
+      >
+      </el-pagination>
+    </div>
     <!-- 操作表格 -->
     <el-drawer class="editPlanItem" :visible.sync="PurchaseDetailDiolog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
@@ -168,7 +181,7 @@ export default {
       this.IsToBeList = false;
       let queryForm = JSON.parse(JSON.stringify(this.queryForm));
       queryForm.salesReturnState = queryForm.salesReturnState == '' ? 0 : parseInt(queryForm.salesReturnState);
-      await this.$api.salesReturn.getSalesReturnListByState({Row:100,Page:1,SalesReturnState:3}).then((res) => {
+      await this.$api.salesReturn.getSalesReturnListByState({Row:this.queryForm.row,Page:this.queryForm.page,SalesReturnState:3}).then((res) => {
         const { data, success, message } = res.data;
         console.log(data);
         if (!success) {
@@ -238,6 +251,17 @@ export default {
       this.PurchaseDetailDiolog.editPurchaseId = row.salesReturnId;
       this.getSalesReturnDatailByReturnId(row.salesReturnId);
       this.PurchaseDetailDiolog.show = true;
+    },
+        //条数改变
+    handleSizeChange(row) {
+      console.log(row);
+      this.queryForm.row = row;
+      this.loadData();
+    },
+    //页数改变
+    handleCurrentChange(page) {
+      this.queryForm.page = page;
+      this.loadData();
     },
   },
   created() {

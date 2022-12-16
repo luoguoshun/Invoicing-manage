@@ -61,7 +61,19 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <div class="block">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :total="table.total"
+        :page-sizes="[5, 10, 15, 20]"
+        :current-page="queryForm.page"
+        :page-size="queryForm.row"
+        layout="total, sizes, prev, pager, next, jumper"
+        background
+      >
+      </el-pagination>
+    </div>
     <!-- 操作表格 -->
     <el-drawer class="editPlanItem" :visible.sync="orderDetailDialog.show" direction="rtl" size="70%">
       <el-divider></el-divider>
@@ -204,6 +216,16 @@ export default {
         }
         this.orderDetailDialog.orderDetailItems = data;
       });
+    },
+        //条数改变
+    handleSizeChange(row) {
+      this.queryForm.row = row;
+      this.loadData();
+    },
+    //页数改变
+    handleCurrentChange(page) {
+      this.queryForm.page = page;
+      this.loadData();
     },
   },
   created() {
