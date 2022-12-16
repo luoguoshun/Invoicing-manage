@@ -93,7 +93,7 @@
     </div>
     <!-- 出库单详情 -->
     <el-drawer title="出库单据详情信息" :visible.sync="planDetailDiolog.show" direction="rtl" size="80%">
-      <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button>
+      <!-- <el-button size="mini" type="primary" @click="updatePurchaseDetails()" plain>保存</el-button> -->
       <el-button size="mini" type="primary" @click="planDetailDiolog.show = false" plain>关闭</el-button>
       <el-table :data="planDetailDiolog.detailPlanItems" :header-cell-style="{ 'text-align': 'center' }" border>
         <el-table-column prop="exwarehouseDeteilId" label="出库详情编号" width="120" align="center">
@@ -106,15 +106,17 @@
         <el-table-column prop="brand" label="品牌" width="120" align="center"> </el-table-column>
         <el-table-column prop="unit" label="单位" width="120" align="center"> </el-table-column>
         <el-table-column prop="wCount" label="库存数量" align="center"></el-table-column>
-        <el-table-column prop="count" label="出库数量(可编辑)" align="center">
-          <template slot-scope="scope">
+        <el-table-column prop="count" label="出库数量" align="center">
+          <!-- <template slot-scope="scope">
             <el-input-number
               type="number"
               size="mini"
               v-model.number="scope.row.count"
-              @change="addGoodsCount(scope.$index, scope.row)"
+              
             ></el-input-number>
-          </template>
+            
+          </template> -->
+          <!-- change="addGoodsCount(scope.$index, scope.row) -->
         </el-table-column>
         <el-table-column prop="totalPrice" label="单价(可编辑)" align="center">
           <template slot-scope="scope">
@@ -273,7 +275,7 @@ export default {
     },
     //更新采购计划项目
     updatePurchaseDetails() {
-      debugger;
+      //debugger;
       this.planDetailDiolog.detailPlanItems.forEach((item) => {
         this.updateExdetFrom.exwarehouseDeteilIds.push(item.exwarehouseDeteilId);
         this.updateExdetFrom.prices.push(item.price);
