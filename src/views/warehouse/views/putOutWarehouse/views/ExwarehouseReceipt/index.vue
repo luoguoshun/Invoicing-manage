@@ -32,7 +32,7 @@
       </el-table-column>
       <el-table-column prop="exwarehouseStateStr" label="状态" align="center"> </el-table-column>
       <el-table-column prop="warehouseName" label="出库仓" align="center"> </el-table-column>
-      <el-table-column prop="operationPersonId" label="申请人" align="center"></el-table-column>
+      <el-table-column prop="name" label="申请人" align="center"></el-table-column>
       <el-table-column prop="exwarehouseMoney" label="订单总价" align="center"></el-table-column>
       <el-table-column prop="exwarehouseCout" label="货品总数" align="center"></el-table-column>
       <el-table-column prop="remakes" label="备注" align="center">
@@ -276,7 +276,7 @@ export default {
         row: 10,
         publicationDates: [],
         warehouseId: '',
-        approvalName: '',
+        approvalName: '',//开单人
         ExwarehouseState: 1, //待引用
         IsToBeSubmitted: true,
       },
@@ -376,6 +376,7 @@ export default {
     async getPurchasePlanList() {
       await this.$api.exwarehouse.getExWareHouseOrder(this.queryForm).then((res) => {
         const { data, success, message } = res.data;
+        console.log(data);
         if (!success) {
           console.log(message);
           return;
