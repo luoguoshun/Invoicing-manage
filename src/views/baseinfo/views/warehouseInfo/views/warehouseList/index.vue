@@ -346,7 +346,7 @@ export default {
             } else {
               this.$message({ message: '修改成功！', type: 'success' });
               this.dialogObject.editVisible = false;
-              this.getWarehouseList();
+              this.loadData();
             }
           });
         }

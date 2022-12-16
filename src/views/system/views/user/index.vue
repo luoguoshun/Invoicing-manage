@@ -308,8 +308,7 @@ export default {
     },
     //获取用户数据
     async getUserList() {
-      let roleId = this.queryForm.roleId == '' ? 0 : parseInt(this.queryForm.roleId);
-      await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, roleId).then((res) => {
+      await this.$api.user.GetUserList(this.queryForm.page, this.queryForm.row, this.queryForm.conditions, this.queryForm.roleId).then((res) => {
         const { data, success, message } = res.data;
         if (!success) {
           console.log(message);
@@ -344,7 +343,7 @@ export default {
     //重置搜索条件
     resetQueryForm() {
       this.queryForm.conditions = '';
-      this.queryForm.roleId = 0;
+      this.queryForm.roleId = '';
       this.loadData();
     },
     //条数改变
@@ -457,6 +456,7 @@ export default {
     },
     //打开修改弹窗
     openUpdateDiolog(row) {
+      this.userForm.areadata = '';
       this.userForm = { ...row };
       if (this.userForm.roleIdStr !== null) {
         this.roleIds = this.userForm.roleIdStr.split('、');
@@ -467,11 +467,16 @@ export default {
     },
     //修改用户数据
     updateUserInfo() {
+      debugger;
+      let areadata = '';
+      if (this.userForm.areadata != undefined) {
+        areadata = this.userForm.areadata;
+      }
       const user = {
         userId: this.userForm.userId,
         roleIds: this.roleIds,
         phone: this.userForm.phone,
-        address: this.queryForm.areadata + this.userForm.address,
+        address: areadata + this.userForm.address,
         sex: this.userForm.sex,
         name: this.userForm.name,
         departmentId: this.userForm.departmentId,
@@ -533,9 +538,8 @@ export default {
           break;
         }
       }
-      this.queryForm.areadata = '';
-      this.queryForm.areadata = this.search.province + this.search.city + this.search.district;
-      console.log(this.queryForm.areadata);
+      this.userForm.areadata = '';
+      this.userForm.areadata = this.search.province + this.search.city + this.search.district;
     },
   },
   created() {

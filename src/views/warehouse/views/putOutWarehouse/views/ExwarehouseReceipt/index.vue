@@ -627,9 +627,8 @@ export default {
     },
     //获取采购计划选中行的数据
     selectSalesRows(selection) {
-      console.log(selection);
       this.purchasePlanForm.applicanSKUIds = [];
-      (this.purchasePlanForm.skuPrices = []),
+      this.purchasePlanForm.skuPrices = [];
         selection.forEach((element) => {
           this.purchasePlanForm.applicanSKUIds.push(element.skuId);
           this.purchasePlanForm.skuPrices.push(element.price);

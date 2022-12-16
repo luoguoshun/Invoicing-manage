@@ -30,7 +30,7 @@
       border
     >
       <el-table-column type="selection" width="55" align="center"> </el-table-column>
-      <el-table-column prop="logId" label="logId" width="60" align="center"> </el-table-column>
+      <el-table-column prop="logId" label="logId" width="100" align="center"> </el-table-column>
       <el-table-column prop="appName" label="记录框架名称" align="center"> </el-table-column>
       <el-table-column prop="thread" label="线程编号" width="50" align="center"> </el-table-column>
       <el-table-column prop="source" label="错误来源" align="center"> </el-table-column>

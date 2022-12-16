@@ -38,7 +38,7 @@
       border
     >
       <el-table-column type="selection" width="55" align="center"> </el-table-column>
-      <el-table-column prop="operateId" label="编号" width="50" align="center"> </el-table-column>
+      <el-table-column prop="operateId" label="编号" width="100" align="center"> </el-table-column>
       <el-table-column prop="userId" label="操作人编号" align="center"> </el-table-column>
       <el-table-column prop="operateName" label="操作人姓名" align="center"> </el-table-column>
       <el-table-column prop="tableId" label="表名编号" align="center"> </el-table-column>

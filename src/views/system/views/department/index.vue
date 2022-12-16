@@ -91,9 +91,9 @@ export default {
       },
       queryForm: {
         page: 1,
-        row: 10,
+        row: 100,
         conditions: '',
-        roleId: 0,
+        roleId: '',
       },
       departmentForm: {
         departmentId: '',

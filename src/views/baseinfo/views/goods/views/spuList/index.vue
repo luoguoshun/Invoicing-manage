@@ -62,8 +62,8 @@
       width="40%"
     >
       <el-form :model="SpuForm" ref="SpuFormModel" label-width="80px">
-        <el-form-item label="货品编码" prop="SpuId">
-          <el-input v-model="SpuForm.SpuId"></el-input>
+        <el-form-item label="货品编码" prop="SpuId" >
+          <el-input v-model="SpuForm.SpuId" disabled></el-input>
         </el-form-item>
         <el-form-item label="名称" prop="Name">
           <el-input v-model="SpuForm.Name"></el-input>
