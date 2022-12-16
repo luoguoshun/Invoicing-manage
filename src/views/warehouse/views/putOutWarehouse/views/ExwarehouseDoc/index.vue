@@ -297,6 +297,8 @@ export default {
         this.purchaseOrderIds.push(element.exwarehouseId);
         this.OrderState.push(element.exwarehouseStateStr);
       });
+
+      console.log(this.OrderState);
     },
     showplanDetailDiolog(row) {
       this.planDetailDiolog.editPurchaseId = row.exwarehouseId;
@@ -359,7 +361,20 @@ export default {
           type: 'warning',
         });
         return false;
-      } else {
+      }
+      
+      for (let i = 0; i < this.OrderState.length; i++) {
+        if (this.OrderState[i] == '已完成') {
+          this.$message({
+            message: '不能取消已完成的订单！',
+            type: 'warning',
+          });
+          this.OrderState = [];
+          return false;
+        }
+      }
+
+      //else {
         this.$api.exwarehouse.rejectOrderRequest(this.purchaseOrderIds).then((res) => {
           let { success, message } = res.data;
           if (!success) {
@@ -370,7 +385,7 @@ export default {
             this.loadData();
           }
         });
-      }
+      //}
     },
     //显示采购单子项目
     showorderDetailDiolog(row) {
