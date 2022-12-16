@@ -61,7 +61,7 @@
       <el-table-column prop="orderTotalPrice" label="订单总价" align="center"> </el-table-column>
       <el-table-column prop="putTotalNum" label="入库总量" align="center"> </el-table-column>
       <el-table-column prop="actualWarehousing" label="实际入库" align="center"> </el-table-column>
-      <el-table-column label="编辑" width="200" align="center">
+      <el-table-column label="更多信息" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>详情</el-button>
         </template>
@@ -92,10 +92,10 @@
         <el-table-column prop="skuName" label="物品名称" align="center"> </el-table-column>
         <el-table-column prop="supplierName" label="物品供应商" align="center"> </el-table-column>
         <el-table-column prop="purchaseCount" label="采购数量" align="center"> </el-table-column>
-        <el-table-column label="入库数量" align="center">
-          <template slot-scope="scope">
+        <el-table-column label="入库数量" align="center" prop="putinCount">
+          <!-- <template slot-scope="scope">
             <el-input-number type="number" size="mini" v-model.number="scope.row.putinCount"></el-input-number>
-          </template>
+          </template> -->
         </el-table-column>
         <el-table-column prop="purchasePrice" label="物品采购价" align="center"> </el-table-column>
         <el-table-column prop="goodsCost" label="物品成本" align="center"> </el-table-column>
@@ -106,11 +106,11 @@
             <el-input type="textare" rows="2" size="mini" v-model="scope.row.remarks"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
+        <!-- <el-table-column label="操作" width="150" align="center">
           <template>
             <el-button size="mini" type="danger">删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-drawer>
   </div>

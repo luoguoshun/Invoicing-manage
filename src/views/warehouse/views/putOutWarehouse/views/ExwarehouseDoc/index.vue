@@ -70,7 +70,7 @@
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column label="编辑" width="200" align="center">
+      <el-table-column label="更多信息" width="200" align="center">
         <template slot-scope="scope">
           <!-- <el-button type="success " size="mini" @click="openApprovalDetails(scope.row.purchaseId)" plain>审批详情</el-button> -->
           <el-button type="info" size="mini" @click="showplanDetailDiolog(scope.row)" plain>订单详情</el-button>
@@ -123,11 +123,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="remakes" label="备注" align="center"> </el-table-column>
-        <el-table-column label="操作" width="150" align="center">
+        <!-- <el-table-column label="操作" width="150" align="center">
           <template slot-scope="scope">
             <el-button size="mini" type="danger" @click="deletePurchaseDetail(scope.$index, scope.row)">删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-drawer>
   </div>
@@ -273,6 +273,7 @@ export default {
     },
     //更新采购计划项目
     updatePurchaseDetails() {
+      debugger;
       this.planDetailDiolog.detailPlanItems.forEach((item) => {
         this.updateExdetFrom.exwarehouseDeteilIds.push(item.exwarehouseDeteilId);
         this.updateExdetFrom.prices.push(item.price);
